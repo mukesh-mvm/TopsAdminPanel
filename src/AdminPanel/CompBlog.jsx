@@ -18,8 +18,8 @@ import {
     TranslationOutlined,
     TruckOutlined,
     CloseCircleOutlined,
-  } from "@ant-design/icons";
-  import { UploadOutlined } from "@ant-design/icons";
+} from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 import { baseurl } from "../helper/Helper";
 import axios from "axios";
 import Password from "antd/es/input/Password";
@@ -28,7 +28,7 @@ import { useAuth } from "../context/auth";
 const { Option } = Select;
 
 const { TextArea } = Input;
-const Company = () => {
+const CompBlog = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,49 +40,53 @@ const Company = () => {
     const [image1, setImage] = useState();
     const [photo, setPhoto] = useState("");
     const [cross, setCross] = useState(true);
-  const [record1, setRecord] = useState();
-  const [imageTrue, setImageTrue] = useState(false);
+    const [record1, setRecord] = useState();
+    const [imageTrue, setImageTrue] = useState(false);
+    const[tag,setTag] = useState([])
+    const[user,setUser] = useState([])
 
 
- const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
+    const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
 
-  const handleCategoryChange = (value) => {
-    setSelectedCategory(value); // save selected category ID to variable
-    console.log("Selected Category ID:", value);
-  };
-
-
+    const handleCategoryChange = (value) => {
+        setSelectedCategory(value); // save selected category ID to variable
+        console.log("Selected Category ID:", value);
+    };
 
 
 
-  const handleRowClick = (record) => {
-    console.log("Clicked row data:", record);
-    setRecord(record);
-    setImage(record?.logo);
-    setCross(true);
 
-    // Access the clicked row's data here
-    // You can now use 'record' to get the details of the clicked row
-  };
 
-  const handleCross = () => {
-    setCross(false);
-  };
+    const handleRowClick = (record) => {
+        console.log("Clicked row data:", record);
+        setRecord(record);
+        setImage(record?.logo);
+        setCross(true);
+
+        // Access the clicked row's data here
+        // You can now use 'record' to get the details of the clicked row
+    };
+
+    const handleCross = () => {
+        setCross(false);
+    };
 
     // console.log(auth?.user._id);
 
     useEffect(() => {
         fetchData();
         fetchData1()
+        fetchData3()
+        fetchData4()
 
-       
+
     }, []);
 
 
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchData2()
-    },[selectedCategory])
+    }, [selectedCategory])
 
 
 
@@ -113,11 +117,43 @@ const Company = () => {
         }
     };
 
+
+    const fetchData3 = async () => {
+        try {
+            const res = await axios.get(baseurl + "/tags");
+            // console.log("----data-----", res.data);
+            setTag(res.data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setLoading(false);
+        }
+    };
+
+
+
+
+    const fetchData4 = async () => {
+        try {
+            const res = await axios.get(baseurl + "/getUsers");
+            // console.log("----data-----", res.data);
+            setUser(res.data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setLoading(false);
+        }
+    };
+
+
+
+
+
     const fetchData = async () => {
         try {
-            const res = await axios.get(baseurl + "/getAllCompany");
+            const res = await axios.get(baseurl + "/getALlcompblogs");
 
-            // console.log("----data-----", res.data);
+            console.log("----data-----", res.data);
             setData(res.data);
             setLoading(false);
         } catch (error) {
@@ -136,24 +172,16 @@ const Company = () => {
         setImageTrue(true);
         setEditingCompany(record);
         console.log(record);
-        setSelectedCategory(record.category._id)
-        const benifits = record?.benifits.join(',')
-        const cons = record?.cons.join(',')
-        const features = record?.features.join(',')
-        const pros = record?.pros.join(',')
+
+       
         form.setFieldsValue({
-            Description: record.Description,
-            benifits: benifits,
-            cons: cons,
-            features: features,
-            pros: pros,
-            mainHeading: record.mainHeading,
-            rating: record.rating,
-            review: record.review,
-            websiteName: record.websiteName,
-            visitSiteUrl: record.visitSiteUrl,
+            title:record.title,
+            mtitle:record.mtitle,
+            mdesc:record.mdesc,
             category: record.category._id,
-            subcategories: record.subcategories._id
+            subcategories: record.subcategories._id,
+            tags: record.tags._id,
+            postedBy: record.postedBy._id,
 
             // dob:record.dateOfBirth,
         });
@@ -183,30 +211,30 @@ const Company = () => {
         const formData = new FormData();
         formData.append("image", file.file);
         // console.log(file.file.name);
-    
+
         try {
-          const response = await axios.post(
-            `${baseurl}/upload`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
+            const response = await axios.post(
+                `${baseurl}/upload`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+            if (response) {
+                message.success("Image uploaded successfully!");
+                setImage(response.data.imageUrl);
             }
-          );
-    
-          if (response) {
-            message.success("Image uploaded successfully!");
-            setImage(response.data.imageUrl);
-          }
-    
-          return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
+
+            return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
         } catch (error) {
-          message.error("Error uploading image. Please try again later.");
-          console.error("Image upload error:", error);
-          return null;
+            message.error("Error uploading image. Please try again later.");
+            console.error("Image upload error:", error);
+            return null;
         }
-      };
+    };
 
     const handlePost = async (values) => {
 
@@ -271,9 +299,9 @@ const Company = () => {
             logo: imageTrue ? image1 : values.logo,
 
         };
-   
 
-        console.log("----post data----",postData)
+
+        console.log("----post data----", postData)
 
         try {
             const response = await axios.put(
@@ -302,29 +330,24 @@ const Company = () => {
 
     const columns = [
         {
-            title: "Company Name",
-            dataIndex: "websiteName",
-            key: "websiteName",
+            title: "Blog Title",
+            dataIndex: "title",
+            key: "title",
         },
 
         {
             title: "Categories",
-            dataIndex: ['category', 'name'],
+            dataIndex: ['categories', 'name'],
             key: "name",
         },
 
         {
-            title: "subcategories",
+            title: "Subcategories",
             dataIndex: ['subcategories', 'name'],
             key: "subcategories",
         },
 
 
-        {
-            title: "Rating",
-            dataIndex: "rating",
-            key: "rating",
-        },
 
 
 
@@ -363,13 +386,8 @@ const Company = () => {
                 columns={columns}
                 dataSource={data}
                 loading={loading}
-                scroll={{ x: 'max-content' }}
-                rowKey={(record) => record._id}
-         onRow={(record) => ({
-          onClick: () => {
-            handleRowClick(record); // Trigger the click handler
-          },
-        })}
+              
+               
             // rowKey="_id"
             />
 
@@ -380,12 +398,32 @@ const Company = () => {
                 footer={null}
             >
                 <Form form={form} layout="vertical" onFinish={handleSubmit}>
+                    
+                    
                     <Form.Item
-                        name="websiteName"
-                        label="Company Name"
+                        name="title"
+                        label="Blog Title"
                         rules={[{ required: true, message: "Please input the name!" }]}
                     >
-                        <Input placeholder="Enter Company Name" />
+                        <Input placeholder="Enter Blog Title" />
+                    </Form.Item>
+
+
+                    <Form.Item
+                        name="mtitle"
+                        label="Blog Meta Title"
+                        rules={[{ required: true, message: "Please input the name!" }]}
+                    >
+                        <Input placeholder="Enter Blog Meta Title" />
+                    </Form.Item>
+
+
+                    <Form.Item
+                        name="mdesc"
+                        label="Blog Meta Description"
+                        rules={[{ required: true, message: "Please input the name!" }]}
+                    >
+                        <Input placeholder="Enter Blog Meta Description" />
                     </Form.Item>
 
 
@@ -403,9 +441,9 @@ const Company = () => {
                         </Select>
                     </Form.Item>
 
-                
 
-                {/* {
+
+                    {/* {
                     subcategories.length !==0?(<> <Form.Item
                         name="subcategories"
                         label="SubCategories"
@@ -422,7 +460,7 @@ const Company = () => {
                 } */}
 
 
-<Form.Item
+                    <Form.Item
                         name="subcategories"
                         label="SubCategories"
                         rules={[{ required: true, message: 'Please select a category!' }]}
@@ -435,193 +473,39 @@ const Company = () => {
                             ))}
                         </Select>
                     </Form.Item>
-                   
 
 
 
                     <Form.Item
-                        name="rating"
-                        label="Rating"
-                        rules={[{ required: true, message: "Please input the rating!" }]}
+                        name="postedBy"
+                        label="Author"
+                        rules={[{ required: true, message: 'Please select a category!' }]}
                     >
-                        <InputNumber min={0} max={5} step={1} placeholder="Enter company rating maximum 5" />
-                    </Form.Item>
-
-
-                    <Form.Item
-                        name="visitSiteUrl"
-                        label="Company Url"
-                        rules={[{ required: true, message: "Please input the name!" }]}
-                    >
-                        <Input placeholder="Enter Company url" />
-                    </Form.Item>
-                   
-
-                    <Form.Item
-                        name="mainHeading"
-                        label="Main Heading"
-                        rules={[{ required: true, message: "Please input the name!" }]}
-                    >
-                        <Input placeholder="Enter Main Heading" />
-                    </Form.Item>
-
-
-                    <Form.Item
-                        name="review"
-                        label="Review"
-                        rules={[{ required: true, message: "Please input the review!" }]}
-                    >
-                        <TextArea placeholder="Enter company review" style={{ height: 150 }} />
+                        <Select placeholder="Select a Author" loading={loading} >
+                            {user.map((cat) => (
+                                <Option key={cat._id} value={cat._id}>
+                                    {cat.firstName}
+                                </Option>
+                            ))}
+                        </Select>
                     </Form.Item>
 
 
 
                     <Form.Item
-                        name="features"
-                        label="Features"
-                        rules={[{ required: true, message: "Please input the review!" }]}
+                        name="tags"
+                        label="Tags"
+                        rules={[{ required: true, message: 'Please select a category!' }]}
                     >
-                        <TextArea placeholder="Enter company Feature seperated by comma ," style={{ height: 150 }} />
+                        <Select placeholder="Select a Tag" loading={loading} >
+                            {tag.map((cat) => (
+                                <Option key={cat._id} value={cat._id}>
+                                    {cat.name}
+                                </Option>
+                            ))}
+                        </Select>
                     </Form.Item>
 
-
-
-                    
-                    
-
-
-                    <Form.Item
-                        name="benifits"
-                        label="Benifits"
-                        rules={[{ required: true, message: "Please input the review!" }]}
-                    >
-                        <TextArea placeholder="Enter Benifits seperated with comma ," style={{ height: 150 }} />
-                    </Form.Item>
-
-               
-                    <Form.Item
-                        name="Description"
-                        label="Description"
-                        rules={[{ required: true, message: "Please input the name!" }]}
-                    >
-                        <Input placeholder="Enter Description" />
-                    </Form.Item>
-
-
-                    <Form.Item
-                        name="pros"
-                        label="Pros"
-                        rules={[{ required: true, message: "Please input the review!" }]}
-                    >
-                        <TextArea placeholder="Enter Pros seperated with comma ," style={{ height: 150 }} />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="cons"
-                        label="Cons"
-                        rules={[{ required: true, message: "Please input the review!" }]}
-                    >
-                        <TextArea placeholder="Enter Cons seperated with comma ," style={{ height: 150 }} />
-                    </Form.Item>
-                  
-
-
-
-
-                  
-          {editingCompany ? (
-            <>
-              {cross ? (
-                <>
-                  <CloseCircleOutlined
-                    style={{ width: "30px" }}
-                    onClick={handleCross}
-                  />
-                  <img
-                    src={`${record1.logo}`}
-                    alt=""
-                    style={{ width: "100px", height: "100px" }}
-                  />
-                </>
-              ) : (
-                <>
-                  <Form.Item
-                    label="Photo"
-                    name="photo"
-                    onChange={(e) => setPhoto(e.target.files[0])}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please upload the driver's photo!",
-                      },
-                    ]}
-                  >
-                    <Upload
-                      listType="picture"
-                      beforeUpload={() => false}
-                      onChange={uploadImage}
-                      showUploadList={false}
-                      customRequest={({ file, onSuccess }) => {
-                        setTimeout(() => {
-                          onSuccess("ok");
-                        }, 0);
-                      }}
-                    >
-                      <Button icon={<UploadOutlined />}>Upload Photo</Button>
-                    </Upload>
-                  </Form.Item>
-                  {photo && (
-                    <div>
-                      <img
-                        src={URL.createObjectURL(photo)}
-                        alt="Uploaded"
-                        height="100px"
-                        width="100px"
-                      />
-                    </div>
-                  )}
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              <Form.Item
-                label="Photo"
-                name="photo"
-                onChange={(e) => setPhoto(e.target.files[0])}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please upload the driver's photo!",
-                  },
-                ]}
-              >
-                <Upload
-                  listType="picture"
-                  beforeUpload={() => false}
-                  onChange={uploadImage}
-                  showUploadList={false}
-                  customRequest={({ file, onSuccess }) => {
-                    setTimeout(() => {
-                      onSuccess("ok");
-                    }, 0);
-                  }}
-                >
-                  <Button icon={<UploadOutlined />}>Upload Photo</Button>
-                </Upload>
-              </Form.Item>
-              {photo && (
-                <div>
-                  <img
-                    src={URL.createObjectURL(photo)}
-                    alt="Uploaded"
-                    height="100px"
-                    width="100px"
-                  />
-                </div>
-              )}
-            </>
-          )}
 
 
                     <Form.Item>
@@ -635,4 +519,4 @@ const Company = () => {
     );
 };
 
-export default Company;
+export default CompBlog;

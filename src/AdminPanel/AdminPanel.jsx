@@ -25,6 +25,7 @@ import Testinomial from "./Testinomial";
 import Category from "./Category";
 import SubCategory from "./SubCategory";
 import Company from "./Company";
+import CompBlog from "./CompBlog";
 // import logo from "../../public/logo.png";
 // properties-details
 
@@ -58,6 +59,10 @@ const AdminPanel = () => {
         return <Company />;
 
 
+        case "compBlog":
+        return <CompBlog />;
+
+
       case "blog":
         return <BlogList setSelectedTab={setSelectedTab} />;
 
@@ -76,6 +81,7 @@ const AdminPanel = () => {
     { key: "categories", icon: <HomeOutlined />, label: "Categories" },
     { key: "sub-categories", icon: <TeamOutlined  />, label: "Sub-Categories" },
     { key: "company", icon: <TeamOutlined  />, label: "Company" },
+    { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
     // { key: "blog", icon: <CarOutlined />, label: "Blog" },
     // { key: "testinomial", icon: <CalendarOutlined />, label: "Testinomial" },
   ];
