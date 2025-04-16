@@ -32,24 +32,32 @@ const CompBlog = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingCompany, setEditingCompany] = useState(null);
+    const [editingCompBlog, setEditingCompBlog] = useState(null);
     const [form] = Form.useForm();
     const [auth, setAuth] = useAuth();
     const [categories, setCategoris] = useState([])
     const [subcategories, setSubCategoris] = useState([])
+    const[company,setCompany] = useState([])
     const [image1, setImage] = useState();
     const [photo, setPhoto] = useState("");
     const [cross, setCross] = useState(true);
     const [record1, setRecord] = useState();
     const [imageTrue, setImageTrue] = useState(false);
-    const[tag,setTag] = useState([])
-    const[user,setUser] = useState([])
+    const [tag, setTag] = useState([])
+    const [user, setUser] = useState([])
 
 
     const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
+    const [selectedSubCategory, setSelectedSubCategory] = useState(null); 
 
     const handleCategoryChange = (value) => {
         setSelectedCategory(value); // save selected category ID to variable
+        console.log("Selected Category ID:", value);
+    };
+
+
+    const handleCategoryChange1 = (value) => {
+        setSelectedSubCategory(value); // save selected category ID to variable
         console.log("Selected Category ID:", value);
     };
 
@@ -89,6 +97,11 @@ const CompBlog = () => {
     }, [selectedCategory])
 
 
+    useEffect(() => {
+        fetchData6()
+    }, [selectedSubCategory])
+
+
 
 
     const fetchData1 = async () => {
@@ -110,6 +123,19 @@ const CompBlog = () => {
             const res = await axios.get(`${baseurl}/getOneSubByCategoryId/${selectedCategory}`);
             console.log("----data-----", res.data);
             setSubCategoris(res.data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setLoading(false);
+        }
+    };
+
+
+    const fetchData6 = async () => {
+        try {
+            const res = await axios.get(`${baseurl}/getCompanySubId/${selectedSubCategory}`);
+            console.log("----data-----", res.data);
+            setCompany(res.data);
             setLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -163,25 +189,26 @@ const CompBlog = () => {
     };
 
     const handleAdd = () => {
-        setEditingCompany(null);
+        setEditingCompBlog(null);
         form.resetFields();
         setIsModalOpen(true);
     };
 
     const handleEdit = (record) => {
         setImageTrue(true);
-        setEditingCompany(record);
+        setEditingCompBlog(record);
         console.log(record);
-
-       
+        setSelectedCategory(record.categories._id)
+        setSelectedSubCategory(record.subcategories._id)
         form.setFieldsValue({
-            title:record.title,
-            mtitle:record.mtitle,
-            mdesc:record.mdesc,
-            category: record.category._id,
+            title: record.title,
+            mtitle: record.mtitle,
+            mdesc: record.mdesc,
+            category: record.categories._id,
             subcategories: record.subcategories._id,
             tags: record.tags._id,
             postedBy: record.postedBy._id,
+            company: record.company.map(c => c._id)
 
             // dob:record.dateOfBirth,
         });
@@ -238,24 +265,16 @@ const CompBlog = () => {
 
     const handlePost = async (values) => {
 
-        const benifits = values?.benifits.split(',')
-        const cons = values?.cons.split(',')
-        const features = values?.features.split(',')
-        const pros = values?.pros.split(',')
+       
         const postData = {
-            Description: values.Description,
-            benifits: benifits,
-            cons: cons,
-            features: features,
-            pros: pros,
-            mainHeading: values.mainHeading,
-            rating: values.rating,
-            review: values.review,
-            websiteName: values.websiteName,
-            visitSiteUrl: values.visitSiteUrl,
-            category: values.category,
+            title: values.title,
+            mtitle: values.mtitle,
+            mdesc: values.mdesc,
+            categories: values.category,
             subcategories: values.subcategories,
-            logo: image1,
+            tags: values.tags,
+            postedBy: values.postedBy,
+            company: values.company
 
         };
 
@@ -263,7 +282,7 @@ const CompBlog = () => {
 
         try {
             const response = await axios.post(
-                baseurl + "/createCompany",
+                baseurl + "/createCompblogs",
                 postData
             );
             console.log(response.data);
@@ -279,24 +298,17 @@ const CompBlog = () => {
     };
 
     const handlePut = async (values) => {
-        const benifits = values?.benifits.split(',')
-        const cons = values?.cons.split(',')
-        const features = values?.features.split(',')
-        const pros = values?.pros.split(',')
+        
+        
         const postData = {
-            Description: values.Description,
-            benifits: benifits,
-            cons: cons,
-            features: features,
-            pros: pros,
-            mainHeading: values.mainHeading,
-            rating: values.rating,
-            review: values.review,
-            websiteName: values.websiteName,
-            visitSiteUrl: values.visitSiteUrl,
-            category: values.category,
+            title: values.title,
+            mtitle: values.mtitle,
+            mdesc: values.mdesc,
+            categories: values.category,
             subcategories: values.subcategories,
-            logo: imageTrue ? image1 : values.logo,
+            tags: values.tags,
+            postedBy: values.postedBy,
+            company: values.company
 
         };
 
@@ -305,7 +317,7 @@ const CompBlog = () => {
 
         try {
             const response = await axios.put(
-                `${baseurl}/updateCompany/${editingCompany?._id}`,
+                `${baseurl}/updatecompblogs/${editingCompBlog?._id}`,
                 postData
             );
             console.log(response.data);
@@ -321,7 +333,7 @@ const CompBlog = () => {
         }
     };
     const handleSubmit = async (values) => {
-        if (editingCompany) {
+        if (editingCompBlog) {
             await handlePut(values);
         } else {
             await handlePost(values);
@@ -380,26 +392,26 @@ const CompBlog = () => {
     return (
         <div>
             <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
-                Add Company
+                Add CompBlog
             </Button>
             <Table
                 columns={columns}
                 dataSource={data}
                 loading={loading}
-              
-               
+
+
             // rowKey="_id"
             />
 
             <Modal
-                title={editingCompany ? "Edit Company" : "Add Company"}
+                title={editingCompBlog ? "Edit CompBlog" : "Add CompBlog"}
                 open={isModalOpen}
                 onCancel={() => setIsModalOpen(false)}
                 footer={null}
             >
                 <Form form={form} layout="vertical" onFinish={handleSubmit}>
-                    
-                    
+
+
                     <Form.Item
                         name="title"
                         label="Blog Title"
@@ -465,8 +477,8 @@ const CompBlog = () => {
                         label="SubCategories"
                         rules={[{ required: true, message: 'Please select a category!' }]}
                     >
-                        <Select placeholder="Select a subcategories" loading={loading} >
-                            {subcategories.map((cat) => (
+                        <Select placeholder="Select a subcategories" loading={loading}  onChange={handleCategoryChange1}>
+                            {subcategories?.map((cat) => (
                                 <Option key={cat._id} value={cat._id}>
                                     {cat.name}
                                 </Option>
@@ -474,6 +486,25 @@ const CompBlog = () => {
                         </Select>
                     </Form.Item>
 
+
+
+                    <Form.Item
+                        label="Company"
+                        name="company"
+                        rules={[{ required: true, message: 'Please select the allowed locations!' }]}
+                    >
+                        <Select
+                            mode="multiple"
+                            placeholder="Select Company"
+
+                        >
+                            {company?.map((cat) => (
+                                <Option key={cat._id} value={cat._id}>
+                                    {cat.websiteName}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
 
 
                     <Form.Item
@@ -507,10 +538,9 @@ const CompBlog = () => {
                     </Form.Item>
 
 
-
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
-                            {editingCompany ? "Update" : "Submit"}
+                            {editingCompBlog ? "Update" : "Submit"}
                         </Button>
                     </Form.Item>
                 </Form>
