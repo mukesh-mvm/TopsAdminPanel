@@ -9,7 +9,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [auth, setAuth] = useAuth();
-    console.log(baseurl)
+   
 
     const onFinish = async (values) => {
         console.log(values)
@@ -22,8 +22,7 @@ const Login = () => {
            
         );
 
-            console.log(response.data);
-            console.log("----token-----",response.data.token);
+           
 
             if ( response.data) {
                 localStorage.setItem('authToken', response.data.token);

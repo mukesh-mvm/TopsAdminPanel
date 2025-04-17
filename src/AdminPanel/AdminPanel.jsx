@@ -26,6 +26,7 @@ import Category from "./Category";
 import SubCategory from "./SubCategory";
 import Company from "./Company";
 import CompBlog from "./CompBlog";
+import Blogs from "./Blogs";
 // import logo from "../../public/logo.png";
 // properties-details
 
@@ -63,6 +64,10 @@ const AdminPanel = () => {
         return <CompBlog />;
 
 
+        case "blogs":
+          return <Blogs />;
+
+
       case "blog":
         return <BlogList setSelectedTab={setSelectedTab} />;
 
@@ -82,6 +87,7 @@ const AdminPanel = () => {
     { key: "sub-categories", icon: <TeamOutlined  />, label: "Sub-Categories" },
     { key: "company", icon: <TeamOutlined  />, label: "Company" },
     { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
+    { key: "blogs", icon: <TeamOutlined  />, label: "Blogs" },
     // { key: "blog", icon: <CarOutlined />, label: "Blog" },
     // { key: "testinomial", icon: <CalendarOutlined />, label: "Testinomial" },
   ];

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     Table,
     Button,
@@ -25,10 +25,11 @@ import axios from "axios";
 import Password from "antd/es/input/Password";
 // import { baseurl } from "../helper/Helper";
 import { useAuth } from "../context/auth";
+import JoditEditor from "jodit-react";
 const { Option } = Select;
 
 const { TextArea } = Input;
-const CompBlog = () => {
+const Blogs = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,6 +46,8 @@ const CompBlog = () => {
     const [imageTrue, setImageTrue] = useState(false);
     const [tag, setTag] = useState([])
     const [user, setUser] = useState([])
+    const editor = useRef(null);
+    const [editorContent, setEditorContent] = useState("");
 
 
     const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
@@ -68,7 +71,7 @@ const CompBlog = () => {
     const handleRowClick = (record) => {
         console.log("Clicked row data:", record);
         setRecord(record);
-        setImage(record?.logo);
+        setImage(record?.image)
         setCross(true);
 
         // Access the clicked row's data here
@@ -177,7 +180,7 @@ const CompBlog = () => {
 
     const fetchData = async () => {
         try {
-            const res = await axios.get(baseurl + "/getALlcompblogs");
+            const res = await axios.get(baseurl + "/blogs");
 
             console.log("----data-----", res.data);
             setData(res.data);
@@ -200,7 +203,8 @@ const CompBlog = () => {
         console.log(record);
         setSelectedCategory(record.categories._id)
         setSelectedSubCategory(record.subcategories._id)
-        console.log("--------data-----------",record.subcategories._id)
+        setEditorContent(record.body)
+        console.log("--------data-----------",record.categories._id)
         form.setFieldsValue({
             title: record.title,
             mtitle: record.mtitle,
@@ -209,8 +213,8 @@ const CompBlog = () => {
             subcategories: record.subcategories._id,
             tags: record.tags._id,
             postedBy: record.postedBy._id,
-            company: record.company.map(c => c._id)
-
+           
+        
             // dob:record.dateOfBirth,
         });
         setIsModalOpen(true);
@@ -275,15 +279,16 @@ const CompBlog = () => {
             subcategories: values.subcategories,
             tags: values.tags,
             postedBy: values.postedBy,
-            company: values.company
-
+            image: image1,
+            body:editorContent,
+            
         };
 
         console.log(postData)
 
         try {
             const response = await axios.post(
-                baseurl + "/createCompblogs",
+                baseurl + "/blogs",
                 postData
             );
             console.log(response.data);
@@ -291,6 +296,7 @@ const CompBlog = () => {
             if (response.data) {
                 setIsModalOpen(false);
                 message.success("User created successfully!");
+                setPhoto("");
                 fetchData();
             }
         } catch (error) {
@@ -300,7 +306,6 @@ const CompBlog = () => {
 
     const handlePut = async (values) => {
         
-        
         const postData = {
             title: values.title,
             mtitle: values.mtitle,
@@ -309,7 +314,8 @@ const CompBlog = () => {
             subcategories: values.subcategories,
             tags: values.tags,
             postedBy: values.postedBy,
-            company: values.company
+            image: imageTrue ? image1 : values.logo,
+            body:editorContent,
 
         };
 
@@ -318,7 +324,7 @@ const CompBlog = () => {
 
         try {
             const response = await axios.put(
-                `${baseurl}/updatecompblogs/${editingCompBlog?._id}`,
+                `${baseurl}/updateblogs/${editingCompBlog?._id}`,
                 postData
             );
             console.log(response.data);
@@ -328,6 +334,7 @@ const CompBlog = () => {
                 fetchData();
                 message.success("User update successfully!");
                 form.resetFields();
+                setPhoto("");
             }
         } catch (error) {
             console.log(error);
@@ -390,15 +397,29 @@ const CompBlog = () => {
         },
     ];
 
+
+
+
+    
+
+
+
+
     return (
         <div>
             <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
-                Add CompBlog
+                Add Blog
             </Button>
             <Table
                 columns={columns}
                 dataSource={data}
                 loading={loading}
+                rowKey={(record) => record._id}
+        onRow={(record) => ({
+          onClick: () => {
+            handleRowClick(record); // Trigger the click handler
+          },
+        })}
 
 
             // rowKey="_id"
@@ -488,26 +509,6 @@ const CompBlog = () => {
                     </Form.Item>
 
 
-
-                    <Form.Item
-                        label="Company"
-                        name="company"
-                        rules={[{ required: true, message: 'Please select the allowed locations!' }]}
-                    >
-                        <Select
-                            mode="multiple"
-                            placeholder="Select Company"
-
-                        >
-                            {company?.map((cat) => (
-                                <Option key={cat._id} value={cat._id}>
-                                    {cat.websiteName}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-
-
                     <Form.Item
                         name="postedBy"
                         label="Author"
@@ -538,6 +539,154 @@ const CompBlog = () => {
                         </Select>
                     </Form.Item>
 
+                 
+        <Form.Item label="Content" required>
+          <JoditEditor
+            ref={editor}
+            value={editorContent}
+            onBlur={(newContent) => setEditorContent(newContent)}
+            tabIndex={1}
+            placeholder="Write your content here..."
+            config={{
+              cleanHTML: {
+                removeEmptyTags: false,
+                fillEmptyParagraph: false,
+                removeEmptyBlocks: false,
+              },
+              uploader: {
+                url: `${baseurl}/api/amenities/uploadImage`, // Your image upload API endpoint
+                // This function handles the response
+                format: "json", // Specify the response format
+                isSuccess: function (resp) {
+                  return !resp.error;
+                },
+                getMsg: function (resp) {
+                  return resp.msg.join !== undefined
+                    ? resp.msg.join(" ")
+                    : resp.msg;
+                },
+                process: function (resp) {
+                  return {
+                    files: resp.files || [],
+                    path: resp.files.url,
+                    baseurl: resp.files.url,
+                    error: resp.error || "error",
+                    msg: resp.msg || "iuplfn",
+                  };
+                },
+                defaultHandlerSuccess: function (data, resp) {
+                  const files = data.files || [];
+                  console.log({ files });
+                  if (files) {
+                    this.selection.insertImage(files.url, null, 250);
+                  }
+                },
+              },
+              enter: "DIV",
+              defaultMode: "DIV",
+              removeButtons: ["font"],
+            }}
+          />
+        </Form.Item>
+
+
+
+                       {editingCompBlog ? (
+                                <>
+                                  {cross ? (
+                                    <>
+                                      <CloseCircleOutlined
+                                        style={{ width: "30px" }}
+                                        onClick={handleCross}
+                                      />
+                                      <img
+                                        src={`${record1.image}`}
+                                        alt=""
+                                        style={{ width: "100px", height: "100px" }}
+                                      />
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Form.Item
+                                        label="Photo"
+                                        name="photo"
+                                        onChange={(e) => setPhoto(e.target.files[0])}
+                                        rules={[
+                                          {
+                                            required: true,
+                                            message: "Please upload the driver's photo!",
+                                          },
+                                        ]}
+                                      >
+                                        <Upload
+                                          listType="picture"
+                                          beforeUpload={() => false}
+                                          onChange={uploadImage}
+                                          showUploadList={false}
+                                          customRequest={({ file, onSuccess }) => {
+                                            setTimeout(() => {
+                                              onSuccess("ok");
+                                            }, 0);
+                                          }}
+                                        >
+                                          <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                                        </Upload>
+                                      </Form.Item>
+                                      {photo && (
+                                        <div>
+                                          <img
+                                            src={URL.createObjectURL(photo)}
+                                            alt="Uploaded"
+                                            height="100px"
+                                            width="100px"
+                                          />
+                                        </div>
+                                      )}
+                                    </>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <Form.Item
+                                    label="Photo"
+                                    name="photo"
+                                    onChange={(e) => setPhoto(e.target.files[0])}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: "Please upload the driver's photo!",
+                                      },
+                                    ]}
+                                  >
+                                    <Upload
+                                      listType="picture"
+                                      beforeUpload={() => false}
+                                      onChange={uploadImage}
+                                      showUploadList={false}
+                                      customRequest={({ file, onSuccess }) => {
+                                        setTimeout(() => {
+                                          onSuccess("ok");
+                                        }, 0);
+                                      }}
+                                    >
+                                      <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                                    </Upload>
+                                  </Form.Item>
+                                  {photo && (
+                                    <div>
+                                      <img
+                                        src={URL.createObjectURL(photo)}
+                                        alt="Uploaded"
+                                        height="100px"
+                                        width="100px"
+                                      />
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                    
+
+
 
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
@@ -550,4 +699,4 @@ const CompBlog = () => {
     );
 };
 
-export default CompBlog;
+export default Blogs;
