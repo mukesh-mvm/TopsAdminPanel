@@ -137,10 +137,10 @@ const Company = () => {
         setEditingCompany(record);
         console.log(record);
         setSelectedCategory(record.category._id)
-        const benifits = record?.benifits.join(',')
-        const cons = record?.cons.join(',')
-        const features = record?.features.join(',')
-        const pros = record?.pros.join(',')
+        const benifits = record?.benifits.join('\n')
+        const cons = record?.cons.join('\n')
+        const features = record?.features.join('\n')
+        const pros = record?.pros.join('\n')
         form.setFieldsValue({
             Description: record.Description,
             benifits: benifits,
@@ -210,10 +210,10 @@ const Company = () => {
 
     const handlePost = async (values) => {
 
-        const benifits = values?.benifits.split(',')
-        const cons = values?.cons.split(',')
-        const features = values?.features.split(',')
-        const pros = values?.pros.split(',')
+        const benifits = values?.benifits.split('\n')
+        const cons = values?.cons.split('\n')
+        const features = values?.features.split('\n')
+        const pros = values?.pros.split('\n')
         const postData = {
             Description: values.Description,
             benifits: benifits,
@@ -251,10 +251,10 @@ const Company = () => {
     };
 
     const handlePut = async (values) => {
-        const benifits = values?.benifits.split(',')
-        const cons = values?.cons.split(',')
-        const features = values?.features.split(',')
-        const pros = values?.pros.split(',')
+        const benifits = values?.benifits.split('\n')
+        const cons = values?.cons.split('\n')
+        const features = values?.features.split('\n')
+        const pros = values?.pros.split('\n')
         const postData = {
             Description: values.Description,
             benifits: benifits,
