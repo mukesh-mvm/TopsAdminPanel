@@ -466,14 +466,7 @@ const Company = () => {
                     </Form.Item>
 
 
-                    <Form.Item
-                        name="review"
-                        label="Review"
-                        rules={[{ required: true, message: "Please input the review!" }]}
-                    >
-                        <TextArea placeholder="Enter company review" style={{ height: 150 }} />
-                    </Form.Item>
-
+                   
 
 
                     <Form.Item
@@ -492,7 +485,7 @@ const Company = () => {
 
                     <Form.Item
                         name="benifits"
-                        label="Benifits"
+                        label="Benefits"
                         rules={[{ required: true, message: "Please input the review!" }]}
                     >
                         <TextArea placeholder="Enter Benifits seperated with comma ," style={{ height: 150 }} />
@@ -523,6 +516,16 @@ const Company = () => {
                     >
                         <TextArea placeholder="Enter Cons seperated with comma ," style={{ height: 150 }} />
                     </Form.Item>
+
+
+                    <Form.Item
+                        name="review"
+                        label="Review"
+                        rules={[{ required: true, message: "Please input the review!" }]}
+                    >
+                        <TextArea placeholder="Enter company review" style={{ height: 150 }} />
+                    </Form.Item>
+
                   
 
 
