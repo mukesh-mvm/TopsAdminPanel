@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout, Menu, Avatar, Button, Dropdown } from "antd";
+import { useAuth } from "../context/auth";
 import "../Style/AdminPanel.css";
 import {
   UserOutlined,
@@ -27,13 +28,16 @@ import SubCategory from "./SubCategory";
 import Company from "./Company";
 import CompBlog from "./CompBlog";
 import Blogs from "./Blogs";
+import { Profile } from "./Profile";
 // import logo from "../../public/logo.png";
 // properties-details
 
 const AdminPanel = () => {
-  const [selectedTab, setSelectedTab] = useState("users");
+  const [selectedTab, setSelectedTab] = useState("profile");
   const [id, setId] = useState();
   const navigate = useNavigate();
+  const [auth, setAuth] = useAuth();
+  console.log("-----auth-----",auth?.user?.role)
 
   const handleMenuClick = (e) => {
     setSelectedTab(e.key);
@@ -47,10 +51,14 @@ const AdminPanel = () => {
   const renderContent = () => {
     switch (selectedTab) {
       case "users":
-        return <Users />;
+      return <Users />;
 
         case "categories":
         return <Category />;
+
+
+        case "profile":
+        return <Profile  setSelectedTab={setSelectedTab}/>;
 
         case "sub-categories":
         return <SubCategory />;
@@ -82,7 +90,8 @@ const AdminPanel = () => {
 
   const menuItems = [
     // { key: "home", icon: <TeamOutlined />, label: "Home" },
-    { key: "users", icon: < UserOutlined/>, label: "Users" },
+    // { key: "users", icon: < UserOutlined/>, label: "Users" },
+    { key: "profile", icon: <HomeOutlined />, label: "Profile" },
     { key: "categories", icon: <HomeOutlined />, label: "Categories" },
     { key: "sub-categories", icon: <TeamOutlined  />, label: "Sub-Categories" },
     { key: "company", icon: <TeamOutlined  />, label: "Company" },
@@ -92,6 +101,20 @@ const AdminPanel = () => {
     // { key: "testinomial", icon: <CalendarOutlined />, label: "Testinomial" },
   ];
 
+
+
+  const menuItems1 = [
+    // { key: "home", icon: <TeamOutlined />, label: "Home" },
+    { key: "profile", icon: <HomeOutlined />, label: "Profile" },
+    { key: "users", icon: < UserOutlined/>, label: "Admin" },
+    { key: "categories", icon: <HomeOutlined />, label: "Categories" },
+    { key: "sub-categories", icon: <TeamOutlined  />, label: "Sub-Categories" },
+    { key: "company", icon: <TeamOutlined  />, label: "Company" },
+    { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
+    { key: "blogs", icon: <TeamOutlined  />, label: "Blogs" },
+    // { key: "blog", icon: <CarOutlined />, label: "Blog" },
+    // { key: "testinomial", icon: <CalendarOutlined />, label: "Testinomial" },
+  ];
   return (
     <Layout style={{ minHeight: "100vh", maxWidth: "100vw" }}>
       <Header className="header">
@@ -121,11 +144,25 @@ const AdminPanel = () => {
               Dashboard
             </Menu.Item> */}
 
-            {menuItems?.map((menuItem) => (
+
+            {
+              auth?.user?.role==='superAdmin'?(<>
+                  {menuItems1?.map((menuItem) => (
               <Menu.Item key={menuItem?.key} icon={menuItem?.icon}>
                 {menuItem?.label}
               </Menu.Item>
             ))}
+              </>):(<>
+                 
+                 {menuItems?.map((menuItem) => (
+              <Menu.Item key={menuItem?.key} icon={menuItem?.icon}>
+                {menuItem?.label}
+              </Menu.Item>
+            ))}
+              </>)
+            }
+
+            
           </Menu>
         </Sider>
 

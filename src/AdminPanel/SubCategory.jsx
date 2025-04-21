@@ -9,7 +9,8 @@ import {
     message,
     Upload,
     Switch,
-    DatePicker
+    DatePicker,
+    Popconfirm
 } from "antd";
 import { baseurl } from "../helper/Helper";
 import axios from "axios";
@@ -74,7 +75,7 @@ const SubCategory = () => {
         console.log(record.email);
         form.setFieldsValue({
             name: record.name,
-            parent:record.category._id
+            parent: record.category._id
 
             // dob:record.dateOfBirth,
         });
@@ -84,7 +85,7 @@ const SubCategory = () => {
     const handleStatusToggle = async (record) => {
         try {
             const response = await axios.patch(
-                `${baseurl}/api/admin/toggled/${record?._id}`
+                `${baseurl}/updateSubCategoryStatus/${record?._id}`
             );
             console.log(response);
 
@@ -96,6 +97,19 @@ const SubCategory = () => {
             console.log(error);
         }
     };
+
+
+    const handleDelete = async(record)=>{
+        try {
+             const response = await axios.delete(`${baseurl}/delteSubCategory/${record}`)
+             if (response) {
+                message.success("Status updated succesfully");
+                fetchData();
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const handlePost = async (values) => {
         const postData = {
@@ -125,7 +139,7 @@ const SubCategory = () => {
         const postData = {
             name: values.name,
             category: values.parent,
-            
+
         };
 
         try {
@@ -162,12 +176,76 @@ const SubCategory = () => {
 
         {
             title: "Categories",
-            dataIndex: ['category','name'],
+            dataIndex: ['category', 'name'],
             key: "name",
         },
-       
 
-    
+
+
+
+        // specialization
+
+        {
+            title: "Status",
+            key: "Status",
+            render: (_, record) => (
+                <Switch
+                    checked={record.status === "Active"}
+                    onChange={() => handleStatusToggle(record)}
+                    checkedChildren="Active"
+                    unCheckedChildren="Inactive"
+                />
+            ),
+        },
+
+        {
+            title: "Actions",
+            key: "actions",
+            render: (_, record) => (
+                <>
+                    <Button onClick={() => handleEdit(record)}>Update</Button>
+                </>
+            ),
+        },
+
+
+        {
+            title: "Delete",
+            render: (_, record) => (
+                <>
+                    {auth?.user?.role === 'superAdmin' && (
+                        <Popconfirm
+                            title="Are you sure you want to delete this blog?"
+                            onConfirm={() => handleDelete(record._id)}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Button type="link" danger>
+                                Delete
+                            </Button>
+                        </Popconfirm>
+                    )}
+                </>
+            ),
+        }
+    ];
+
+
+    const columns1 = [
+        {
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
+        },
+
+        {
+            title: "Categories",
+            dataIndex: ['category', 'name'],
+            key: "name",
+        },
+
+
+
 
         // specialization
 
@@ -200,13 +278,26 @@ const SubCategory = () => {
             <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
                 Add SubCategory
             </Button>
-            <Table
-                columns={columns}
-                dataSource={data}
-                loading={loading}
-                scroll={{ x: 'max-content' }} 
-            // rowKey="_id"
-            />
+
+
+
+            {
+                auth?.user?.role === 'superAdmin' ? (<>            <Table
+                    columns={columns}
+                    dataSource={data}
+                    loading={loading}
+                    scroll={{ x: 'max-content' }}
+                // rowKey="_id"
+                /></>) : (<>
+                    <Table
+                        columns={columns1}
+                        dataSource={data}
+                        loading={loading}
+                        scroll={{ x: 'max-content' }}
+                    // rowKey="_id"
+                    />
+                </>)
+            }
 
             <Modal
                 title={editingSubCategory ? "Edit SubCategory" : "Add SubCategory"}
@@ -239,7 +330,7 @@ const SubCategory = () => {
                     </Form.Item>
 
 
-                  
+
 
 
                     <Form.Item>

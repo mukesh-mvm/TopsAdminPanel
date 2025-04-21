@@ -9,7 +9,7 @@ import {
   message,
   Upload,
   Switch,
-  DatePicker 
+  DatePicker
 } from "antd";
 import { baseurl } from "../helper/Helper";
 import axios from "axios";
@@ -35,7 +35,7 @@ const Users = () => {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(baseurl + "/getUsers");
+      const res = await axios.get(baseurl + "/getAdmin");
 
       console.log(res.data);
       setData(res.data);
@@ -56,10 +56,12 @@ const Users = () => {
     setEditingUser(record);
     console.log(record.email);
     form.setFieldsValue({
-      name: record.name,
-      username: record.email,
-      phone:record.phone,
-      specialization:record.specialization,
+      firstName: record.firstName,
+      lastName: record.lastName,
+      username: record.username,
+      email: record.email,
+      role: record.role,
+      // password: record.password,
       // dob:record.dateOfBirth,
     });
     setIsModalOpen(true);
@@ -83,15 +85,18 @@ const Users = () => {
 
   const handlePost = async (values) => {
     const postData = {
-      name: values.name,
-      email: values.username,
-      password: values.password,
-      
+      firstName: values.firstName,
+      lastName: values.lastName,
+      username: values.username,
+      email: values.email,
+      role: values.role,
+      password:values.password
+
     };
 
     try {
       const response = await axios.post(
-        baseurl + "/api/admin/onboard",
+        baseurl + "/register",
         postData
       );
       console.log(response.data);
@@ -108,16 +113,18 @@ const Users = () => {
 
   const handlePut = async (values) => {
     const postData = {
-      name: values.name,
-      email: values.username,
-      password: values.password,
-      specialization:values.specialization,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      username: values.username,
+      email: values.email,
+      role: values.role,
+      password:values.password
 
     };
 
     try {
       const response = await axios.put(
-        `${baseurl}/api/admin/update/${editingUser?._id}`,
+        `${baseurl}/update/${editingUser?._id}`,
         postData
       );
       console.log(response.data);
@@ -184,27 +191,27 @@ const Users = () => {
       ),
     },
 
-    // {
-    //   title: "Actions",
-    //   key: "actions",
-    //   render: (_, record) => (
-    //     <>
-    //       <Button onClick={() => handleEdit(record)}>Update</Button>
-    //     </>
-    //   ),
-    // },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <>
+          <Button onClick={() => handleEdit(record)}>Update</Button>
+        </>
+      ),
+    },
   ];
 
   return (
     <div>
-      {/* <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
-        Add Users
-      </Button> */}
+      <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
+        Add Admin
+      </Button>
       <Table
         columns={columns}
         dataSource={data}
         loading={loading}
-        // rowKey="_id"
+      // rowKey="_id"
       />
 
       <Modal
@@ -215,62 +222,69 @@ const Users = () => {
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
-            name="name"
-            label="Name"
-            rules={[{ required: true, message: "Please input the name!" }]}
+            name="firstName"
+            label="First Name"
+            rules={[{ required: true, message: "Please Enter First Name!" }]}
           >
             <Input placeholder="Enter Name" />
           </Form.Item>
+
+
+
           <Form.Item
-            name="username"
-            rules={[{ required: true, message: "Please enter your email!" }]}
+            name="lastName"
+            label="Last Name"
+            rules={[{ required: true, message: "Please Enter Last Name !" }]}
+          >
+            <Input placeholder="Enter Name" />
+          </Form.Item>
+
+
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true, message: "Please Enter Email!" }]}
           >
             <Input placeholder="Email" />
           </Form.Item>
 
 
-         
+
 
           <Form.Item
             name="password"
-            rules={[{ required: true, message: "Please enter your password!" }]}
+            label="Password"
+            rules={[{ required: true, message: "Please Enter Password!" }]}
           >
             <Input.Password placeholder="Password" />
           </Form.Item>
 
 
+
           <Form.Item
-            name="phone"
-            rules={[{ required: true, message: "Please enter your phone!" }]}
+            name="username"
+            label="Username"
+            rules={[{ required: true, message: "Please Enter UserName !" }]}
           >
-            <Input placeholder="phone" />
+            <Input placeholder="Enter UserName" />
           </Form.Item>
 
 
+
+
           <Form.Item
-  name="specialization"
-  rules={[{ required: true, message: "Please select your specialization!" }]}
-  label="Specialization"
->
-  <Select placeholder="Select specialization">
-    <Option value="tech">Tech</Option>
-    <Option value="govern">Govt</Option>
-    <Option value="bank">Bank</Option>
-  </Select>
-</Form.Item>
+            name="role"
+            rules={[{ required: true, message: "Please Select Role!" }]}
+            label="Role"
+          >
+            <Select placeholder="Select specialization">
+              <Option value="admin">Admin</Option>
+              <Option value="superAdmin">Super Admin</Option>
+              <Option value="seoAdmin">Seo Admin</Option>
+            </Select>
+          </Form.Item>
 
           <Form.Item>
-
-
-
-          <Form.Item
-  name="dob"
-  label="Date of Birth"
-  rules={[{ required: true, message: "Please select your date of birth!" }]}
->
-  <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
-</Form.Item>
-
 
             <Button type="primary" htmlType="submit">
               {editingUser ? "Update" : "Submit"}

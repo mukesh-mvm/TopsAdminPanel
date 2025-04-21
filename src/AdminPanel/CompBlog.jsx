@@ -25,6 +25,7 @@ import axios from "axios";
 import Password from "antd/es/input/Password";
 // import { baseurl } from "../helper/Helper";
 import { useAuth } from "../context/auth";
+import { Popconfirm } from 'antd';
 const { Option } = Select;
 
 const { TextArea } = Input;
@@ -219,7 +220,7 @@ const CompBlog = () => {
     const handleStatusToggle = async (record) => {
         try {
             const response = await axios.patch(
-                `${baseurl}/api/admin/toggled/${record?._id}`
+                `${baseurl}/updateCompStatus/${record?._id}`
             );
             console.log(response);
 
@@ -231,6 +232,19 @@ const CompBlog = () => {
             console.log(error);
         }
     };
+
+
+    const handleDelete = async(record)=>{
+        try {
+             const response = await axios.delete(`${baseurl}/deletecompblogs/${record}`)
+             if (response) {
+                message.success("Status updated succesfully");
+                fetchData();
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
 
 
@@ -341,6 +355,9 @@ const CompBlog = () => {
         }
     };
 
+
+
+
     const columns = [
         {
             title: "Blog Title",
@@ -366,18 +383,76 @@ const CompBlog = () => {
 
         // specialization
 
-        // {
-        //   title: "Status",
-        //   key: "Status",
-        //   render: (_, record) => (
-        //     <Switch
-        //       checked={record.Status === "Active"}
-        //       onChange={() => handleStatusToggle(record)}
-        //       checkedChildren="Active"
-        //       unCheckedChildren="Inactive"
-        //     />
-        //   ),
-        // },
+        {
+          title: "Status",
+          key: "Status",
+          render: (_, record) => (
+            <Switch
+              checked={record.status === "Active"}
+              onChange={() => handleStatusToggle(record)}
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+            />
+          ),
+        },
+
+        {
+            title: "Actions",
+            key: "actions",
+            render: (_, record) => (
+                <>
+                    <Button onClick={() => handleEdit(record)}>Update</Button>
+                </>
+            ),
+        },
+
+         {
+              title: "Delete",
+              render: (_, record) => (
+                <>
+                  {auth?.user?.role === 'superAdmin' && (
+                    <Popconfirm
+                      title="Are you sure you want to delete this blog?"
+                      onConfirm={() => handleDelete(record._id)}
+                      okText="Yes"
+                      cancelText="No"
+                    >
+                      <Button type="link" danger>
+                        Delete
+                      </Button>
+                    </Popconfirm>
+                  )}
+                </>
+              ),
+            }
+    ];
+
+const columns1 = [
+        {
+            title: "Blog Title",
+            dataIndex: "title",
+            key: "title",
+        },
+
+        {
+            title: "Categories",
+            dataIndex: ['categories', 'name'],
+            key: "name",
+        },
+
+        {
+            title: "Subcategories",
+            dataIndex: ['subcategories', 'name'],
+            key: "subcategories",
+        },
+
+
+
+
+
+        // specialization
+
+       
 
         {
             title: "Actions",
@@ -389,20 +464,35 @@ const CompBlog = () => {
             ),
         },
     ];
+    
+
 
     return (
         <div>
             <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
                 Add CompBlog
             </Button>
-            <Table
-                columns={columns}
-                dataSource={data}
-                loading={loading}
 
-
-            // rowKey="_id"
-            />
+            {
+                auth?.user?.role==='superAdmin'?(<><Table
+                    columns={columns}
+                    dataSource={data}
+                    loading={loading}
+    
+    
+                // rowKey="_id"
+                /></>):(<>
+                <Table
+                    columns={columns1}
+                    dataSource={data}
+                    loading={loading}
+    
+    
+                // rowKey="_id"
+                />
+                </>)
+            }
+            
 
             <Modal
                 title={editingCompBlog ? "Edit CompBlog" : "Add CompBlog"}

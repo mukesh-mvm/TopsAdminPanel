@@ -10,7 +10,8 @@ import {
     Upload,
     Switch,
     DatePicker,
-    InputNumber
+    InputNumber,
+    Popconfirm
 } from "antd";
 
 import {
@@ -163,7 +164,7 @@ const Company = () => {
     const handleStatusToggle = async (record) => {
         try {
             const response = await axios.patch(
-                `${baseurl}/api/admin/toggled/${record?._id}`
+                `${baseurl}/updateCompanyStatus/${record?._id}`
             );
             console.log(response);
 
@@ -175,6 +176,19 @@ const Company = () => {
             console.log(error);
         }
     };
+
+
+    const handleDelete = async(record)=>{
+            try {
+                 const response = await axios.delete(`${baseurl}/deleteCompany/${record}`)
+                 if (response) {
+                    message.success("Status updated succesfully");
+                    fetchData();
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
 
 
@@ -300,6 +314,12 @@ const Company = () => {
         }
     };
 
+
+    
+
+
+
+
     const columns = [
         {
             title: "Company Name",
@@ -330,18 +350,18 @@ const Company = () => {
 
         // specialization
 
-        // {
-        //   title: "Status",
-        //   key: "Status",
-        //   render: (_, record) => (
-        //     <Switch
-        //       checked={record.Status === "Active"}
-        //       onChange={() => handleStatusToggle(record)}
-        //       checkedChildren="Active"
-        //       unCheckedChildren="Inactive"
-        //     />
-        //   ),
-        // },
+        {
+          title: "Status",
+          key: "Status",
+          render: (_, record) => (
+            <Switch
+              checked={record.status === "Active"}
+              onChange={() => handleStatusToggle(record)}
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+            />
+          ),
+        },
 
         {
             title: "Actions",
@@ -352,15 +372,111 @@ const Company = () => {
                 </>
             ),
         },
+
+         {
+                      title: "Delete",
+                      render: (_, record) => (
+                        <>
+                          {auth?.user?.role === 'superAdmin' && (
+                            <Popconfirm
+                              title="Are you sure you want to delete this blog?"
+                              onConfirm={() => handleDelete(record._id)}
+                              okText="Yes"
+                              cancelText="No"
+                            >
+                              <Button type="link" danger>
+                                Delete
+                              </Button>
+                            </Popconfirm>
+                          )}
+                        </>
+                      ),
+                    }
     ];
+
+
+
+    const columns1 = [
+      {
+          title: "Company Name",
+          dataIndex: "websiteName",
+          key: "websiteName",
+      },
+
+      {
+          title: "Categories",
+          dataIndex: ['category', 'name'],
+          key: "name",
+      },
+
+      {
+          title: "subcategories",
+          dataIndex: ['subcategories', 'name'],
+          key: "subcategories",
+      },
+
+
+      {
+          title: "Rating",
+          dataIndex: "rating",
+          key: "rating",
+      },
+
+
+
+      // specialization
+
+      // {
+      //   title: "Status",
+      //   key: "Status",
+      //   render: (_, record) => (
+      //     <Switch
+      //       checked={record.Status === "Active"}
+      //       onChange={() => handleStatusToggle(record)}
+      //       checkedChildren="Active"
+      //       unCheckedChildren="Inactive"
+      //     />
+      //   ),
+      // },
+
+      {
+          title: "Actions",
+          key: "actions",
+          render: (_, record) => (
+              <>
+                  <Button onClick={() => handleEdit(record)}>Update</Button>
+              </>
+          ),
+      },
+  ];
 
     return (
         <div>
             <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
                 Add Company
             </Button>
-            <Table
-                columns={columns}
+           
+
+
+
+             {
+                                       auth?.user?.role==='superAdmin'?(<> <Table
+                                        columns={columns}
+                                        dataSource={data}
+                                        loading={loading}
+                                        scroll={{ x: 'max-content' }}
+                                        rowKey={(record) => record._id}
+                                 onRow={(record) => ({
+                                  onClick: () => {
+                                    handleRowClick(record); // Trigger the click handler
+                                  },
+                                })}
+                        
+                        
+                                 // rowKey="_id"
+                                    /></>):(<>
+                                       <Table
+                columns={columns1}
                 dataSource={data}
                 loading={loading}
                 scroll={{ x: 'max-content' }}
@@ -370,8 +486,12 @@ const Company = () => {
             handleRowClick(record); // Trigger the click handler
           },
         })}
-            // rowKey="_id"
+
+
+         // rowKey="_id"
             />
+                                       </>)
+                                   }
 
             <Modal
                 title={editingCompany ? "Edit Company" : "Add Company"}
