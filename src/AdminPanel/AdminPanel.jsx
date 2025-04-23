@@ -93,8 +93,6 @@ const AdminPanel = () => {
     // { key: "home", icon: <TeamOutlined />, label: "Home" },
     // { key: "users", icon: < UserOutlined/>, label: "Users" },
     { key: "profile", icon: <HomeOutlined />, label: "Profile" },
-    { key: "categories", icon: <HomeOutlined />, label: "Categories" },
-    { key: "sub-categories", icon: <TeamOutlined  />, label: "Sub-Categories" },
     { key: "company", icon: <TeamOutlined  />, label: "Company" },
     { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
     { key: "blogs", icon: <TeamOutlined  />, label: "Blogs" },
