@@ -43,6 +43,7 @@ const Company = () => {
     const [cross, setCross] = useState(true);
   const [record1, setRecord] = useState();
   const [imageTrue, setImageTrue] = useState(false);
+  const auth1 = JSON.parse(localStorage.getItem('auth'));
 
 
  const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
@@ -377,7 +378,7 @@ const Company = () => {
                       title: "Delete",
                       render: (_, record) => (
                         <>
-                          {auth?.user?.role === 'superAdmin' && (
+                          {auth1?.user?.role === 'superAdmin' && (
                             <Popconfirm
                               title="Are you sure you want to delete this blog?"
                               onConfirm={() => handleDelete(record._id)}
@@ -460,7 +461,7 @@ const Company = () => {
 
 
              {
-                                       auth?.user?.role==='superAdmin'?(<> <Table
+                                       auth1?.user?.role==='superAdmin'?(<> <Table
                                         columns={columns}
                                         dataSource={data}
                                         loading={loading}

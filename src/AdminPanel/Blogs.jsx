@@ -49,6 +49,7 @@ const Blogs = () => {
     const [user, setUser] = useState([])
     const editor = useRef(null);
     const [editorContent, setEditorContent] = useState("");
+    const auth1 = JSON.parse(localStorage.getItem('auth'));
 
 
     const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
@@ -213,7 +214,7 @@ const Blogs = () => {
             category: record.categories._id,
             subcategories: record.subcategories._id,
             tags: record.tags._id,
-            postedBy: record.postedBy._id,
+           
 
 
             // dob:record.dateOfBirth,
@@ -292,7 +293,7 @@ const Blogs = () => {
             categories: values.category,
             subcategories: values.subcategories,
             tags: values.tags,
-            postedBy: values.postedBy,
+            postedBy: auth1.user?._id,
             image: image1,
             body: editorContent,
 
@@ -327,7 +328,7 @@ const Blogs = () => {
             categories: values.category,
             subcategories: values.subcategories,
             tags: values.tags,
-            postedBy: values.postedBy,
+            postedBy: auth1.user?._id,
             image: imageTrue ? image1 : values.logo,
             body: editorContent,
 
@@ -415,7 +416,7 @@ const Blogs = () => {
             title: "Delete",
             render: (_, record) => (
                 <>
-                    {auth?.user?.role === 'superAdmin' && (
+                    {auth1?.user?.role === 'superAdmin' && (
                         <Popconfirm
                             title="Are you sure you want to delete this blog?"
                             onConfirm={() => handleDelete(record._id)}
@@ -500,7 +501,7 @@ const Blogs = () => {
 
 
             {
-                auth?.user?.role === 'superAdmin' ? (<><Table
+                auth1?.user?.role === 'superAdmin' ? (<><Table
                     columns={columns}
                     dataSource={data}
                     loading={loading}
@@ -613,7 +614,7 @@ const Blogs = () => {
                     </Form.Item>
 
 
-                    <Form.Item
+                    {/* <Form.Item
                         name="postedBy"
                         label="Author"
                         rules={[{ required: true, message: 'Please select a category!' }]}
@@ -625,7 +626,7 @@ const Blogs = () => {
                                 </Option>
                             ))}
                         </Select>
-                    </Form.Item>
+                    </Form.Item> */}
 
 
 

@@ -3,7 +3,9 @@ import '../Style/Profile.css'
 import { useAuth } from '../context/auth'
 export const Profile = ({ setSelectedTab }) => {
     const [auth, setAuth] = useAuth();
-    console.log("-----auth-----",auth.user)
+   
+
+    const auth1 = JSON.parse(localStorage.getItem('auth'));
 
     const handleCreateCompBlog = (key) => {
         setSelectedTab(key);
@@ -32,10 +34,10 @@ export const Profile = ({ setSelectedTab }) => {
 
                     </div>
                     <div>
-                    <p>{auth?.user?.firstName}</p>
-                    <p>{auth?.user?.lastName}</p>
-                    <p>{auth?.user?.email}</p>
-                    <p>{auth?.user?.role}</p>
+                    <p>{auth1?.user?.firstName}</p>
+                    <p>{auth1?.user?.lastName}</p>
+                    <p>{auth1?.user?.email}</p>
+                    <p>{auth1?.user?.role}</p>
                     </div>
                     </div>
                    

@@ -46,7 +46,7 @@ const CompBlog = () => {
     const [imageTrue, setImageTrue] = useState(false);
     const [tag, setTag] = useState([])
     const [user, setUser] = useState([])
-
+    const auth1 = JSON.parse(localStorage.getItem('auth'));
 
     const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
     const [selectedSubCategory, setSelectedSubCategory] = useState(null); 
@@ -209,7 +209,7 @@ const CompBlog = () => {
             category: record.categories._id,
             subcategories: record.subcategories._id,
             tags: record.tags._id,
-            postedBy: record.postedBy._id,
+            
             company: record.company.map(c => c._id)
 
             // dob:record.dateOfBirth,
@@ -288,7 +288,7 @@ const CompBlog = () => {
             categories: values.category,
             subcategories: values.subcategories,
             tags: values.tags,
-            postedBy: values.postedBy,
+            postedBy: auth1.user?._id,
             company: values.company
 
         };
@@ -322,7 +322,7 @@ const CompBlog = () => {
             categories: values.category,
             subcategories: values.subcategories,
             tags: values.tags,
-            postedBy: values.postedBy,
+            postedBy: auth1.user?._id,
             company: values.company
 
         };
@@ -410,7 +410,7 @@ const CompBlog = () => {
               title: "Delete",
               render: (_, record) => (
                 <>
-                  {auth?.user?.role === 'superAdmin' && (
+                  {auth1?.user?.role === 'superAdmin' && (
                     <Popconfirm
                       title="Are you sure you want to delete this blog?"
                       onConfirm={() => handleDelete(record._id)}
@@ -474,7 +474,7 @@ const columns1 = [
             </Button>
 
             {
-                auth?.user?.role==='superAdmin'?(<><Table
+                auth1?.user?.role==='superAdmin'?(<><Table
                     columns={columns}
                     dataSource={data}
                     loading={loading}
@@ -598,7 +598,7 @@ const columns1 = [
                     </Form.Item>
 
 
-                    <Form.Item
+                    {/* <Form.Item
                         name="postedBy"
                         label="Author"
                         rules={[{ required: true, message: 'Please select a category!' }]}
@@ -610,7 +610,7 @@ const columns1 = [
                                 </Option>
                             ))}
                         </Select>
-                    </Form.Item>
+                    </Form.Item> */}
 
 
 

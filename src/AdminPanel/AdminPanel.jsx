@@ -37,7 +37,8 @@ const AdminPanel = () => {
   const [id, setId] = useState();
   const navigate = useNavigate();
   const [auth, setAuth] = useAuth();
-  console.log("-----auth-----",auth?.user?.role)
+ 
+  const auth1 = JSON.parse(localStorage.getItem('auth'));
 
   const handleMenuClick = (e) => {
     setSelectedTab(e.key);
@@ -146,7 +147,7 @@ const AdminPanel = () => {
 
 
             {
-              auth?.user?.role==='superAdmin'?(<>
+              auth1?.user?.role==='superAdmin'?(<>
                   {menuItems1?.map((menuItem) => (
               <Menu.Item key={menuItem?.key} icon={menuItem?.icon}>
                 {menuItem?.label}
