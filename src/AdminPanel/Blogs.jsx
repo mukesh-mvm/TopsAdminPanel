@@ -284,16 +284,17 @@ const Blogs = () => {
     };
 
     const handlePost = async (values) => {
-
+      
+        console.log("auth1?.user?._id",auth1?.user?._id)
 
         const postData = {
-            title: values.title,
-            mtitle: values.mtitle,
-            mdesc: values.mdesc,
-            categories: values.category,
-            subcategories: values.subcategories,
-            tags: values.tags,
-            postedBy: auth1.user?._id,
+            title: values?.title,
+            mtitle: values?.mtitle,
+            mdesc: values?.mdesc,
+            categories: values?.category,
+            subcategories: values?.subcategories,
+            tags: values?.tags,
+            postedBy: auth1?.user?.id,
             image: image1,
             body: editorContent,
 
@@ -320,7 +321,7 @@ const Blogs = () => {
     };
 
     const handlePut = async (values) => {
-
+        // console.log("auth1?.user?._id",auth1)
         const postData = {
             title: values.title,
             mtitle: values.mtitle,
@@ -328,7 +329,7 @@ const Blogs = () => {
             categories: values.category,
             subcategories: values.subcategories,
             tags: values.tags,
-            postedBy: auth1.user?._id,
+            postedBy: auth1?.user?.id,
             image: imageTrue ? image1 : values.logo,
             body: editorContent,
 

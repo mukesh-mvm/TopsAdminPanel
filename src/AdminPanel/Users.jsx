@@ -70,7 +70,7 @@ const Users = () => {
   const handleStatusToggle = async (record) => {
     try {
       const response = await axios.patch(
-        `${baseurl}/api/admin/toggled/${record?._id}`
+        `${baseurl}/updateUserStatus/${record?._id}`
       );
       console.log(response);
 
@@ -183,7 +183,7 @@ const Users = () => {
       key: "Status",
       render: (_, record) => (
         <Switch
-          checked={record.Status === "Active"}
+          checked={record.status === "Active"}
           onChange={() => handleStatusToggle(record)}
           checkedChildren="Active"
           unCheckedChildren="Inactive"
@@ -191,15 +191,15 @@ const Users = () => {
       ),
     },
 
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_, record) => (
-        <>
-          <Button onClick={() => handleEdit(record)}>Update</Button>
-        </>
-      ),
-    },
+    // {
+    //   title: "Actions",
+    //   key: "actions",
+    //   render: (_, record) => (
+    //     <>
+    //       <Button onClick={() => handleEdit(record)}>Update</Button>
+    //     </>
+    //   ),
+    // },
   ];
 
   return (

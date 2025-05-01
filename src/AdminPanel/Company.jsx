@@ -144,18 +144,18 @@ const Company = () => {
         const features = record?.features.join('\n')
         const pros = record?.pros.join('\n')
         form.setFieldsValue({
-            Description: record.Description,
+            Description: record?.Description,
             benifits: benifits,
             cons: cons,
             features: features,
             pros: pros,
-            mainHeading: record.mainHeading,
-            rating: record.rating,
-            review: record.review,
-            websiteName: record.websiteName,
-            visitSiteUrl: record.visitSiteUrl,
-            category: record.category._id,
-            subcategories: record.subcategories._id
+            mainHeading: record?.mainHeading,
+            rating: record?.rating,
+            review: record?.review,
+            websiteName: record?.websiteName,
+            visitSiteUrl: record?.visitSiteUrl,
+            category: record?.category?._id,
+            subcategories: record?.subcategories?._id
 
             // dob:record.dateOfBirth,
         });

@@ -64,11 +64,16 @@ export const Profile = ({ setSelectedTab }) => {
         </div>
 
 
-        <div style={{ marginTop: "20px", textAlign: "center" }}>
+
+        {auth1?.user?.role === 'superAdmin' ?( <div style={{ marginTop: "20px", textAlign: "center" }}>
           <button className="create-compblog-btn" onClick={()=>{handleCreateCompBlog("categories")}}>
             Create Category
           </button>
-        </div>
+        </div>):("")}
+
+       
+
+
             </div>
 
            

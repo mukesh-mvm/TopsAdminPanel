@@ -29,6 +29,7 @@ import Company from "./Company";
 import CompBlog from "./CompBlog";
 import Blogs from "./Blogs";
 import { Profile } from "./Profile";
+import TopsShorts from "./TopsShorts";
 // import logo from "../../public/logo.png";
 // properties-details
 
@@ -56,6 +57,8 @@ const AdminPanel = () => {
 
         case "categories":
         return <Category />;
+        case "topShorts":
+        return <TopsShorts />;
 
 
         case "profile":
@@ -111,6 +114,7 @@ const AdminPanel = () => {
     { key: "company", icon: <TeamOutlined  />, label: "Company" },
     { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
     { key: "blogs", icon: <TeamOutlined  />, label: "Blogs" },
+    { key: "topShorts", icon: <TeamOutlined  />, label: "TopsShorts" },
     // { key: "blog", icon: <CarOutlined />, label: "Blog" },
     // { key: "testinomial", icon: <CalendarOutlined />, label: "Testinomial" },
   ];

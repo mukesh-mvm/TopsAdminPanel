@@ -288,7 +288,7 @@ const CompBlog = () => {
             categories: values.category,
             subcategories: values.subcategories,
             tags: values.tags,
-            postedBy: auth1.user?._id,
+            postedBy: auth1?.user?._id,
             company: values.company
 
         };
@@ -322,7 +322,7 @@ const CompBlog = () => {
             categories: values.category,
             subcategories: values.subcategories,
             tags: values.tags,
-            postedBy: auth1.user?._id,
+            postedBy: auth1?.user?._id,
             company: values.company
 
         };
