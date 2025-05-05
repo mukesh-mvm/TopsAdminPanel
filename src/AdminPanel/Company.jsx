@@ -155,6 +155,7 @@ const Company = () => {
             websiteName: record?.websiteName,
             visitSiteUrl: record?.visitSiteUrl,
             category: record?.category?._id,
+            slug: record.slug,
             subcategories: record?.subcategories?._id
 
             // dob:record.dateOfBirth,
@@ -241,6 +242,7 @@ const Company = () => {
             websiteName: values.websiteName,
             visitSiteUrl: values.visitSiteUrl,
             category: values.category,
+            slug: values.slug,
             subcategories: values.subcategories,
             logo: image1,
 
@@ -282,6 +284,7 @@ const Company = () => {
             websiteName: values.websiteName,
             visitSiteUrl: values.visitSiteUrl,
             category: values.category,
+            slug: values.slug,
             subcategories: values.subcategories,
             logo: imageTrue ? image1 : values.logo,
 
@@ -507,6 +510,16 @@ const Company = () => {
                         rules={[{ required: true, message: "Please input the name!" }]}
                     >
                         <Input placeholder="Enter Company Name" />
+                    </Form.Item>
+
+
+
+                    <Form.Item
+                        name="slug"
+                        label="Slug"
+                        rules={[{ required: true, message: "Please Enter slug!" }]}
+                    >
+                        <Input placeholder="Enter Slug" />
                     </Form.Item>
 
 
