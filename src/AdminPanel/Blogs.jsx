@@ -11,7 +11,8 @@ import {
     Switch,
     DatePicker,
     InputNumber,
-    Popconfirm
+    Popconfirm,
+    Space
 } from "antd";
 
 import {
@@ -19,6 +20,8 @@ import {
     TranslationOutlined,
     TruckOutlined,
     CloseCircleOutlined,
+    PlusOutlined,
+    MinusCircleOutlined,
 } from "@ant-design/icons";
 import { UploadOutlined } from "@ant-design/icons";
 import { baseurl } from "../helper/Helper";
@@ -208,12 +211,14 @@ const Blogs = () => {
         setEditorContent(record.body)
         console.log("--------data-----------", record.categories._id)
         form.setFieldsValue({
-            title: record.title,
-            mtitle: record.mtitle,
-            mdesc: record.mdesc,
-            category: record.categories._id,
-            subcategories: record.subcategories._id,
-            tags: record.tags._id,
+            title: record?.title,
+            mtitle: record?.mtitle,
+            mdesc: record?.mdesc,
+            category: record?.categories._id,
+            subcategories: record?.subcategories._id,
+            tags: record?.tags?._id,
+            faqs: record?.faqs || [],
+            slug:record?.slug
            
 
 
@@ -297,6 +302,8 @@ const Blogs = () => {
             postedBy: auth1?.user?.id,
             image: image1,
             body: editorContent,
+            faqs:values.faqs,
+            slug:values.slug
 
         };
 
@@ -332,6 +339,8 @@ const Blogs = () => {
             postedBy: auth1?.user?.id,
             image: imageTrue ? image1 : values.logo,
             body: editorContent,
+            faqs:values.faqs,
+            slug:values.slug
 
         };
 
@@ -550,6 +559,15 @@ const Blogs = () => {
 
 
                     <Form.Item
+                        name="slug"
+                        label="Blog Slug"
+                        rules={[{ required: true, message: "Please input slug!" }]}
+                    >
+                        <Input placeholder="Enter Blog Slug" />
+                    </Form.Item>
+
+
+                    <Form.Item
                         name="mtitle"
                         label="Blog Meta Title"
                         rules={[{ required: true, message: "Please input the name!" }]}
@@ -693,6 +711,55 @@ const Blogs = () => {
                                 removeButtons: ["font"],
                             }}
                         />
+                    </Form.Item>
+
+
+
+                    <Form.Item label="FAQS" required>
+                        <Form.List name="faqs">
+                            {(fields, { add, remove }) => (
+                                <>
+                                    {fields.map(({ key, name, ...restField }, index) => (
+                                        <Space 
+                                            key={key}
+                                            style={{ display: "flex", marginBottom: 8 }}
+                                            align="start"
+                                        >
+                                            <Form.Item
+                                                {...restField}
+                                                label={`Q${index + 1}`}
+                                                name={[name, "ques"]}
+                                                rules={[{ required: true, message: "Please enter a question" }]}
+                                            >
+                                                <Input placeholder="Question" />
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                {...restField}
+                                                label={`A${index + 1}`}
+                                                name={[name, "ans"]}
+                                                rules={[{ required: true, message: "Please enter an answer" }]}
+                                            >
+                                                <Input placeholder="Answer" />
+                                            </Form.Item>
+
+                                            <MinusCircleOutlined onClick={() => remove(name)} />
+                                        </Space>
+                                    ))}
+
+                                    <Form.Item>
+                                        <Button
+                                            type="dashed"
+                                            onClick={() => add()}
+                                            block
+                                            icon={<PlusOutlined  />}
+                                        >
+                                            Add FAQ
+                                        </Button>
+                                    </Form.Item>
+                                </>
+                            )}
+                        </Form.List>
                     </Form.Item>
 
 
