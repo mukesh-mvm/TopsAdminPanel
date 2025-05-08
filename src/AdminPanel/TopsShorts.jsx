@@ -57,7 +57,7 @@ const TopsShorts = () => {
 
             console.log("----data-----", res.data);
 
-            
+
             setData(res.data);
             setLoading(false);
         } catch (error) {
@@ -179,16 +179,16 @@ const TopsShorts = () => {
             title: "CompBlog Titles",
             key: "compBlogTitles",
             render: (_, record) => {
-              if (!Array.isArray(record.compBlog)) return "No Blogs";
-              return (
-                <ul style={{ paddingLeft: 20, margin: 0 }}>
-                  {record.compBlog.map((blog) => (
-                    <li key={blog._id}>{blog.title}</li>
-                  ))}
-                </ul>
-              );
+                if (!Array.isArray(record.compBlog)) return "No Blogs";
+                return (
+                    <ul style={{ paddingLeft: 20, margin: 0 }}>
+                        {record.compBlog.map((blog) => (
+                            <li key={blog._id}>{blog.title}</li>
+                        ))}
+                    </ul>
+                );
             },
-          },
+        },
 
 
 
@@ -242,29 +242,29 @@ const TopsShorts = () => {
 
 
     const columns1 = [
-        
-        
-        
+
+
+
         {
             title: "Page",
             dataIndex: "page",
             key: "page",
-          },
+        },
 
-          {
+        {
             title: "CompBlog Titles",
             key: "compBlogTitles",
             render: (_, record) => {
-              if (!Array.isArray(record.compBlog)) return "No Blogs";
-              return (
-                <ul style={{ paddingLeft: 20, margin: 0 }}>
-                  {record.compBlog.map((blog) => (
-                    <li key={blog._id}>{blog.title}</li>
-                  ))}
-                </ul>
-              );
+                if (!Array.isArray(record.compBlog)) return "No Blogs";
+                return (
+                    <ul style={{ paddingLeft: 20, margin: 0 }}>
+                        {record.compBlog.map((blog) => (
+                            <li key={blog._id}>{blog.title}</li>
+                        ))}
+                    </ul>
+                );
             },
-          },
+        },
 
 
 
@@ -337,23 +337,29 @@ const TopsShorts = () => {
                     </Form.Item>
 
 
-                    <Form.Item
-                        label="compBlog"
-                        name="compBlog"
-                        rules={[{ required: true, message: 'Please select the Comp blogs' }]}
-                    >
-                        <Select
-                            mode="multiple"
-                            placeholder="Select Blogs"
 
-                        >
-                            {categories?.map((cat) => (
-                                <Option key={cat._id} value={cat._id}>
-                                    {cat.title}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
+
+                    <Form.Item
+  label="compBlog"
+  name="compBlog"
+  rules={[{ required: true, message: 'Please select the Comp blogs' }]}
+>
+  <Select
+    mode="multiple"
+    showSearch
+    placeholder="Search and select blogs"
+    optionFilterProp="label"
+    filterOption={(input, option) =>
+      (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+    }
+    loading={loading}
+    options={categories?.map((cat) => ({
+      label: cat.title,  // Displayed text
+      value: cat._id     // Actual value used in form
+    }))}
+  />
+</Form.Item>
+
 
 
 

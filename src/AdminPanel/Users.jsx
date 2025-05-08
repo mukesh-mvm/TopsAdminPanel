@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Table,
   Button,
@@ -14,8 +14,18 @@ import {
 import { baseurl } from "../helper/Helper";
 import axios from "axios";
 import Password from "antd/es/input/Password";
+import {
+  BellOutlined,
+  TranslationOutlined,
+  TruckOutlined,
+  CloseCircleOutlined,
+  PlusOutlined,
+  MinusCircleOutlined,
+} from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 // import { baseurl } from "../helper/Helper";
 import { useAuth } from "../context/auth";
+import JoditEditor from "jodit-react";
 const { Option } = Select;
 
 
@@ -26,8 +36,32 @@ const Users = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [form] = Form.useForm();
   const [auth, setAuth] = useAuth();
+  const [image1, setImage] = useState();
+      const [photo, setPhoto] = useState("");
+      const [cross, setCross] = useState(true);
+      const [record1, setRecord] = useState();
+      const [imageTrue, setImageTrue] = useState(false);
+     const editor = useRef(null);
+      const [editorContent, setEditorContent] = useState("");
 
   // console.log(auth?.user._id);
+
+
+
+  
+  const handleRowClick = (record) => {
+    console.log("Clicked row data:", record);
+    setRecord(record);
+    setImage(record?.image)
+    setCross(true);
+
+    // Access the clicked row's data here
+    // You can now use 'record' to get the details of the clicked row
+};
+
+const handleCross = () => {
+  setCross(false);
+};
 
   useEffect(() => {
     fetchData();
@@ -54,16 +88,24 @@ const Users = () => {
 
   const handleEdit = (record) => {
     setEditingUser(record);
-    console.log(record.email);
+    setImageTrue(true);
+    setEditorContent(record?.shortBio)
     form.setFieldsValue({
-      firstName: record.firstName,
-      lastName: record.lastName,
-      username: record.username,
-      email: record.email,
-      role: record.role,
-      // password: record.password,
-      // dob:record.dateOfBirth,
+      firstName: record?.firstName,
+      lastName: record?.lastName,
+      username: record?.username,
+      email: record?.email,
+      role: record?.role,
+      socialMedia: {
+        facebook: record?.socialMedia?.facebook || '',
+        linkedin: record?.socialMedia?.linkedin || '',
+        twitter: record?.socialMedia?.twitter || '',
+        profile: record?.socialMedia?.profile || '',
+      },
+      tag:record?.tag,
+      slug:record?.slug,
     });
+
     setIsModalOpen(true);
   };
 
@@ -83,15 +125,55 @@ const Users = () => {
     }
   };
 
+
+  const uploadImage = async (file) => {
+    console.log(file);
+    const formData = new FormData();
+    formData.append("image", file.file);
+    // console.log(file.file.name);
+
+    try {
+        const response = await axios.post(
+            `${baseurl}/upload`,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+
+        if (response) {
+            message.success("Image uploaded successfully!");
+            setImage(response.data.imageUrl);
+        }
+
+        return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
+    } catch (error) {
+        message.error("Error uploading image. Please try again later.");
+        console.error("Image upload error:", error);
+        return null;
+    }
+};
+
   const handlePost = async (values) => {
     const postData = {
-      firstName: values.firstName,
-      lastName: values.lastName,
-      username: values.username,
-      email: values.email,
-      role: values.role,
-      password:values.password
-
+      firstName: values?.firstName,
+      lastName: values?.lastName,
+      username: values?.username,
+      email: values?.email,
+      role: values?.role,
+      password: values?.password,
+      socialMedia: {
+        facebook: values?.socialMedia?.facebook || '',
+        linkedin: values?.socialMedia?.linkedin || '',
+        twitter: values?.socialMedia?.twitter || '',
+        profile: values?.socialMedia?.profile || '',
+      },
+      shortBio:editorContent,
+      tag:values?.tag,
+      slug:values?.slug,
+      image: image1,
     };
 
     try {
@@ -105,6 +187,8 @@ const Users = () => {
         setIsModalOpen(false);
         message.success("User created successfully!");
         fetchData();
+        setPhoto("");
+        setEditorContent("")
       }
     } catch (error) {
       console.log(error);
@@ -118,13 +202,22 @@ const Users = () => {
       username: values.username,
       email: values.email,
       role: values.role,
-      password:values.password
-
+      socialMedia: {
+        facebook: values.socialMedia?.facebook || '',
+        linkedin: values.socialMedia?.linkedin || '',
+        twitter: values.socialMedia?.twitter || '',
+        profile: values.socialMedia?.profile || '',
+      },
+      shortBio:editorContent,
+      slug:values.slug,
+      tag:values.tag,
+      image: imageTrue ? image1 : values.logo,
     };
 
+
     try {
-      const response = await axios.put(
-        `${baseurl}/update/${editingUser?._id}`,
+      const response = await axios.patch(
+        `${baseurl}/updateUser/${editingUser?._id}`,
         postData
       );
       console.log(response.data);
@@ -134,6 +227,8 @@ const Users = () => {
         fetchData();
         message.success("User update successfully!");
         form.resetFields();
+        setPhoto("");
+        setEditorContent("")
       }
     } catch (error) {
       console.log(error);
@@ -191,15 +286,15 @@ const Users = () => {
       ),
     },
 
-    // {
-    //   title: "Actions",
-    //   key: "actions",
-    //   render: (_, record) => (
-    //     <>
-    //       <Button onClick={() => handleEdit(record)}>Update</Button>
-    //     </>
-    //   ),
-    // },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <>
+          <Button onClick={() => handleEdit(record)}>Update</Button>
+        </>
+      ),
+    },
   ];
 
   return (
@@ -211,6 +306,12 @@ const Users = () => {
         columns={columns}
         dataSource={data}
         loading={loading}
+        rowKey={(record) => record._id}
+                    onRow={(record) => ({
+                        onClick: () => {
+                            handleRowClick(record); // Trigger the click handler
+                        },
+                    })}
       // rowKey="_id"
       />
 
@@ -250,14 +351,16 @@ const Users = () => {
 
 
 
-
-          <Form.Item
-            name="password"
-            label="Password"
-            rules={[{ required: true, message: "Please Enter Password!" }]}
-          >
-            <Input.Password placeholder="Password" />
-          </Form.Item>
+          {
+            !editingUser ? (<Form.Item
+              name="password"
+              label="Password"
+              rules={[{ required: true, message: "Please Enter Password!" }]}
+            >
+              <Input.Password placeholder="Password" />
+            </Form.Item>
+            ) : ("")
+          }
 
 
 
@@ -268,6 +371,33 @@ const Users = () => {
           >
             <Input placeholder="Enter UserName" />
           </Form.Item>
+
+
+          <Form.Item
+            name="slug"
+            label="Slug"
+            rules={[{ required: true, message: "Please Enter slug !" }]}
+          >
+            <Input placeholder="Enter slug like " />
+          </Form.Item>
+
+
+          <Form.Item
+            name="tag"
+            label="Tag"
+            rules={[{ required: true, message: "Please Enter tag !" }]}
+          >
+            <Input placeholder="Enter tag like Finance and Travel " />
+          </Form.Item>
+
+
+          {/* <Form.Item
+            name="shortBio"
+            label="Short Bio"
+            rules={[{ required: true, message: "Please Enter tag !" }]}
+          >
+            <Input placeholder="Enter tag like Finance and Travel " />
+          </Form.Item> */}
 
 
 
@@ -285,6 +415,188 @@ const Users = () => {
           </Form.Item>
 
           <Form.Item>
+
+
+
+            <Form.Item
+              label="Facebook"
+              name={['socialMedia', 'facebook']}
+              rules={[{ type: 'url', message: 'Enter a valid URL' }]}
+            >
+              <Input placeholder="https://facebook.com/yourprofile" />
+            </Form.Item>
+
+            <Form.Item
+              label="LinkedIn"
+              name={['socialMedia', 'linkedin']}
+              rules={[{ type: 'url', message: 'Enter a valid URL' }]}
+            >
+              <Input placeholder="https://linkedin.com/in/yourprofile" />
+            </Form.Item>
+
+            <Form.Item
+              label="Twitter"
+              name={['socialMedia', 'twitter']}
+              rules={[{ type: 'url', message: 'Enter a valid URL' }]}
+            >
+              <Input placeholder="https://twitter.com/yourprofile" />
+            </Form.Item>
+
+            <Form.Item
+              label="Personal Website"
+              name={['socialMedia', 'profile']}
+              rules={[{ type: 'url', message: 'Enter a valid URL' }]}
+            >
+              <Input placeholder="https://yourwebsite.com" />
+            </Form.Item>
+
+
+
+            <Form.Item label="Short Bio" required>
+                        <JoditEditor
+                            ref={editor}
+                            value={editorContent}
+                            onBlur={(newContent) => setEditorContent(newContent)}
+                            tabIndex={1}
+                            placeholder="Write your content here..."
+                            config={{
+                                cleanHTML: {
+                                    removeEmptyTags: false,
+                                    fillEmptyParagraph: false,
+                                    removeEmptyBlocks: false,
+                                },
+                                uploader: {
+                                    url: `${baseurl}/api/amenities/uploadImage`, // Your image upload API endpoint
+                                    // This function handles the response
+                                    format: "json", // Specify the response format
+                                    isSuccess: function (resp) {
+                                        return !resp.error;
+                                    },
+                                    getMsg: function (resp) {
+                                        return resp.msg.join !== undefined
+                                            ? resp.msg.join(" ")
+                                            : resp.msg;
+                                    },
+                                    process: function (resp) {
+                                        return {
+                                            files: resp.files || [],
+                                            path: resp.files.url,
+                                            baseurl: resp.files.url,
+                                            error: resp.error || "error",
+                                            msg: resp.msg || "iuplfn",
+                                        };
+                                    },
+                                    defaultHandlerSuccess: function (data, resp) {
+                                        const files = data.files || [];
+                                        console.log({ files });
+                                        if (files) {
+                                            this.selection.insertImage(files.url, null, 250);
+                                        }
+                                    },
+                                },
+                                enter: "DIV",
+                                defaultMode: "DIV",
+                                removeButtons: ["font"],
+                            }}
+                        />
+                    </Form.Item>
+
+
+
+                    {editingUser ? (
+                        <>
+                            {cross ? (
+                                <>
+                                    <CloseCircleOutlined
+                                        style={{ width: "30px" }}
+                                        onClick={handleCross}
+                                    />
+                                    <img
+                                        src={`${record1.image}`}
+                                        alt=""
+                                        style={{ width: "100px", height: "100px" }}
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                    <Form.Item
+                                        label="Photo"
+                                        name="photo"
+                                        onChange={(e) => setPhoto(e.target.files[0])}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: "Please upload the driver's photo!",
+                                            },
+                                        ]}
+                                    >
+                                        <Upload
+                                            listType="picture"
+                                            beforeUpload={() => false}
+                                            onChange={uploadImage}
+                                            showUploadList={false}
+                                            customRequest={({ file, onSuccess }) => {
+                                                setTimeout(() => {
+                                                    onSuccess("ok");
+                                                }, 0);
+                                            }}
+                                        >
+                                            <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                                        </Upload>
+                                    </Form.Item>
+                                    {photo && (
+                                        <div>
+                                            <img
+                                                src={URL.createObjectURL(photo)}
+                                                alt="Uploaded"
+                                                height="100px"
+                                                width="100px"
+                                            />
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        <>
+                            <Form.Item
+                                label="Photo"
+                                name="photo"
+                                onChange={(e) => setPhoto(e.target.files[0])}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Please upload the driver's photo!",
+                                    },
+                                ]}
+                            >
+                                <Upload
+                                    listType="picture"
+                                    beforeUpload={() => false}
+                                    onChange={uploadImage}
+                                    showUploadList={false}
+                                    customRequest={({ file, onSuccess }) => {
+                                        setTimeout(() => {
+                                            onSuccess("ok");
+                                        }, 0);
+                                    }}
+                                >
+                                    <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                                </Upload>
+                            </Form.Item>
+                            {photo && (
+                                <div>
+                                    <img
+                                        src={URL.createObjectURL(photo)}
+                                        alt="Uploaded"
+                                        height="100px"
+                                        width="100px"
+                                    />
+                                </div>
+                            )}
+                        </>
+                    )}
+
 
             <Button type="primary" htmlType="submit">
               {editingUser ? "Update" : "Submit"}

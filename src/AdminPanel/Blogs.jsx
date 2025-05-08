@@ -250,6 +250,20 @@ const Blogs = () => {
                      if (response) {
                         message.success("Status updated succesfully");
                         fetchData();
+
+
+                        if(response){
+                            const postData = {
+                                blogsToDelete:[record]
+                            }
+        
+                            const response1 = await axios.patch(
+                                `${baseurl}/deleteSpecificuserBLog/${auth1?.user?.id}`,
+                                postData
+                              );
+        
+                              console.log(response1.data)
+                        }
                     }
                 } catch (error) {
                     console.log(error)
@@ -288,9 +302,13 @@ const Blogs = () => {
         }
     };
 
+
+
+    console.log("auth1?.user?._id",auth1?.user)
+
     const handlePost = async (values) => {
       
-        console.log("auth1?.user?._id",auth1?.user?._id)
+        
 
         const postData = {
             title: values?.title,
@@ -321,10 +339,32 @@ const Blogs = () => {
                 message.success("User created successfully!");
                 setPhoto("");
                 fetchData();
+                 
+               
+
+                if(response?.data?._id){
+                    const postData = {
+                        blog:[response?.data?._id]
+                    }
+
+                    const response1 = await axios.patch(
+                        `${baseurl}/updateUser/${auth1?.user?.id}`,
+                        postData
+                      );
+
+                      console.log(response1.data)
+                }
+
+               
+
             }
         } catch (error) {
             console.log(error);
         }
+
+
+
+
     };
 
     const handlePut = async (values) => {

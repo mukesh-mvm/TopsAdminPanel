@@ -289,7 +289,9 @@ const CompBlog = () => {
             subcategories: values.subcategories,
             tags: values.tags,
             postedBy: auth1?.user?._id,
-            company: values.company
+            company: values.company,
+            image: image1,
+
 
         };
 
@@ -323,7 +325,8 @@ const CompBlog = () => {
             subcategories: values.subcategories,
             tags: values.tags,
             postedBy: auth1?.user?._id,
-            company: values.company
+            company: values.company,
+            image: imageTrue ? image1 : values.logo,
 
         };
 
@@ -478,6 +481,12 @@ const columns1 = [
                     columns={columns}
                     dataSource={data}
                     loading={loading}
+                    rowKey={(record) => record._id}
+                    onRow={(record) => ({
+                        onClick: () => {
+                            handleRowClick(record); // Trigger the click handler
+                        },
+                    })}
     
     
                 // rowKey="_id"
@@ -486,7 +495,12 @@ const columns1 = [
                     columns={columns1}
                     dataSource={data}
                     loading={loading}
-    
+                    rowKey={(record) => record._id}
+                    onRow={(record) => ({
+                        onClick: () => {
+                            handleRowClick(record); // Trigger the click handler
+                        },
+                    })}
     
                 // rowKey="_id"
                 />
@@ -627,6 +641,102 @@ const columns1 = [
                             ))}
                         </Select>
                     </Form.Item>
+
+
+
+                       {editingCompBlog ? (
+                                            <>
+                                                {cross ? (
+                                                    <>
+                                                        <CloseCircleOutlined
+                                                            style={{ width: "30px" }}
+                                                            onClick={handleCross}
+                                                        />
+                                                        <img
+                                                            src={`${record1.image}`}
+                                                            alt=""
+                                                            style={{ width: "100px", height: "100px" }}
+                                                        />
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Form.Item
+                                                            label="Photo"
+                                                            name="photo"
+                                                            onChange={(e) => setPhoto(e.target.files[0])}
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: "Please upload the driver's photo!",
+                                                                },
+                                                            ]}
+                                                        >
+                                                            <Upload
+                                                                listType="picture"
+                                                                beforeUpload={() => false}
+                                                                onChange={uploadImage}
+                                                                showUploadList={false}
+                                                                customRequest={({ file, onSuccess }) => {
+                                                                    setTimeout(() => {
+                                                                        onSuccess("ok");
+                                                                    }, 0);
+                                                                }}
+                                                            >
+                                                                <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                                                            </Upload>
+                                                        </Form.Item>
+                                                        {photo && (
+                                                            <div>
+                                                                <img
+                                                                    src={URL.createObjectURL(photo)}
+                                                                    alt="Uploaded"
+                                                                    height="100px"
+                                                                    width="100px"
+                                                                />
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Form.Item
+                                                    label="Photo"
+                                                    name="photo"
+                                                    onChange={(e) => setPhoto(e.target.files[0])}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Please upload the driver's photo!",
+                                                        },
+                                                    ]}
+                                                >
+                                                    <Upload
+                                                        listType="picture"
+                                                        beforeUpload={() => false}
+                                                        onChange={uploadImage}
+                                                        showUploadList={false}
+                                                        customRequest={({ file, onSuccess }) => {
+                                                            setTimeout(() => {
+                                                                onSuccess("ok");
+                                                            }, 0);
+                                                        }}
+                                                    >
+                                                        <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                                                    </Upload>
+                                                </Form.Item>
+                                                {photo && (
+                                                    <div>
+                                                        <img
+                                                            src={URL.createObjectURL(photo)}
+                                                            alt="Uploaded"
+                                                            height="100px"
+                                                            width="100px"
+                                                        />
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
 
 
                     <Form.Item>
