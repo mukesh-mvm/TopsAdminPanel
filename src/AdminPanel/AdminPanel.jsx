@@ -31,7 +31,7 @@ import Blogs from "./Blogs";
 import { Profile } from "./Profile";
 import TopsShorts from "./TopsShorts";
 import TrendingShorts from "./TrendingShorts";
-import TopHeading from "./topHeading";
+import TopHeading from "./TopHe";
 // import logo from "../../public/logo.png";
 // properties-details
 
