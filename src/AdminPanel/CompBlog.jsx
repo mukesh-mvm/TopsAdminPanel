@@ -308,6 +308,7 @@ const CompBlog = () => {
                 setIsModalOpen(false);
                 message.success("User created successfully!");
                 fetchData();
+                setPhoto("");
             }
         } catch (error) {
             console.log(error);
@@ -345,6 +346,7 @@ const CompBlog = () => {
                 fetchData();
                 message.success("User update successfully!");
                 form.resetFields();
+                setPhoto("");
             }
         } catch (error) {
             console.log(error);

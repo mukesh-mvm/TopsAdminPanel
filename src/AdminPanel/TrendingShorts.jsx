@@ -20,7 +20,7 @@ import { useAuth } from "../context/auth";
 const { Option } = Select;
 
 
-const TopsShorts = () => {
+const TrendingShorts = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,7 +53,7 @@ const TopsShorts = () => {
 
     const fetchData = async () => {
         try {
-            const res = await axios.get(baseurl + "/api/tops-shorts/getAllTopShorts");
+            const res = await axios.get(baseurl + "/api/trending-shorts/getAllTrendnig");
 
             console.log("----data-----", res.data);
 
@@ -102,7 +102,7 @@ const TopsShorts = () => {
 
     const handleDelete = async (record) => {
         try {
-            const response = await axios.delete(`${baseurl}/api/tops-shorts/deleteTopsShorts/${record}`)
+            const response = await axios.delete(`${baseurl}/api/trending-shorts/deleteTrending/${record}`)
             if (response) {
                 message.success("Status updated succesfully");
                 fetchData();
@@ -121,7 +121,7 @@ const TopsShorts = () => {
 
         try {
             const response = await axios.post(
-                baseurl + "/api/tops-shorts/createTopShorts",
+                baseurl + "/api/trending-shorts/createTrending",
                 postData
             );
             console.log(response.data);
@@ -145,7 +145,7 @@ const TopsShorts = () => {
 
         try {
             const response = await axios.put(
-                `${baseurl}/api/tops-shorts/updateTopShorts/${editingSubCategory?._id}`,
+                `${baseurl}/api/trending-shorts/updateTrending/${editingSubCategory?._id}`,
                 postData
             );
             console.log(response.data);
@@ -169,8 +169,6 @@ const TopsShorts = () => {
     };
 
     const columns = [
-
-        
         // {
         //     title: "Page",
         //     dataIndex: "page",
@@ -378,4 +376,4 @@ const TopsShorts = () => {
     );
 };
 
-export default TopsShorts;
+export default TrendingShorts;

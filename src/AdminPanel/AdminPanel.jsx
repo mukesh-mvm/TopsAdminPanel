@@ -30,6 +30,8 @@ import CompBlog from "./CompBlog";
 import Blogs from "./Blogs";
 import { Profile } from "./Profile";
 import TopsShorts from "./TopsShorts";
+import TrendingShorts from "./TrendingShorts";
+import TopHeading from "./topHeading";
 // import logo from "../../public/logo.png";
 // properties-details
 
@@ -57,8 +59,16 @@ const AdminPanel = () => {
 
         case "categories":
         return <Category />;
+
+
         case "topShorts":
         return <TopsShorts />;
+
+        case "trendingShorts":
+        return <TrendingShorts />;
+
+        case "topHeading":
+        return <TopHeading />;
 
 
         case "profile":
@@ -99,6 +109,9 @@ const AdminPanel = () => {
     { key: "company", icon: <TeamOutlined  />, label: "Company" },
     { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
     { key: "blogs", icon: <TeamOutlined  />, label: "Blogs" },
+    { key: "topShorts", icon: <TeamOutlined  />, label: "TopsShorts" },
+    { key: "trendingShorts", icon: <TeamOutlined  />, label: "TrendingShorts" },
+    { key: "topHeading", icon: <TeamOutlined  />, label: "TopHeadingShorts" },
     // { key: "blog", icon: <CarOutlined />, label: "Blog" },
     // { key: "testinomial", icon: <CalendarOutlined />, label: "Testinomial" },
   ];
@@ -115,6 +128,8 @@ const AdminPanel = () => {
     { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
     { key: "blogs", icon: <TeamOutlined  />, label: "Blogs" },
     { key: "topShorts", icon: <TeamOutlined  />, label: "TopsShorts" },
+    { key: "trendingShorts", icon: <TeamOutlined  />, label: "TrendingShorts" },
+    { key: "topHeading", icon: <TeamOutlined  />, label: "TopHeadingShorts" },
     // { key: "blog", icon: <CarOutlined />, label: "Blog" },
     // { key: "testinomial", icon: <CalendarOutlined />, label: "Testinomial" },
   ];
