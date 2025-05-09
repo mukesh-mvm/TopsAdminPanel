@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     Table,
     Button,
@@ -10,7 +10,8 @@ import {
     Upload,
     Switch,
     DatePicker,
-    InputNumber
+    InputNumber,
+    Space
 } from "antd";
 
 import {
@@ -18,6 +19,8 @@ import {
     TranslationOutlined,
     TruckOutlined,
     CloseCircleOutlined,
+    PlusOutlined,
+    MinusCircleOutlined,
 } from "@ant-design/icons";
 import { UploadOutlined } from "@ant-design/icons";
 import { baseurl } from "../helper/Helper";
@@ -26,6 +29,7 @@ import Password from "antd/es/input/Password";
 // import { baseurl } from "../helper/Helper";
 import { useAuth } from "../context/auth";
 import { Popconfirm } from 'antd';
+import JoditEditor from "jodit-react";
 const { Option } = Select;
 
 const { TextArea } = Input;
@@ -45,6 +49,11 @@ const CompBlog = () => {
     const [record1, setRecord] = useState();
     const [imageTrue, setImageTrue] = useState(false);
     const [tag, setTag] = useState([])
+
+
+   const editor = useRef(null);
+   const [editorContent, setEditorContent] = useState("");
+
     const [user, setUser] = useState([])
     const auth1 = JSON.parse(localStorage.getItem('auth'));
 
@@ -201,6 +210,7 @@ const CompBlog = () => {
         console.log(record);
         setSelectedCategory(record.categories._id)
         setSelectedSubCategory(record.subcategories._id)
+        setEditorContent(record.body)
         console.log("--------data-----------",record.subcategories._id)
         form.setFieldsValue({
             title: record.title,
@@ -209,7 +219,7 @@ const CompBlog = () => {
             category: record.categories._id,
             subcategories: record.subcategories._id,
             tags: record.tags._id,
-            
+            faqs: record?.faqs || [],
             company: record.company.map(c => c._id)
 
             // dob:record.dateOfBirth,
@@ -291,6 +301,8 @@ const CompBlog = () => {
             postedBy: auth1?.user?._id,
             company: values.company,
             image: image1,
+            faqs:values.faqs,
+            body: editorContent,
 
 
         };
@@ -328,6 +340,8 @@ const CompBlog = () => {
             postedBy: auth1?.user?._id,
             company: values.company,
             image: imageTrue ? image1 : values.logo,
+            faqs:values.faqs,
+            body: editorContent,
 
         };
 
@@ -643,6 +657,107 @@ const columns1 = [
                             ))}
                         </Select>
                     </Form.Item>
+
+                       
+                       <Form.Item label="FAQS" required>
+                                               <Form.List name="faqs">
+                                                   {(fields, { add, remove }) => (
+                                                       <>
+                                                           {fields.map(({ key, name, ...restField }, index) => (
+                                                               <Space 
+                                                                   key={key}
+                                                                   style={{ display: "flex", marginBottom: 8 }}
+                                                                   align="start"
+                                                               >
+                                                                   <Form.Item
+                                                                       {...restField}
+                                                                       label={`Q${index + 1}`}
+                                                                       name={[name, "ques"]}
+                                                                       rules={[{ required: true, message: "Please enter a question" }]}
+                                                                   >
+                                                                       <Input placeholder="Question" />
+                                                                   </Form.Item>
+                       
+                                                                   <Form.Item
+                                                                       {...restField}
+                                                                       label={`A${index + 1}`}
+                                                                       name={[name, "ans"]}
+                                                                       rules={[{ required: true, message: "Please enter an answer" }]}
+                                                                   >
+                                                                       <Input placeholder="Answer" />
+                                                                   </Form.Item>
+                       
+                                                                   <MinusCircleOutlined onClick={() => remove(name)} />
+                                                               </Space>
+                                                           ))}
+                       
+                                                           <Form.Item>
+                                                               <Button
+                                                                   type="dashed"
+                                                                   onClick={() => add()}
+                                                                   block
+                                                                   icon={<PlusOutlined  />}
+                                                               >
+                                                                   Add FAQ
+                                                               </Button>
+                                                           </Form.Item>
+                                                       </>
+                                                   )}
+                                               </Form.List>
+                                           </Form.Item>
+                       
+                       
+                       
+                                           <Form.Item label="Content" required>
+                                               <JoditEditor
+                                                   ref={editor}
+                                                   value={editorContent}
+                                                   onBlur={(newContent) => setEditorContent(newContent)}
+                                                   tabIndex={1}
+                                                   placeholder="Write your content here..."
+                                                   config={{
+                                                       cleanHTML: {
+                                                           removeEmptyTags: false,
+                                                           fillEmptyParagraph: false,
+                                                           removeEmptyBlocks: false,
+                                                       },
+                                                       uploader: {
+                                                           url: `${baseurl}/api/amenities/uploadImage`, // Your image upload API endpoint
+                                                           // This function handles the response
+                                                           format: "json", // Specify the response format
+                                                           isSuccess: function (resp) {
+                                                               return !resp.error;
+                                                           },
+                                                           getMsg: function (resp) {
+                                                               return resp.msg.join !== undefined
+                                                                   ? resp.msg.join(" ")
+                                                                   : resp.msg;
+                                                           },
+                                                           process: function (resp) {
+                                                               return {
+                                                                   files: resp.files || [],
+                                                                   path: resp.files.url,
+                                                                   baseurl: resp.files.url,
+                                                                   error: resp.error || "error",
+                                                                   msg: resp.msg || "iuplfn",
+                                                               };
+                                                           },
+                                                           defaultHandlerSuccess: function (data, resp) {
+                                                               const files = data.files || [];
+                                                               console.log({ files });
+                                                               if (files) {
+                                                                   this.selection.insertImage(files.url, null, 250);
+                                                               }
+                                                           },
+                                                       },
+                                                       enter: "DIV",
+                                                       defaultMode: "DIV",
+                                                       removeButtons: ["font"],
+                                                   }}
+                                               />
+                                           </Form.Item>
+               
+
 
 
 

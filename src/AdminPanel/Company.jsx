@@ -19,6 +19,8 @@ import {
     TranslationOutlined,
     TruckOutlined,
     CloseCircleOutlined,
+    MinusCircleOutlined,
+    PlusOutlined,
   } from "@ant-design/icons";
   import { UploadOutlined } from "@ant-design/icons";
 import { baseurl } from "../helper/Helper";
@@ -661,6 +663,7 @@ const Company = () => {
                     </Form.Item>
 
                   
+                    
 
 
 
