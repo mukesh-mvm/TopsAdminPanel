@@ -280,7 +280,7 @@ const Blogs = () => {
 
         try {
             const response = await axios.post(
-                `${baseurl}/upload`,
+                 `${baseurl}/api/uploadImage`,
                 formData,
                 {
                     headers: {
@@ -813,7 +813,7 @@ const Blogs = () => {
                                         onClick={handleCross}
                                     />
                                     <img
-                                        src={`${record1.image}`}
+                                       src={`${baseurl}${record1.image}`}
                                         alt=""
                                         style={{ width: "100px", height: "100px" }}
                                     />

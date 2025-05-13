@@ -48,6 +48,96 @@ const Users = () => {
 
 
 
+  // const config = {
+  //   readonly: false,
+  //   height: 500,
+  //   uploader: {
+  //     url: `${baseurl}/api/media`, // Image upload API endpoint
+  //     method: 'POST',
+  //     prepareData: (formData, file) => {
+        
+  //       if (!file) {
+  //         console.error("No file selected!");
+  //       }
+  //       formData.append('file', file); // Append the file to FormData under 'file' key
+  //       return formData;
+  //     },
+  //     isSuccess: (resp) => {
+  //       return resp.success === 1; // Check for success in response
+  //     },
+  //     getMessage: (resp) => {
+  //       return resp.message || 'Image uploaded'; // Success message
+  //     },
+  //     process: (resp) => {
+  //       return {
+  //         files: [
+  //           {
+  //             url: `${baseurl}${resp.file.url}`, // Full URL for the uploaded image
+  //           },
+  //         ],
+  //         path: resp.file.url, // Path to the image (relative to server)
+  //       };
+  //     },
+  //   },
+  //   buttons: [
+  //     'source', '|',
+  //     'bold', 'italic', 'underline', '|',
+  //     'ul', 'ol', '|',
+  //     'table', 'image', 'video', '|',
+  //     'link', 'unlink', '|',
+  //     'hr', 'eraser', '|',
+  //     'fullsize',
+  //   ],
+  // };
+
+
+
+  const config = {
+    readonly: false,
+    height: 500,
+   uploader: {
+  url: `${baseurl}/api/media`,
+  method: 'POST',
+  data: function (formData) {
+    const file = formData.getAll('files[0]')[0];
+    console.log(file)
+    formData.delete('files[0]');
+    formData.append('file', file); // rename field
+    console.log("form data",formData)
+
+    const newForm = new FormData()
+    newForm.append("file[0]",formData.file[0])
+    return formData;
+
+    
+  },
+  
+  isSuccess: (resp) => resp.success === 1,
+  getMessage: (resp) => resp.message || 'Image uploaded',
+  process: (resp) => ({
+    files: [
+      {
+        url: `${baseurl}${resp.file.url}`,
+      },
+    ],
+    path: resp.file.url,
+  }),
+},
+
+    buttons: [
+      'source', '|',
+      'bold', 'italic', 'underline', '|',
+      'ul', 'ol', '|',
+      'table', 'image', 'video', '|',
+      'link', 'unlink', '|',
+      'hr', 'eraser', '|',
+      'fullsize',
+    ],
+  };
+  
+  
+  
+
   
   const handleRowClick = (record) => {
     console.log("Clicked row data:", record);
@@ -452,6 +542,7 @@ const handleCross = () => {
 
 
 
+
             <Form.Item label="Short Bio" required>
                         <JoditEditor
                             ref={editor}
@@ -494,12 +585,27 @@ const handleCross = () => {
                                         }
                                     },
                                 },
-                                enter: "DIV",
-                                defaultMode: "DIV",
+                                // enter: "DIV",
+                                defaultMode: "div",
                                 removeButtons: ["font"],
                             }}
                         />
+
+
+        
                     </Form.Item>
+
+
+{/* 
+        <Form.Item label="Short Bio" required>            
+        <JoditEditor
+        ref={editor}
+        value={editorContent}
+        config={config}
+        tabIndex={1}
+        onBlur={(newContent) => setEditorContent(newContent)}
+      />
+      </Form.Item> */}
 
 
 

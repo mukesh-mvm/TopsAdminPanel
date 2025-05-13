@@ -204,7 +204,7 @@ const Company = () => {
     
         try {
           const response = await axios.post(
-            `${baseurl}/upload`,
+            `${baseurl}/api/uploadImage`,
             formData,
             {
               headers: {
@@ -225,6 +225,35 @@ const Company = () => {
           return null;
         }
       };
+    // const uploadImage = async (file) => {
+    //     console.log(file);
+    //     const formData = new FormData();
+    //     formData.append("image", file.file);
+    //     // console.log(file.file.name);
+    
+    //     try {
+    //       const response = await axios.post(
+    //         `${baseurl}/upload`,
+    //         formData,
+    //         {
+    //           headers: {
+    //             "Content-Type": "multipart/form-data",
+    //           },
+    //         }
+    //       );
+    
+    //       if (response) {
+    //         message.success("Image uploaded successfully!");
+    //         setImage(response.data.imageUrl);
+    //       }
+    
+    //       return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
+    //     } catch (error) {
+    //       message.error("Error uploading image. Please try again later.");
+    //       console.error("Image upload error:", error);
+    //       return null;
+    //     }
+    //   };
 
     const handlePost = async (values) => {
 
@@ -670,6 +699,8 @@ const Company = () => {
 
                   
           {editingCompany ? (
+
+            
             <>
               {cross ? (
                 <>
@@ -678,7 +709,7 @@ const Company = () => {
                     onClick={handleCross}
                   />
                   <img
-                    src={`${record1.logo}`}
+                    src={`${baseurl}${record1.logo}`}
                     alt=""
                     style={{ width: "100px", height: "100px" }}
                   />
