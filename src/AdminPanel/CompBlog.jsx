@@ -223,6 +223,9 @@ const CompBlog = () => {
             faqs: record?.faqs || [],
             company: record.company.map(c => c._id),
             slug:record?.slug,
+            subHeading:record?.subHeading,
+            heading:record?.heading,
+            para:record?.para
 
             // dob:record.dateOfBirth,
         });
@@ -306,6 +309,9 @@ const CompBlog = () => {
             faqs: values.faqs,
             body: editorContent,
             slug:values?.slug,
+            subHeading:values?.subHeading,
+            heading:values?.heading,
+            para:values?.para,
 
 
         };
@@ -346,6 +352,9 @@ const CompBlog = () => {
             faqs: values.faqs,
             body: editorContent,
             slug:values?.slug,
+            subHeading:values?.subHeading,
+            heading:values?.heading,
+            para:values?.para
 
         };
 
@@ -543,6 +552,29 @@ const CompBlog = () => {
                         rules={[{ required: true, message: "Please input the name!" }]}
                     >
                         <Input placeholder="Enter Blog Title" />
+                    </Form.Item>
+
+
+                    <Form.Item
+                        name="heading"
+                        label="Blog Heading"
+                        // rules={[{ required: true, message: "Please input the name!" }]}
+                    >
+                        <Input placeholder="Enter Blog Heading" />
+                    </Form.Item>
+                    <Form.Item
+                        name="subHeading"
+                        label="Blog SubHeading"
+                        // rules={[{ required: true, message: "Please input the name!" }]}
+                    >
+                        <Input placeholder="Enter Blog Sub Heading" />
+                    </Form.Item>
+                    <Form.Item
+                        name="para"
+                        label="Blog Para"
+                        // rules={[{ required: true, message: "Please input the name!" }]}
+                    >
+                        <Input placeholder="Enter Blog Para" />
                     </Form.Item>
 
 
