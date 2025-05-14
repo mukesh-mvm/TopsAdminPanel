@@ -708,11 +708,28 @@ const Company = () => {
                     style={{ width: "30px" }}
                     onClick={handleCross}
                   />
-                  <img
+                  {/* <img
                     src={`${baseurl}${record1.logo}`}
                     alt=""
                     style={{ width: "100px", height: "100px" }}
-                  />
+                  /> */}
+
+
+                   {
+                                                          record1?.logo?.includes("res") ? (
+                                                              <img
+                                                                  src={record1.logo}
+                                                                  alt=""
+                                                                  style={{ width: "100px", height: "100px" }}
+                                                              />
+                                                          ) : (
+                                                              <img
+                                                                  src={`${baseurl}${record1.logo}`}
+                                                                  alt=""
+                                                                  style={{ width: "100px", height: "100px" }}
+                                                              />
+                                                          )
+                                                      }
                 </>
               ) : (
                 <>

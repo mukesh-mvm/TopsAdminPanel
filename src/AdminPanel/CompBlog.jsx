@@ -42,7 +42,7 @@ const CompBlog = () => {
     const [auth, setAuth] = useAuth();
     const [categories, setCategoris] = useState([])
     const [subcategories, setSubCategoris] = useState([])
-    const[company,setCompany] = useState([])
+    const [company, setCompany] = useState([])
     const [image1, setImage] = useState();
     const [photo, setPhoto] = useState("");
     const [cross, setCross] = useState(true);
@@ -51,14 +51,14 @@ const CompBlog = () => {
     const [tag, setTag] = useState([])
 
 
-   const editor = useRef(null);
-   const [editorContent, setEditorContent] = useState("");
+    const editor = useRef(null);
+    const [editorContent, setEditorContent] = useState("");
 
     const [user, setUser] = useState([])
     const auth1 = JSON.parse(localStorage.getItem('auth'));
 
     const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
-    const [selectedSubCategory, setSelectedSubCategory] = useState(null); 
+    const [selectedSubCategory, setSelectedSubCategory] = useState(null);
 
     const handleCategoryChange = (value) => {
         setSelectedCategory(value); // save selected category ID to variable
@@ -210,8 +210,9 @@ const CompBlog = () => {
         console.log(record);
         setSelectedCategory(record.categories._id)
         setSelectedSubCategory(record.subcategories._id)
-        setEditorContent(record.body)
-        console.log("--------data-----------",record.subcategories._id)
+        setEditorContent(record?.body)
+        console.log("---body---",record.body)
+        console.log("--------data-----------", record.subcategories._id)
         form.setFieldsValue({
             title: record.title,
             mtitle: record.mtitle,
@@ -220,7 +221,8 @@ const CompBlog = () => {
             subcategories: record.subcategories._id,
             tags: record.tags._id,
             faqs: record?.faqs || [],
-            company: record.company.map(c => c._id)
+            company: record.company.map(c => c._id),
+            slug:record?.slug,
 
             // dob:record.dateOfBirth,
         });
@@ -244,10 +246,10 @@ const CompBlog = () => {
     };
 
 
-    const handleDelete = async(record)=>{
+    const handleDelete = async (record) => {
         try {
-             const response = await axios.delete(`${baseurl}/deletecompblogs/${record}`)
-             if (response) {
+            const response = await axios.delete(`${baseurl}/deletecompblogs/${record}`)
+            if (response) {
                 message.success("Status updated succesfully");
                 fetchData();
             }
@@ -290,7 +292,7 @@ const CompBlog = () => {
 
     const handlePost = async (values) => {
 
-       
+
         const postData = {
             title: values.title,
             mtitle: values.mtitle,
@@ -301,8 +303,9 @@ const CompBlog = () => {
             postedBy: auth1?.user?._id,
             company: values.company,
             image: image1,
-            faqs:values.faqs,
+            faqs: values.faqs,
             body: editorContent,
+            slug:values?.slug,
 
 
         };
@@ -328,8 +331,8 @@ const CompBlog = () => {
     };
 
     const handlePut = async (values) => {
-        
-        
+
+
         const postData = {
             title: values.title,
             mtitle: values.mtitle,
@@ -340,8 +343,9 @@ const CompBlog = () => {
             postedBy: auth1?.user?._id,
             company: values.company,
             image: imageTrue ? image1 : values.logo,
-            faqs:values.faqs,
+            faqs: values.faqs,
             body: editorContent,
+            slug:values?.slug,
 
         };
 
@@ -403,16 +407,16 @@ const CompBlog = () => {
         // specialization
 
         {
-          title: "Status",
-          key: "Status",
-          render: (_, record) => (
-            <Switch
-              checked={record.status === "Active"}
-              onChange={() => handleStatusToggle(record)}
-              checkedChildren="Active"
-              unCheckedChildren="Inactive"
-            />
-          ),
+            title: "Status",
+            key: "Status",
+            render: (_, record) => (
+                <Switch
+                    checked={record.status === "Active"}
+                    onChange={() => handleStatusToggle(record)}
+                    checkedChildren="Active"
+                    unCheckedChildren="Inactive"
+                />
+            ),
         },
 
         {
@@ -425,28 +429,28 @@ const CompBlog = () => {
             ),
         },
 
-         {
-              title: "Delete",
-              render: (_, record) => (
+        {
+            title: "Delete",
+            render: (_, record) => (
                 <>
-                  {auth1?.user?.role === 'superAdmin' && (
-                    <Popconfirm
-                      title="Are you sure you want to delete this blog?"
-                      onConfirm={() => handleDelete(record._id)}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <Button type="link" danger>
-                        Delete
-                      </Button>
-                    </Popconfirm>
-                  )}
+                    {auth1?.user?.role === 'superAdmin' && (
+                        <Popconfirm
+                            title="Are you sure you want to delete this blog?"
+                            onConfirm={() => handleDelete(record._id)}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Button type="link" danger>
+                                Delete
+                            </Button>
+                        </Popconfirm>
+                    )}
                 </>
-              ),
-            }
+            ),
+        }
     ];
 
-const columns1 = [
+    const columns1 = [
         {
             title: "Blog Title",
             dataIndex: "title",
@@ -471,7 +475,7 @@ const columns1 = [
 
         // specialization
 
-       
+
 
         {
             title: "Actions",
@@ -483,7 +487,7 @@ const columns1 = [
             ),
         },
     ];
-    
+
 
 
     return (
@@ -493,7 +497,7 @@ const columns1 = [
             </Button>
 
             {
-                auth1?.user?.role==='superAdmin'?(<><Table
+                auth1?.user?.role === 'superAdmin' ? (<><Table
                     columns={columns}
                     dataSource={data}
                     loading={loading}
@@ -503,26 +507,26 @@ const columns1 = [
                             handleRowClick(record); // Trigger the click handler
                         },
                     })}
-    
-    
+
+
                 // rowKey="_id"
-                /></>):(<>
-                <Table
-                    columns={columns1}
-                    dataSource={data}
-                    loading={loading}
-                    rowKey={(record) => record._id}
-                    onRow={(record) => ({
-                        onClick: () => {
-                            handleRowClick(record); // Trigger the click handler
-                        },
-                    })}
-    
-                // rowKey="_id"
-                />
+                /></>) : (<>
+                    <Table
+                        columns={columns1}
+                        dataSource={data}
+                        loading={loading}
+                        rowKey={(record) => record._id}
+                        onRow={(record) => ({
+                            onClick: () => {
+                                handleRowClick(record); // Trigger the click handler
+                            },
+                        })}
+
+                    // rowKey="_id"
+                    />
                 </>)
             }
-            
+
 
             <Modal
                 title={editingCompBlog ? "Edit CompBlog" : "Add CompBlog"}
@@ -539,6 +543,15 @@ const columns1 = [
                         rules={[{ required: true, message: "Please input the name!" }]}
                     >
                         <Input placeholder="Enter Blog Title" />
+                    </Form.Item>
+
+
+                    <Form.Item
+                        name="slug"
+                        label="Blog slug"
+                        rules={[{ required: true, message: "Please input the name!" }]}
+                    >
+                        <Input placeholder="Enter Blog Slug" />
                     </Form.Item>
 
 
@@ -598,7 +611,7 @@ const columns1 = [
                         label="SubCategories"
                         rules={[{ required: true, message: 'Please select a category!' }]}
                     >
-                        <Select placeholder="Select a subcategories" loading={loading}  onChange={handleCategoryChange1}>
+                        <Select placeholder="Select a subcategories" loading={loading} onChange={handleCategoryChange1}>
                             {subcategories?.map((cat) => (
                                 <Option key={cat._id} value={cat._id}>
                                     {cat.name}
@@ -658,202 +671,215 @@ const columns1 = [
                         </Select>
                     </Form.Item>
 
-                       
-                       <Form.Item label="FAQS" required>
-                                               <Form.List name="faqs">
-                                                   {(fields, { add, remove }) => (
-                                                       <>
-                                                           {fields.map(({ key, name, ...restField }, index) => (
-                                                               <Space 
-                                                                   key={key}
-                                                                   style={{ display: "flex", marginBottom: 8 }}
-                                                                   align="start"
-                                                               >
-                                                                   <Form.Item
-                                                                       {...restField}
-                                                                       label={`Q${index + 1}`}
-                                                                       name={[name, "ques"]}
-                                                                       rules={[{ required: true, message: "Please enter a question" }]}
-                                                                   >
-                                                                       <Input placeholder="Question" />
-                                                                   </Form.Item>
-                       
-                                                                   <Form.Item
-                                                                       {...restField}
-                                                                       label={`A${index + 1}`}
-                                                                       name={[name, "ans"]}
-                                                                       rules={[{ required: true, message: "Please enter an answer" }]}
-                                                                   >
-                                                                       <Input placeholder="Answer" />
-                                                                   </Form.Item>
-                       
-                                                                   <MinusCircleOutlined onClick={() => remove(name)} />
-                                                               </Space>
-                                                           ))}
-                       
-                                                           <Form.Item>
-                                                               <Button
-                                                                   type="dashed"
-                                                                   onClick={() => add()}
-                                                                   block
-                                                                   icon={<PlusOutlined  />}
-                                                               >
-                                                                   Add FAQ
-                                                               </Button>
-                                                           </Form.Item>
-                                                       </>
-                                                   )}
-                                               </Form.List>
-                                           </Form.Item>
-                       
-                       
-                       
-                                           <Form.Item label="Content" required>
-                                               <JoditEditor
-                                                   ref={editor}
-                                                   value={editorContent}
-                                                   onBlur={(newContent) => setEditorContent(newContent)}
-                                                   tabIndex={1}
-                                                   placeholder="Write your content here..."
-                                                   config={{
-                                                       cleanHTML: {
-                                                           removeEmptyTags: false,
-                                                           fillEmptyParagraph: false,
-                                                           removeEmptyBlocks: false,
-                                                       },
-                                                       uploader: {
-                                                           url: `${baseurl}/api/amenities/uploadImage`, // Your image upload API endpoint
-                                                           // This function handles the response
-                                                           format: "json", // Specify the response format
-                                                           isSuccess: function (resp) {
-                                                               return !resp.error;
-                                                           },
-                                                           getMsg: function (resp) {
-                                                               return resp.msg.join !== undefined
-                                                                   ? resp.msg.join(" ")
-                                                                   : resp.msg;
-                                                           },
-                                                           process: function (resp) {
-                                                               return {
-                                                                   files: resp.files || [],
-                                                                   path: resp.files.url,
-                                                                   baseurl: resp.files.url,
-                                                                   error: resp.error || "error",
-                                                                   msg: resp.msg || "iuplfn",
-                                                               };
-                                                           },
-                                                           defaultHandlerSuccess: function (data, resp) {
-                                                               const files = data.files || [];
-                                                               console.log({ files });
-                                                               if (files) {
-                                                                   this.selection.insertImage(files.url, null, 250);
-                                                               }
-                                                           },
-                                                       },
-                                                       enter: "DIV",
-                                                       defaultMode: "DIV",
-                                                       removeButtons: ["font"],
-                                                   }}
-                                               />
-                                           </Form.Item>
-               
+
+                    <Form.Item label="FAQS" required>
+                        <Form.List name="faqs">
+                            {(fields, { add, remove }) => (
+                                <>
+                                    {fields.map(({ key, name, ...restField }, index) => (
+                                        <Space
+                                            key={key}
+                                            style={{ display: "flex", marginBottom: 8 }}
+                                            align="start"
+                                        >
+                                            <Form.Item
+                                                {...restField}
+                                                label={`Q${index + 1}`}
+                                                name={[name, "ques"]}
+                                                rules={[{ required: true, message: "Please enter a question" }]}
+                                            >
+                                                <Input placeholder="Question" />
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                {...restField}
+                                                label={`A${index + 1}`}
+                                                name={[name, "ans"]}
+                                                rules={[{ required: true, message: "Please enter an answer" }]}
+                                            >
+                                                <Input placeholder="Answer" />
+                                            </Form.Item>
+
+                                            <MinusCircleOutlined onClick={() => remove(name)} />
+                                        </Space>
+                                    ))}
+
+                                    <Form.Item>
+                                        <Button
+                                            type="dashed"
+                                            onClick={() => add()}
+                                            block
+                                            icon={<PlusOutlined />}
+                                        >
+                                            Add FAQ
+                                        </Button>
+                                    </Form.Item>
+                                </>
+                            )}
+                        </Form.List>
+                    </Form.Item>
+
+
+
+                    <Form.Item label="Content" required>
+                        <JoditEditor
+                            ref={editor}
+                            value={editorContent}
+                            onBlur={(newContent) => setEditorContent(newContent)}
+                            tabIndex={1}
+                            placeholder="Write your content here..."
+                            config={{
+                                cleanHTML: {
+                                    removeEmptyTags: false,
+                                    fillEmptyParagraph: false,
+                                    removeEmptyBlocks: false,
+                                },
+                                uploader: {
+                                    url: `${baseurl}/api/amenities/uploadImage`, // Your image upload API endpoint
+                                    // This function handles the response
+                                    format: "json", // Specify the response format
+                                    isSuccess: function (resp) {
+                                        return !resp.error;
+                                    },
+                                    getMsg: function (resp) {
+                                        return resp.msg.join !== undefined
+                                            ? resp.msg.join(" ")
+                                            : resp.msg;
+                                    },
+                                    process: function (resp) {
+                                        return {
+                                            files: resp.files || [],
+                                            path: resp.files.url,
+                                            baseurl: resp.files.url,
+                                            error: resp.error || "error",
+                                            msg: resp.msg || "iuplfn",
+                                        };
+                                    },
+                                    defaultHandlerSuccess: function (data, resp) {
+                                        const files = data.files || [];
+                                        console.log({ files });
+                                        if (files) {
+                                            this.selection.insertImage(files.url, null, 250);
+                                        }
+                                    },
+                                },
+                                enter: "DIV",
+                                defaultMode: "DIV",
+                                removeButtons: ["font"],
+                            }}
+                        />
+                    </Form.Item>
 
 
 
 
-                       {editingCompBlog ? (
-                                            <>
-                                                {cross ? (
-                                                    <>
-                                                        <CloseCircleOutlined
-                                                            style={{ width: "30px" }}
-                                                            onClick={handleCross}
-                                                        />
-                                                        <img
-                                                             src={`${baseurl}${record1.image}`}
-                                                            alt=""
-                                                            style={{ width: "100px", height: "100px" }}
-                                                        />
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Form.Item
-                                                            label="Photo"
-                                                            name="photo"
-                                                            onChange={(e) => setPhoto(e.target.files[0])}
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Please upload the driver's photo!",
-                                                                },
-                                                            ]}
-                                                        >
-                                                            <Upload
-                                                                listType="picture"
-                                                                beforeUpload={() => false}
-                                                                onChange={uploadImage}
-                                                                showUploadList={false}
-                                                                customRequest={({ file, onSuccess }) => {
-                                                                    setTimeout(() => {
-                                                                        onSuccess("ok");
-                                                                    }, 0);
-                                                                }}
-                                                            >
-                                                                <Button icon={<UploadOutlined />}>Upload Photo</Button>
-                                                            </Upload>
-                                                        </Form.Item>
-                                                        {photo && (
-                                                            <div>
-                                                                <img
-                                                                    src={URL.createObjectURL(photo)}
-                                                                    alt="Uploaded"
-                                                                    height="100px"
-                                                                    width="100px"
-                                                                />
-                                                            </div>
-                                                        )}
-                                                    </>
-                                                )}
-                                            </>
+
+                    {editingCompBlog ? (
+                        <>
+                            {cross ? (
+                                <>
+                                    <CloseCircleOutlined
+                                        style={{ width: "30px" }}
+                                        onClick={handleCross}
+                                    />
+
+                                    {
+                                        record1?.image?.includes("res") ? (
+                                            <img
+                                                src={record1.image}
+                                                alt=""
+                                                style={{ width: "100px", height: "100px" }}
+                                            />
                                         ) : (
-                                            <>
-                                                <Form.Item
-                                                    label="Photo"
-                                                    name="photo"
-                                                    onChange={(e) => setPhoto(e.target.files[0])}
-                                                    rules={[
-                                                        {
-                                                            required: true,
-                                                            message: "Please upload the driver's photo!",
-                                                        },
-                                                    ]}
-                                                >
-                                                    <Upload
-                                                        listType="picture"
-                                                        beforeUpload={() => false}
-                                                        onChange={uploadImage}
-                                                        showUploadList={false}
-                                                        customRequest={({ file, onSuccess }) => {
-                                                            setTimeout(() => {
-                                                                onSuccess("ok");
-                                                            }, 0);
-                                                        }}
-                                                    >
-                                                        <Button icon={<UploadOutlined />}>Upload Photo</Button>
-                                                    </Upload>
-                                                </Form.Item>
-                                                {photo && (
-                                                    <div>
-                                                        <img
-                                                            src={URL.createObjectURL(photo)}
-                                                            alt="Uploaded"
-                                                            height="100px"
-                                                            width="100px"
-                                                        />
-                                                    </div>
-                                                )}
-                                            </>
-                                        )}
+                                            <img
+                                                src={`${baseurl}${record1.image}`}
+                                                alt=""
+                                                style={{ width: "100px", height: "100px" }}
+                                            />
+                                        )
+                                    }
+
+
+                                </>
+                            ) : (
+                                <>
+                                    <Form.Item
+                                        label="Photo"
+                                        name="photo"
+                                        onChange={(e) => setPhoto(e.target.files[0])}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: "Please upload the driver's photo!",
+                                            },
+                                        ]}
+                                    >
+                                        <Upload
+                                            listType="picture"
+                                            beforeUpload={() => false}
+                                            onChange={uploadImage}
+                                            showUploadList={false}
+                                            customRequest={({ file, onSuccess }) => {
+                                                setTimeout(() => {
+                                                    onSuccess("ok");
+                                                }, 0);
+                                            }}
+                                        >
+                                            <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                                        </Upload>
+                                    </Form.Item>
+                                    {photo && (
+                                        <div>
+                                            <img
+                                                src={URL.createObjectURL(photo)}
+                                                alt="Uploaded"
+                                                height="100px"
+                                                width="100px"
+                                            />
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        <>
+                            <Form.Item
+                                label="Photo"
+                                name="photo"
+                                onChange={(e) => setPhoto(e.target.files[0])}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Please upload the driver's photo!",
+                                    },
+                                ]}
+                            >
+                                <Upload
+                                    listType="picture"
+                                    beforeUpload={() => false}
+                                    onChange={uploadImage}
+                                    showUploadList={false}
+                                    customRequest={({ file, onSuccess }) => {
+                                        setTimeout(() => {
+                                            onSuccess("ok");
+                                        }, 0);
+                                    }}
+                                >
+                                    <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                                </Upload>
+                            </Form.Item>
+                            {photo && (
+                                <div>
+                                    <img
+                                        src={URL.createObjectURL(photo)}
+                                        alt="Uploaded"
+                                        height="100px"
+                                        width="100px"
+                                    />
+                                </div>
+                            )}
+                        </>
+                    )}
 
 
                     <Form.Item>
