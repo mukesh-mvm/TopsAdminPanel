@@ -37,7 +37,7 @@ const Blog = () => {
         try {
             const res = await axios.get(baseurl + "/api/catagory/get-categories");
 
-            console.log("----data-----", res.data);
+            // console.log("----data-----", res.data);
             setData(res.data);
             setLoading(false);
         } catch (error) {
@@ -54,7 +54,7 @@ const Blog = () => {
 
     const handleEdit = (record) => {
         setEditingBlog(record);
-        console.log(record.email);
+        // console.log(record.email);
         form.setFieldsValue({
             name: record.name,
             title: record.title,
@@ -70,7 +70,7 @@ const Blog = () => {
             const response = await axios.patch(
                 `${baseurl}/api/admin/toggled/${record?._id}`
             );
-            console.log(response);
+            // console.log(response);
 
             if (response) {
                 message.success("Status updated succesfully");
@@ -94,7 +94,7 @@ const Blog = () => {
                 baseurl + "/api/catagory/create-categories",
                 postData
             );
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data) {
                 setIsModalOpen(false);
@@ -118,7 +118,7 @@ const Blog = () => {
                 `${baseurl}/api/catagory/update-categories/${editingBlog?._id}`,
                 postData
             );
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data) {
                 setIsModalOpen(false);

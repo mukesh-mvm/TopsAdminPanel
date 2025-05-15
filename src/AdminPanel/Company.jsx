@@ -1,28 +1,28 @@
 import React, { useState, useEffect } from "react";
 import {
-    Table,
-    Button,
-    Modal,
-    Form,
-    Input,
-    Select,
-    message,
-    Upload,
-    Switch,
-    DatePicker,
-    InputNumber,
-    Popconfirm
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Select,
+  message,
+  Upload,
+  Switch,
+  DatePicker,
+  InputNumber,
+  Popconfirm
 } from "antd";
 
 import {
-    BellOutlined,
-    TranslationOutlined,
-    TruckOutlined,
-    CloseCircleOutlined,
-    MinusCircleOutlined,
-    PlusOutlined,
-  } from "@ant-design/icons";
-  import { UploadOutlined } from "@ant-design/icons";
+  BellOutlined,
+  TranslationOutlined,
+  TruckOutlined,
+  CloseCircleOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 import { baseurl } from "../helper/Helper";
 import axios from "axios";
 import Password from "antd/es/input/Password";
@@ -32,27 +32,27 @@ const { Option } = Select;
 
 const { TextArea } = Input;
 const Company = () => {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingCompany, setEditingCompany] = useState(null);
-    const [form] = Form.useForm();
-    const [auth, setAuth] = useAuth();
-    const [categories, setCategoris] = useState([])
-    const [subcategories, setSubCategoris] = useState([])
-    const [image1, setImage] = useState();
-    const [photo, setPhoto] = useState("");
-    const [cross, setCross] = useState(true);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCompany, setEditingCompany] = useState(null);
+  const [form] = Form.useForm();
+  const [auth, setAuth] = useAuth();
+  const [categories, setCategoris] = useState([])
+  const [subcategories, setSubCategoris] = useState([])
+  const [image1, setImage] = useState();
+  const [photo, setPhoto] = useState("");
+  const [cross, setCross] = useState(true);
   const [record1, setRecord] = useState();
   const [imageTrue, setImageTrue] = useState(false);
   const auth1 = JSON.parse(localStorage.getItem('auth'));
 
 
- const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
+  const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
 
   const handleCategoryChange = (value) => {
     setSelectedCategory(value); // save selected category ID to variable
-    console.log("Selected Category ID:", value);
+    // console.log("Selected Category ID:", value);
   };
 
 
@@ -60,7 +60,7 @@ const Company = () => {
 
 
   const handleRowClick = (record) => {
-    console.log("Clicked row data:", record);
+    // console.log("Clicked row data:", record);
     setRecord(record);
     setImage(record?.logo);
     setCross(true);
@@ -73,504 +73,504 @@ const Company = () => {
     setCross(false);
   };
 
-    // console.log(auth?.user._id);
+  // console.log(auth?.user._id);
 
-    useEffect(() => {
+  useEffect(() => {
+    fetchData();
+    fetchData1()
+
+
+  }, []);
+
+
+
+  useEffect(() => {
+    fetchData2()
+  }, [selectedCategory])
+
+
+
+
+  const fetchData1 = async () => {
+    try {
+      const res = await axios.get(baseurl + "/category");
+      // console.log("----data-----", res.data);
+      setCategoris(res.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  };
+
+
+
+  const fetchData2 = async () => {
+    try {
+      const res = await axios.get(`${baseurl}/getOneSubByCategoryId/${selectedCategory}`);
+      // console.log("----data-----", res.data);
+      setSubCategoris(res.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(baseurl + "/getAllCompany");
+
+      // console.log("----data-----", res.data);
+      setData(res.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  };
+
+  const handleAdd = () => {
+    setEditingCompany(null);
+    form.resetFields();
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (record) => {
+    setImageTrue(true);
+    setEditingCompany(record);
+    // console.log(record);
+    setSelectedCategory(record.category._id)
+    const benifits = record?.benifits.join('\n')
+    const cons = record?.cons.join('\n')
+    const features = record?.features.join('\n')
+    const pros = record?.pros.join('\n')
+    form.setFieldsValue({
+      Description: record?.Description,
+      benifits: benifits,
+      cons: cons,
+      features: features,
+      pros: pros,
+      mainHeading: record?.mainHeading,
+      rating: record?.rating,
+      review: record?.review,
+      websiteName: record?.websiteName,
+      visitSiteUrl: record?.visitSiteUrl,
+      category: record?.category?._id,
+      slug: record.slug,
+      subcategories: record?.subcategories?._id
+
+      // dob:record.dateOfBirth,
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleStatusToggle = async (record) => {
+    try {
+      const response = await axios.patch(
+        `${baseurl}/updateCompanyStatus/${record?._id}`
+      );
+      // console.log(response);
+
+      if (response) {
+        message.success("Status updated succesfully");
         fetchData();
-        fetchData1()
-
-       
-    }, []);
-
-
-
-    useEffect(()=>{
-        fetchData2()
-    },[selectedCategory])
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 
+  const handleDelete = async (record) => {
+    try {
+      const response = await axios.delete(`${baseurl}/deleteCompany/${record}`)
+      if (response) {
+        message.success("Status updated succesfully");
+        fetchData();
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
-    const fetchData1 = async () => {
-        try {
-            const res = await axios.get(baseurl + "/category");
-            // console.log("----data-----", res.data);
-            setCategoris(res.data);
-            setLoading(false);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            setLoading(false);
+
+  const uploadImage = async (file) => {
+    // console.log(file);
+    const formData = new FormData();
+    formData.append("image", file.file);
+    // console.log(file.file.name);
+
+    try {
+      const response = await axios.post(
+        `${baseurl}/api/uploadImage`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
+      );
+
+      if (response) {
+        message.success("Image uploaded successfully!");
+        setImage(response.data.imageUrl);
+      }
+
+      return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
+    } catch (error) {
+      message.error("Error uploading image. Please try again later.");
+      console.error("Image upload error:", error);
+      return null;
+    }
+  };
+  // const uploadImage = async (file) => {
+  //     console.log(file);
+  //     const formData = new FormData();
+  //     formData.append("image", file.file);
+  //     // console.log(file.file.name);
+
+  //     try {
+  //       const response = await axios.post(
+  //         `${baseurl}/upload`,
+  //         formData,
+  //         {
+  //           headers: {
+  //             "Content-Type": "multipart/form-data",
+  //           },
+  //         }
+  //       );
+
+  //       if (response) {
+  //         message.success("Image uploaded successfully!");
+  //         setImage(response.data.imageUrl);
+  //       }
+
+  //       return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
+  //     } catch (error) {
+  //       message.error("Error uploading image. Please try again later.");
+  //       console.error("Image upload error:", error);
+  //       return null;
+  //     }
+  //   };
+
+  const handlePost = async (values) => {
+
+    const benifits = values?.benifits.split('\n')
+    const cons = values?.cons.split('\n')
+    const features = values?.features.split('\n')
+    const pros = values?.pros.split('\n')
+    const postData = {
+      Description: values.Description,
+      benifits: benifits,
+      cons: cons,
+      features: features,
+      pros: pros,
+      mainHeading: values.mainHeading,
+      rating: values.rating,
+      review: values.review,
+      websiteName: values.websiteName,
+      visitSiteUrl: values.visitSiteUrl,
+      category: values.category,
+      slug: values.slug,
+      subcategories: values.subcategories,
+      logo: image1,
+
+    };
+
+    // console.log(postData)
+
+    try {
+      const response = await axios.post(
+        baseurl + "/createCompany",
+        postData
+      );
+      // console.log(response.data);
+
+      if (response.data) {
+        setIsModalOpen(false);
+        message.success("User created successfully!");
+        fetchData();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlePut = async (values) => {
+    const benifits = values?.benifits.split('\n')
+    const cons = values?.cons.split('\n')
+    const features = values?.features.split('\n')
+    const pros = values?.pros.split('\n')
+    const postData = {
+      Description: values.Description,
+      benifits: benifits,
+      cons: cons,
+      features: features,
+      pros: pros,
+      mainHeading: values.mainHeading,
+      rating: values.rating,
+      review: values.review,
+      websiteName: values.websiteName,
+      visitSiteUrl: values.visitSiteUrl,
+      category: values.category,
+      slug: values.slug,
+      subcategories: values.subcategories,
+      logo: imageTrue ? image1 : values.logo,
+
     };
 
 
+    // console.log("----post data----", postData)
 
-    const fetchData2 = async () => {
-        try {
-            const res = await axios.get(`${baseurl}/getOneSubByCategoryId/${selectedCategory}`);
-            console.log("----data-----", res.data);
-            setSubCategoris(res.data);
-            setLoading(false);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            setLoading(false);
-        }
-    };
+    try {
+      const response = await axios.put(
+        `${baseurl}/updateCompany/${editingCompany?._id}`,
+        postData
+      );
+      // console.log(response.data);
 
-    const fetchData = async () => {
-        try {
-            const res = await axios.get(baseurl + "/getAllCompany");
-
-            // console.log("----data-----", res.data);
-            setData(res.data);
-            setLoading(false);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            setLoading(false);
-        }
-    };
-
-    const handleAdd = () => {
-        setEditingCompany(null);
+      if (response.data) {
+        setIsModalOpen(false);
+        fetchData();
+        message.success("User update successfully!");
         form.resetFields();
-        setIsModalOpen(true);
-    };
-
-    const handleEdit = (record) => {
-        setImageTrue(true);
-        setEditingCompany(record);
-        console.log(record);
-        setSelectedCategory(record.category._id)
-        const benifits = record?.benifits.join('\n')
-        const cons = record?.cons.join('\n')
-        const features = record?.features.join('\n')
-        const pros = record?.pros.join('\n')
-        form.setFieldsValue({
-            Description: record?.Description,
-            benifits: benifits,
-            cons: cons,
-            features: features,
-            pros: pros,
-            mainHeading: record?.mainHeading,
-            rating: record?.rating,
-            review: record?.review,
-            websiteName: record?.websiteName,
-            visitSiteUrl: record?.visitSiteUrl,
-            category: record?.category?._id,
-            slug: record.slug,
-            subcategories: record?.subcategories?._id
-
-            // dob:record.dateOfBirth,
-        });
-        setIsModalOpen(true);
-    };
-
-    const handleStatusToggle = async (record) => {
-        try {
-            const response = await axios.patch(
-                `${baseurl}/updateCompanyStatus/${record?._id}`
-            );
-            console.log(response);
-
-            if (response) {
-                message.success("Status updated succesfully");
-                fetchData();
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-
-    const handleDelete = async(record)=>{
-            try {
-                 const response = await axios.delete(`${baseurl}/deleteCompany/${record}`)
-                 if (response) {
-                    message.success("Status updated succesfully");
-                    fetchData();
-                }
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-
-
-    const uploadImage = async (file) => {
-        console.log(file);
-        const formData = new FormData();
-        formData.append("image", file.file);
-        // console.log(file.file.name);
-    
-        try {
-          const response = await axios.post(
-            `${baseurl}/api/uploadImage`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
-    
-          if (response) {
-            message.success("Image uploaded successfully!");
-            setImage(response.data.imageUrl);
-          }
-    
-          return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
-        } catch (error) {
-          message.error("Error uploading image. Please try again later.");
-          console.error("Image upload error:", error);
-          return null;
-        }
-      };
-    // const uploadImage = async (file) => {
-    //     console.log(file);
-    //     const formData = new FormData();
-    //     formData.append("image", file.file);
-    //     // console.log(file.file.name);
-    
-    //     try {
-    //       const response = await axios.post(
-    //         `${baseurl}/upload`,
-    //         formData,
-    //         {
-    //           headers: {
-    //             "Content-Type": "multipart/form-data",
-    //           },
-    //         }
-    //       );
-    
-    //       if (response) {
-    //         message.success("Image uploaded successfully!");
-    //         setImage(response.data.imageUrl);
-    //       }
-    
-    //       return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
-    //     } catch (error) {
-    //       message.error("Error uploading image. Please try again later.");
-    //       console.error("Image upload error:", error);
-    //       return null;
-    //     }
-    //   };
-
-    const handlePost = async (values) => {
-
-        const benifits = values?.benifits.split('\n')
-        const cons = values?.cons.split('\n')
-        const features = values?.features.split('\n')
-        const pros = values?.pros.split('\n')
-        const postData = {
-            Description: values.Description,
-            benifits: benifits,
-            cons: cons,
-            features: features,
-            pros: pros,
-            mainHeading: values.mainHeading,
-            rating: values.rating,
-            review: values.review,
-            websiteName: values.websiteName,
-            visitSiteUrl: values.visitSiteUrl,
-            category: values.category,
-            slug: values.slug,
-            subcategories: values.subcategories,
-            logo: image1,
-
-        };
-
-        console.log(postData)
-
-        try {
-            const response = await axios.post(
-                baseurl + "/createCompany",
-                postData
-            );
-            console.log(response.data);
-
-            if (response.data) {
-                setIsModalOpen(false);
-                message.success("User created successfully!");
-                fetchData();
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handlePut = async (values) => {
-        const benifits = values?.benifits.split('\n')
-        const cons = values?.cons.split('\n')
-        const features = values?.features.split('\n')
-        const pros = values?.pros.split('\n')
-        const postData = {
-            Description: values.Description,
-            benifits: benifits,
-            cons: cons,
-            features: features,
-            pros: pros,
-            mainHeading: values.mainHeading,
-            rating: values.rating,
-            review: values.review,
-            websiteName: values.websiteName,
-            visitSiteUrl: values.visitSiteUrl,
-            category: values.category,
-            slug: values.slug,
-            subcategories: values.subcategories,
-            logo: imageTrue ? image1 : values.logo,
-
-        };
-   
-
-        console.log("----post data----",postData)
-
-        try {
-            const response = await axios.put(
-                `${baseurl}/updateCompany/${editingCompany?._id}`,
-                postData
-            );
-            console.log(response.data);
-
-            if (response.data) {
-                setIsModalOpen(false);
-                fetchData();
-                message.success("User update successfully!");
-                form.resetFields();
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const handleSubmit = async (values) => {
-        if (editingCompany) {
-            await handlePut(values);
-        } else {
-            await handlePost(values);
-        }
-    };
-
-
-    
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleSubmit = async (values) => {
+    if (editingCompany) {
+      await handlePut(values);
+    } else {
+      await handlePost(values);
+    }
+  };
 
 
 
 
-    const columns = [
-        {
-            title: "Company Name",
-            dataIndex: "websiteName",
-            key: "websiteName",
-        },
-
-        {
-            title: "Categories",
-            dataIndex: ['category', 'name'],
-            key: "name",
-        },
-
-        {
-            title: "subcategories",
-            dataIndex: ['subcategories', 'name'],
-            key: "subcategories",
-        },
-
-
-        {
-            title: "Rating",
-            dataIndex: "rating",
-            key: "rating",
-        },
 
 
 
-        // specialization
+  const columns = [
+    {
+      title: "Company Name",
+      dataIndex: "websiteName",
+      key: "websiteName",
+    },
 
-        {
-          title: "Status",
-          key: "Status",
-          render: (_, record) => (
-            <Switch
-              checked={record.status === "Active"}
-              onChange={() => handleStatusToggle(record)}
-              checkedChildren="Active"
-              unCheckedChildren="Inactive"
-            />
-          ),
-        },
+    {
+      title: "Categories",
+      dataIndex: ['category', 'name'],
+      key: "name",
+    },
 
-        {
-            title: "Actions",
-            key: "actions",
-            render: (_, record) => (
-                <>
-                    <Button onClick={() => handleEdit(record)}>Update</Button>
-                </>
-            ),
-        },
+    {
+      title: "subcategories",
+      dataIndex: ['subcategories', 'name'],
+      key: "subcategories",
+    },
 
-         {
-                      title: "Delete",
-                      render: (_, record) => (
-                        <>
-                          {auth1?.user?.role === 'superAdmin' && (
-                            <Popconfirm
-                              title="Are you sure you want to delete this blog?"
-                              onConfirm={() => handleDelete(record._id)}
-                              okText="Yes"
-                              cancelText="No"
-                            >
-                              <Button type="link" danger>
-                                Delete
-                              </Button>
-                            </Popconfirm>
-                          )}
-                        </>
-                      ),
-                    }
-    ];
+
+    {
+      title: "Rating",
+      dataIndex: "rating",
+      key: "rating",
+    },
 
 
 
-    const columns1 = [
-      {
-          title: "Company Name",
-          dataIndex: "websiteName",
-          key: "websiteName",
-      },
+    // specialization
 
-      {
-          title: "Categories",
-          dataIndex: ['category', 'name'],
-          key: "name",
-      },
+    {
+      title: "Status",
+      key: "Status",
+      render: (_, record) => (
+        <Switch
+          checked={record.status === "Active"}
+          onChange={() => handleStatusToggle(record)}
+          checkedChildren="Active"
+          unCheckedChildren="Inactive"
+        />
+      ),
+    },
 
-      {
-          title: "subcategories",
-          dataIndex: ['subcategories', 'name'],
-          key: "subcategories",
-      },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <>
+          <Button onClick={() => handleEdit(record)}>Update</Button>
+        </>
+      ),
+    },
 
-
-      {
-          title: "Rating",
-          dataIndex: "rating",
-          key: "rating",
-      },
-
-
-
-      // specialization
-
-      // {
-      //   title: "Status",
-      //   key: "Status",
-      //   render: (_, record) => (
-      //     <Switch
-      //       checked={record.Status === "Active"}
-      //       onChange={() => handleStatusToggle(record)}
-      //       checkedChildren="Active"
-      //       unCheckedChildren="Inactive"
-      //     />
-      //   ),
-      // },
-
-      {
-          title: "Actions",
-          key: "actions",
-          render: (_, record) => (
-              <>
-                  <Button onClick={() => handleEdit(record)}>Update</Button>
-              </>
-          ),
-      },
+    {
+      title: "Delete",
+      render: (_, record) => (
+        <>
+          {auth1?.user?.role === 'superAdmin' && (
+            <Popconfirm
+              title="Are you sure you want to delete this blog?"
+              onConfirm={() => handleDelete(record._id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="link" danger>
+                Delete
+              </Button>
+            </Popconfirm>
+          )}
+        </>
+      ),
+    }
   ];
 
-    return (
-        <div>
-            <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
-                Add Company
-            </Button>
-           
+
+
+  const columns1 = [
+    {
+      title: "Company Name",
+      dataIndex: "websiteName",
+      key: "websiteName",
+    },
+
+    {
+      title: "Categories",
+      dataIndex: ['category', 'name'],
+      key: "name",
+    },
+
+    {
+      title: "subcategories",
+      dataIndex: ['subcategories', 'name'],
+      key: "subcategories",
+    },
+
+
+    {
+      title: "Rating",
+      dataIndex: "rating",
+      key: "rating",
+    },
 
 
 
-             {
-                                       auth1?.user?.role==='superAdmin'?(<> <Table
-                                        columns={columns}
-                                        dataSource={data}
-                                        loading={loading}
-                                        scroll={{ x: 'max-content' }}
-                                        rowKey={(record) => record._id}
-                                 onRow={(record) => ({
-                                  onClick: () => {
-                                    handleRowClick(record); // Trigger the click handler
-                                  },
-                                })}
-                        
-                        
-                                 // rowKey="_id"
-                                    /></>):(<>
-                                       <Table
-                columns={columns1}
-                dataSource={data}
-                loading={loading}
-                scroll={{ x: 'max-content' }}
-                rowKey={(record) => record._id}
-         onRow={(record) => ({
-          onClick: () => {
-            handleRowClick(record); // Trigger the click handler
-          },
-        })}
+    // specialization
 
+    // {
+    //   title: "Status",
+    //   key: "Status",
+    //   render: (_, record) => (
+    //     <Switch
+    //       checked={record.Status === "Active"}
+    //       onChange={() => handleStatusToggle(record)}
+    //       checkedChildren="Active"
+    //       unCheckedChildren="Inactive"
+    //     />
+    //   ),
+    // },
 
-         // rowKey="_id"
-            />
-                                       </>)
-                                   }
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <>
+          <Button onClick={() => handleEdit(record)}>Update</Button>
+        </>
+      ),
+    },
+  ];
 
-            <Modal
-                title={editingCompany ? "Edit Company" : "Add Company"}
-                open={isModalOpen}
-                onCancel={() => setIsModalOpen(false)}
-                footer={null}
-            >
-                <Form form={form} layout="vertical" onFinish={handleSubmit}>
-                    <Form.Item
-                        name="websiteName"
-                        label="Company Name"
-                        rules={[{ required: true, message: "Please input the name!" }]}
-                    >
-                        <Input placeholder="Enter Company Name" />
-                    </Form.Item>
+  return (
+    <div>
+      <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
+        Add Company
+      </Button>
 
 
 
-                    <Form.Item
-                        name="slug"
-                        label="Slug"
-                        rules={[{ required: true, message: "Please Enter slug!" }]}
-                    >
-                        <Input placeholder="Enter Slug" />
-                    </Form.Item>
+
+      {
+        auth1?.user?.role === 'superAdmin' ? (<> <Table
+          columns={columns}
+          dataSource={data}
+          loading={loading}
+          scroll={{ x: 'max-content' }}
+          rowKey={(record) => record._id}
+          onRow={(record) => ({
+            onClick: () => {
+              handleRowClick(record); // Trigger the click handler
+            },
+          })}
 
 
-                    <Form.Item
-                        name="category"
-                        label="Category"
-                        rules={[{ required: true, message: 'Please select a category!' }]}
-                    >
-                        <Select placeholder="Select a category" loading={loading} onChange={handleCategoryChange}>
-                            {categories.map((cat) => (
-                                <Option key={cat._id} value={cat._id}>
-                                    {cat.name}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
+        // rowKey="_id"
+        /></>) : (<>
+          <Table
+            columns={columns1}
+            dataSource={data}
+            loading={loading}
+            scroll={{ x: 'max-content' }}
+            rowKey={(record) => record._id}
+            onRow={(record) => ({
+              onClick: () => {
+                handleRowClick(record); // Trigger the click handler
+              },
+            })}
 
-                
 
-                {/* {
+          // rowKey="_id"
+          />
+        </>)
+      }
+
+      <Modal
+        title={editingCompany ? "Edit Company" : "Add Company"}
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        footer={null}
+      >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <Form.Item
+            name="websiteName"
+            label="Company Name"
+            rules={[{ required: true, message: "Please input the name!" }]}
+          >
+            <Input placeholder="Enter Company Name" />
+          </Form.Item>
+
+
+
+          <Form.Item
+            name="slug"
+            label="Slug"
+            rules={[{ required: true, message: "Please Enter slug!" }]}
+          >
+            <Input placeholder="Enter Slug" />
+          </Form.Item>
+
+
+          <Form.Item
+            name="category"
+            label="Category"
+            rules={[{ required: true, message: 'Please select a category!' }]}
+          >
+            <Select placeholder="Select a category" loading={loading} onChange={handleCategoryChange}>
+              {categories.map((cat) => (
+                <Option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+
+
+          {/* {
                     subcategories.length !==0?(<> <Form.Item
                         name="subcategories"
                         label="SubCategories"
@@ -587,120 +587,120 @@ const Company = () => {
                 } */}
 
 
-<Form.Item
-                        name="subcategories"
-                        label="SubCategories"
-                        rules={[{ required: true, message: 'Please select a category!' }]}
-                    >
-                        <Select placeholder="Select a subcategories" loading={loading} >
-                            {subcategories.map((cat) => (
-                                <Option key={cat._id} value={cat._id}>
-                                    {cat.name}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                   
-
-
-
-                    <Form.Item
-                        name="rating"
-                        label="Rating"
-                        rules={[{ required: true, message: "Please input the rating!" }]}
-                    >
-                        <InputNumber min={0} max={5} step={1} placeholder="Enter company rating maximum 5" />
-                    </Form.Item>
-
-
-                    <Form.Item
-                        name="visitSiteUrl"
-                        label="Company Url"
-                        rules={[{ required: true, message: "Please input the name!" }]}
-                    >
-                        <Input placeholder="Enter Company url" />
-                    </Form.Item>
-                   
-
-                    <Form.Item
-                        name="mainHeading"
-                        label="Main Heading"
-                        rules={[{ required: true, message: "Please input the name!" }]}
-                    >
-                        <Input placeholder="Enter Main Heading" />
-                    </Form.Item>
-
-
-                   
-
-
-                    <Form.Item
-                        name="features"
-                        label="Features"
-                        rules={[{ required: true, message: "Please input the review!" }]}
-                    >
-                        <TextArea placeholder="Enter company Feature seperated by comma ," style={{ height: 150 }} />
-                    </Form.Item>
-
-
-
-                    
-                    
-
-
-                    <Form.Item
-                        name="benifits"
-                        label="Benefits"
-                        rules={[{ required: true, message: "Please input the review!" }]}
-                    >
-                        <TextArea placeholder="Enter Benifits seperated with comma ," style={{ height: 150 }} />
-                    </Form.Item>
-
-               
-                    <Form.Item
-                        name="Description"
-                        label="Description"
-                        rules={[{ required: true, message: "Please input the name!" }]}
-                    >
-                        <Input placeholder="Enter Description" />
-                    </Form.Item>
-
-
-                    <Form.Item
-                        name="pros"
-                        label="Pros"
-                        rules={[{ required: true, message: "Please input the review!" }]}
-                    >
-                        <TextArea placeholder="Enter Pros seperated with comma ," style={{ height: 150 }} />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="cons"
-                        label="Cons"
-                        rules={[{ required: true, message: "Please input the review!" }]}
-                    >
-                        <TextArea placeholder="Enter Cons seperated with comma ," style={{ height: 150 }} />
-                    </Form.Item>
-
-
-                    <Form.Item
-                        name="review"
-                        label="Review"
-                        rules={[{ required: true, message: "Please input the review!" }]}
-                    >
-                        <TextArea placeholder="Enter company review" style={{ height: 150 }} />
-                    </Form.Item>
-
-                  
-                    
+          <Form.Item
+            name="subcategories"
+            label="SubCategories"
+            rules={[{ required: true, message: 'Please select a category!' }]}
+          >
+            <Select placeholder="Select a subcategories" loading={loading} >
+              {subcategories.map((cat) => (
+                <Option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
 
 
 
 
-                  
+          <Form.Item
+            name="rating"
+            label="Rating"
+            rules={[{ required: true, message: "Please input the rating!" }]}
+          >
+            <InputNumber min={0} max={5} step={1} placeholder="Enter company rating maximum 5" />
+          </Form.Item>
+
+
+          <Form.Item
+            name="visitSiteUrl"
+            label="Company Url"
+            rules={[{ required: true, message: "Please input the name!" }]}
+          >
+            <Input placeholder="Enter Company url" />
+          </Form.Item>
+
+
+          <Form.Item
+            name="mainHeading"
+            label="Main Heading"
+            rules={[{ required: true, message: "Please input the name!" }]}
+          >
+            <Input placeholder="Enter Main Heading" />
+          </Form.Item>
+
+
+
+
+
+          <Form.Item
+            name="features"
+            label="Features"
+            rules={[{ required: true, message: "Please input the review!" }]}
+          >
+            <TextArea placeholder="Enter company Feature seperated by comma ," style={{ height: 150 }} />
+          </Form.Item>
+
+
+
+
+
+
+
+          <Form.Item
+            name="benifits"
+            label="Benefits"
+            rules={[{ required: true, message: "Please input the review!" }]}
+          >
+            <TextArea placeholder="Enter Benifits seperated with comma ," style={{ height: 150 }} />
+          </Form.Item>
+
+
+          <Form.Item
+            name="Description"
+            label="Description"
+            rules={[{ required: true, message: "Please input the name!" }]}
+          >
+            <Input placeholder="Enter Description" />
+          </Form.Item>
+
+
+          <Form.Item
+            name="pros"
+            label="Pros"
+            rules={[{ required: true, message: "Please input the review!" }]}
+          >
+            <TextArea placeholder="Enter Pros seperated with comma ," style={{ height: 150 }} />
+          </Form.Item>
+
+          <Form.Item
+            name="cons"
+            label="Cons"
+            rules={[{ required: true, message: "Please input the review!" }]}
+          >
+            <TextArea placeholder="Enter Cons seperated with comma ," style={{ height: 150 }} />
+          </Form.Item>
+
+
+          <Form.Item
+            name="review"
+            label="Review"
+            rules={[{ required: true, message: "Please input the review!" }]}
+          >
+            <TextArea placeholder="Enter company review" style={{ height: 150 }} />
+          </Form.Item>
+
+
+
+
+
+
+
+
           {editingCompany ? (
 
-            
+
             <>
               {cross ? (
                 <>
@@ -715,21 +715,21 @@ const Company = () => {
                   /> */}
 
 
-                   {
-                                                          record1?.logo?.includes("res") ? (
-                                                              <img
-                                                                  src={record1.logo}
-                                                                  alt=""
-                                                                  style={{ width: "100px", height: "100px" }}
-                                                              />
-                                                          ) : (
-                                                              <img
-                                                                  src={`${baseurl}${record1.logo}`}
-                                                                  alt=""
-                                                                  style={{ width: "100px", height: "100px" }}
-                                                              />
-                                                          )
-                                                      }
+                  {
+                    record1?.logo?.includes("res") ? (
+                      <img
+                        src={record1.logo}
+                        alt=""
+                        style={{ width: "100px", height: "100px" }}
+                      />
+                    ) : (
+                      <img
+                        src={`${baseurl}${record1.logo}`}
+                        alt=""
+                        style={{ width: "100px", height: "100px" }}
+                      />
+                    )
+                  }
                 </>
               ) : (
                 <>
@@ -812,15 +812,15 @@ const Company = () => {
           )}
 
 
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                            {editingCompany ? "Update" : "Submit"}
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Modal>
-        </div>
-    );
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              {editingCompany ? "Update" : "Submit"}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  );
 };
 
 export default Company;

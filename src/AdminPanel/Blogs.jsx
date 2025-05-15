@@ -59,22 +59,22 @@ const Blogs = () => {
     const [selectedSubCategory, setSelectedSubCategory] = useState(null);
 
 
-const [blogType, setBlogType] = useState('');
+    const [blogType, setBlogType] = useState('');
 
-  const handleChange = (value) => {
-    setBlogType(value);
-    console.log("Selected blogType:", value); // Do something with the value
-  };
+    const handleChange = (value) => {
+        setBlogType(value);
+        // console.log("Selected blogType:", value); // Do something with the value
+    };
 
     const handleCategoryChange = (value) => {
         setSelectedCategory(value); // save selected category ID to variable
-        console.log("Selected Category ID:", value);
+        // console.log("Selected Category ID:", value);
     };
 
 
     const handleCategoryChange1 = (value) => {
         setSelectedSubCategory(value); // save selected category ID to variable
-        console.log("Selected Category ID:", value);
+        // console.log("Selected Category ID:", value);
     };
 
 
@@ -82,7 +82,7 @@ const [blogType, setBlogType] = useState('');
 
 
     const handleRowClick = (record) => {
-        console.log("Clicked row data:", record);
+        // console.log("Clicked row data:", record);
         setRecord(record);
         setImage(record?.image)
         setCross(true);
@@ -137,7 +137,7 @@ const [blogType, setBlogType] = useState('');
     const fetchData2 = async () => {
         try {
             const res = await axios.get(`${baseurl}/getOneSubByCategoryId/${selectedCategory}`);
-            console.log("----data-----", res.data);
+            // console.log("----data-----", res.data);
             setSubCategoris(res.data);
             setLoading(false);
         } catch (error) {
@@ -150,7 +150,7 @@ const [blogType, setBlogType] = useState('');
     const fetchData6 = async () => {
         try {
             const res = await axios.get(`${baseurl}/getCompanySubId/${selectedSubCategory}`);
-            console.log("----data-----", res.data);
+            // console.log("----data-----", res.data);
             setCompany(res.data);
             setLoading(false);
         } catch (error) {
@@ -195,7 +195,7 @@ const [blogType, setBlogType] = useState('');
         try {
             const res = await axios.get(baseurl + "/blogs");
 
-            console.log("----data-----", res.data);
+            // console.log("----data-----", res.data);
             setData(res.data);
             setLoading(false);
         } catch (error) {
@@ -213,12 +213,12 @@ const [blogType, setBlogType] = useState('');
     const handleEdit = (record) => {
         setImageTrue(true);
         setEditingCompBlog(record);
-        console.log(record);
+        // console.log(record);
         setSelectedCategory(record.categories._id)
         setSelectedSubCategory(record.subcategories._id)
         setBlogType(record?.blogType)
         setEditorContent(record.body)
-        console.log("--------data-----------", record.categories._id)
+        // console.log("--------data-----------", record.categories._id)
         form.setFieldsValue({
             title: record?.title,
             mtitle: record?.mtitle,
@@ -227,9 +227,9 @@ const [blogType, setBlogType] = useState('');
             subcategories: record?.subcategories._id,
             tags: record?.tags?._id,
             faqs: record?.faqs || [],
-            slug:record?.slug,
-            blogType:record?.blogType,
-           
+            slug: record?.slug,
+            blogType: record?.blogType,
+
 
 
             // dob:record.dateOfBirth,
@@ -242,7 +242,7 @@ const [blogType, setBlogType] = useState('');
             const response = await axios.patch(
                 `${baseurl}/updateBlogStatus/${record?._id}`
             );
-            console.log(response);
+            // console.log(response);
 
             if (response) {
                 message.success("Status updated succesfully");
@@ -254,31 +254,31 @@ const [blogType, setBlogType] = useState('');
     };
 
 
-     const handleDelete = async(record)=>{
-                try {
-                     const response = await axios.delete(`${baseurl}/deleteblogs/${record}`)
-                     if (response) {
-                        message.success("Status updated succesfully");
-                        fetchData();
+    const handleDelete = async (record) => {
+        try {
+            const response = await axios.delete(`${baseurl}/deleteblogs/${record}`)
+            if (response) {
+                message.success("Status updated succesfully");
+                fetchData();
 
 
-                        if(response){
-                            const postData = {
-                                blogsToDelete:[record]
-                            }
-        
-                            const response1 = await axios.patch(
-                                `${baseurl}/deleteSpecificuserBLog/${auth1?.user?.id}`,
-                                postData
-                              );
-        
-                              console.log(response1.data)
-                        }
+                if (response) {
+                    const postData = {
+                        blogsToDelete: [record]
                     }
-                } catch (error) {
-                    console.log(error)
+
+                    const response1 = await axios.patch(
+                        `${baseurl}/deleteSpecificuserBLog/${auth1?.user?.id}`,
+                        postData
+                    );
+
+                    // console.log(response1.data)
                 }
             }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
 
 
@@ -290,7 +290,7 @@ const [blogType, setBlogType] = useState('');
 
         try {
             const response = await axios.post(
-                 `${baseurl}/api/uploadImage`,
+                `${baseurl}/api/uploadImage`,
                 formData,
                 {
                     headers: {
@@ -312,47 +312,47 @@ const [blogType, setBlogType] = useState('');
         }
     };
 
-// const uploadImage = async (file) => {
-//     console.log("Uploading file:", file);
+    // const uploadImage = async (file) => {
+    //     console.log("Uploading file:", file);
 
-//     const formData = new FormData();
+    //     const formData = new FormData();
 
-//     // Use "image" or "video" key based on file type
-//     const isVideo = file.file.type.startsWith("video/");
-//     const fieldName = isVideo ? "video" : "image";
+    //     // Use "image" or "video" key based on file type
+    //     const isVideo = file.file.type.startsWith("video/");
+    //     const fieldName = isVideo ? "video" : "image";
 
-//     formData.append(fieldName, file.file);
+    //     formData.append(fieldName, file.file);
 
-//     try {
-//         const response = await axios.post(
-//             `${baseurl}/api/uploadImage`, // Change URL if needed
-//             formData,
-//             {
-//                 headers: {
-//                     "Content-Type": "multipart/form-data",
-//                 },
-//             }
-//         );
+    //     try {
+    //         const response = await axios.post(
+    //             `${baseurl}/api/uploadImage`, // Change URL if needed
+    //             formData,
+    //             {
+    //                 headers: {
+    //                     "Content-Type": "multipart/form-data",
+    //                 },
+    //             }
+    //         );
 
-//         if (response) {
-//             message.success(`${isVideo ? "Video" : "Image"} uploaded successfully!`);
-//             setImage(response.data.imageUrl); // You can keep this as `setImage` if you're using it for both
-//         }
+    //         if (response) {
+    //             message.success(`${isVideo ? "Video" : "Image"} uploaded successfully!`);
+    //             setImage(response.data.imageUrl); // You can keep this as `setImage` if you're using it for both
+    //         }
 
-//         return response.data.imageUrl;
-//     } catch (error) {
-//         message.error(`Error uploading ${isVideo ? "video" : "image"}. Please try again later.`);
-//         console.error("Upload error:", error);
-//         return null;
-//     }
-// };
+    //         return response.data.imageUrl;
+    //     } catch (error) {
+    //         message.error(`Error uploading ${isVideo ? "video" : "image"}. Please try again later.`);
+    //         console.error("Upload error:", error);
+    //         return null;
+    //     }
+    // };
 
 
-    console.log("auth1?.user?._id",auth1?.user)
+    // console.log("auth1?.user?._id", auth1?.user)
 
     const handlePost = async (values) => {
-      
-        
+
+
 
         const postData = {
             title: values?.title,
@@ -364,43 +364,43 @@ const [blogType, setBlogType] = useState('');
             postedBy: auth1?.user?.id,
             image: image1,
             body: editorContent,
-            faqs:values.faqs,
-            slug:values.slug,
-            blogType:values?.blogType
+            faqs: values.faqs,
+            slug: values.slug,
+            blogType: values?.blogType
 
         };
 
-        console.log(postData)
+        // console.log(postData)
 
         try {
             const response = await axios.post(
                 baseurl + "/blogs",
                 postData
             );
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data) {
                 setIsModalOpen(false);
                 message.success("User created successfully!");
                 setPhoto("");
                 fetchData();
-                 
-               
 
-                if(response?.data?._id){
+
+
+                if (response?.data?._id) {
                     const postData = {
-                        blog:[response?.data?._id]
+                        blog: [response?.data?._id]
                     }
 
                     const response1 = await axios.patch(
                         `${baseurl}/updateUser/${auth1?.user?.id}`,
                         postData
-                      );
+                    );
 
-                      console.log(response1.data)
+                    // console.log(response1.data)
                 }
 
-               
+
 
             }
         } catch (error) {
@@ -424,21 +424,21 @@ const [blogType, setBlogType] = useState('');
             postedBy: auth1?.user?.id,
             image: imageTrue ? image1 : values.logo,
             body: editorContent,
-            faqs:values?.faqs,
-            slug:values?.slug,
-            blogType:values?.blogType
+            faqs: values?.faqs,
+            slug: values?.slug,
+            blogType: values?.blogType
 
         };
 
 
-        console.log("----post data----", postData)
+        // console.log("----post data----", postData)
 
         try {
             const response = await axios.put(
                 `${baseurl}/updateblogs/${editingCompBlog?._id}`,
                 postData
             );
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data) {
                 setIsModalOpen(false);
@@ -786,7 +786,7 @@ const [blogType, setBlogType] = useState('');
                                     },
                                     defaultHandlerSuccess: function (data, resp) {
                                         const files = data.files || [];
-                                        console.log({ files });
+                                        // console.log({ files });
                                         if (files) {
                                             this.selection.insertImage(files.url, null, 250);
                                         }
@@ -806,7 +806,7 @@ const [blogType, setBlogType] = useState('');
                             {(fields, { add, remove }) => (
                                 <>
                                     {fields.map(({ key, name, ...restField }, index) => (
-                                        <Space 
+                                        <Space
                                             key={key}
                                             style={{ display: "flex", marginBottom: 8 }}
                                             align="start"
@@ -838,7 +838,7 @@ const [blogType, setBlogType] = useState('');
                                             type="dashed"
                                             onClick={() => add()}
                                             block
-                                            icon={<PlusOutlined  />}
+                                            icon={<PlusOutlined />}
                                         >
                                             Add FAQ
                                         </Button>
@@ -847,239 +847,239 @@ const [blogType, setBlogType] = useState('');
                             )}
                         </Form.List>
                     </Form.Item>
-                     
 
 
-    <Form.Item
-        label="Blog Type"
-        name="blogType"
-        rules={[{ required: true, message: 'Please select a blog type' }]}
-      >
-        <Select
-          placeholder="Select blog type"
-          onChange={handleChange}
-          value={blogType}
-        >
-          <Option value="viral stories">Viral Stories</Option>
-          <Option value="article">Article</Option>
-        </Select>
-      </Form.Item>
 
-
-            {
-                
-               blogType === 'article' ? (
-        <>
-            {editingCompBlog ? (
-                <>
-                    {cross ? (
-                        <>
-                            <CloseCircleOutlined
-                                style={{ width: "30px" }}
-                                onClick={handleCross}
-                            />
-                            {
-                                record1?.image?.includes("res") ? (
-                                    <img
-                                        src={record1.image}
-                                        alt=""
-                                        style={{ width: "100px", height: "100px" }}
-                                    />
-                                ) : (
-                                    <img
-                                        src={`${baseurl}${record1.image}`}
-                                        alt=""
-                                        style={{ width: "100px", height: "100px" }}
-                                    />
-                                )
-                            }
-                        </>
-                    ) : (
-                        <>
-                            <Form.Item
-                                label="Photo"
-                                name="photo"
-                                onChange={(e) => setPhoto(e.target.files[0])}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please upload the driver's photo!",
-                                    },
-                                ]}
-                            >
-                                <Upload
-                                    listType="picture"
-                                    beforeUpload={() => false}
-                                    onChange={uploadImage}
-                                    showUploadList={false}
-                                    customRequest={({ file, onSuccess }) => {
-                                        setTimeout(() => {
-                                            onSuccess("ok");
-                                        }, 0);
-                                    }}
-                                >
-                                    <Button icon={<UploadOutlined />}>Upload Photo</Button>
-                                </Upload>
-                            </Form.Item>
-                            {photo && (
-                                <div>
-                                    <img
-                                        src={URL.createObjectURL(photo)}
-                                        alt="Uploaded"
-                                        height="100px"
-                                        width="100px"
-                                    />
-                                </div>
-                            )}
-                        </>
-                    )}
-                </>
-            ) : (
-                <>
                     <Form.Item
-                        label="Photo"
-                        name="photo"
-                        onChange={(e) => setPhoto(e.target.files[0])}
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please upload the driver's photo!",
-                            },
-                        ]}
+                        label="Blog Type"
+                        name="blogType"
+                        rules={[{ required: true, message: 'Please select a blog type' }]}
                     >
-                        <Upload
-                            listType="picture"
-                            beforeUpload={() => false}
-                            onChange={uploadImage}
-                            showUploadList={false}
-                            customRequest={({ file, onSuccess }) => {
-                                setTimeout(() => {
-                                    onSuccess("ok");
-                                }, 0);
-                            }}
+                        <Select
+                            placeholder="Select blog type"
+                            onChange={handleChange}
+                            value={blogType}
                         >
-                            <Button icon={<UploadOutlined />}>Upload Photo</Button>
-                        </Upload>
+                            <Option value="viral stories">Viral Stories</Option>
+                            <Option value="article">Article</Option>
+                        </Select>
                     </Form.Item>
-                    {photo && (
-                        <div>
-                            <img
-                                src={URL.createObjectURL(photo)}
-                                alt="Uploaded"
-                                height="100px"
-                                width="100px"
-                            />
-                        </div>
-                    )}
-                </>
-            )}
-        </>
-    ) : (
-        <>
-            {editingCompBlog ? (
-                <>
-                    {cross ? (
-                        <>
-                            <CloseCircleOutlined
-                                style={{ width: "30px" }}
-                                onClick={handleCross}
-                            />
-                            {
-                                record1?.image?.includes("res") ? (
-                                    <video
-                                        src={record1.image}
-                                        style={{ width: "200px", height: "120px" }}
-                                        controls
-                                    />
-                                ) : (
-                                    <video
-                                        src={`${baseurl}${record1.image}`}
-                                        style={{ width: "200px", height: "120px" }}
-                                        controls
-                                    />
-                                )
-                            }
-                        </>
-                    ) : (
-                        <>
-                            <Form.Item
-                                label="Video"
-                                name="photo"
-                                onChange={(e) => setPhoto(e.target.files[0])}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please upload a video!",
-                                    },
-                                ]}
-                            >
-                                <Upload
-                                    listType="text"
-                                    beforeUpload={() => false}
-                                    onChange={uploadImage}
-                                    showUploadList={false}
-                                    customRequest={({ file, onSuccess }) => {
-                                        setTimeout(() => {
-                                            onSuccess("ok");
-                                        }, 0);
-                                    }}
-                                >
-                                    <Button icon={<UploadOutlined />}>Upload Video</Button>
-                                </Upload>
-                            </Form.Item>
-                            {photo && (
-                                <div>
-                                    <video width="320" height="240" controls>
-                                        <source src={URL.createObjectURL(photo)} type="video/mp4" />
-                                        Your browser does not support the video tag.
-                                    </video>
-                                </div>
-                            )}
-                        </>
-                    )}
-                </>
-            ) : (
-                <>
-                    <Form.Item
-                        label="Video"
-                        name="photo"
-                        onChange={(e) => setPhoto(e.target.files[0])}
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please upload a video!",
-                            },
-                        ]}
-                    >
-                        <Upload
-                            listType="text"
-                            beforeUpload={() => false}
-                            onChange={uploadImage}
-                            showUploadList={false}
-                            customRequest={({ file, onSuccess }) => {
-                                setTimeout(() => {
-                                    onSuccess("ok");
-                                }, 0);
-                            }}
-                        >
-                            <Button icon={<UploadOutlined />}>Upload Video</Button>
-                        </Upload>
-                    </Form.Item>
-                    {photo && (
-                        <div>
-                            <video width="320" height="240" controls>
-                                <source src={URL.createObjectURL(photo)} type="video/mp4" />
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
-                    )}
-                </>
-            )}
-        </>
-    )
-}
 
-            
+
+                    {
+
+                        blogType === 'article' ? (
+                            <>
+                                {editingCompBlog ? (
+                                    <>
+                                        {cross ? (
+                                            <>
+                                                <CloseCircleOutlined
+                                                    style={{ width: "30px" }}
+                                                    onClick={handleCross}
+                                                />
+                                                {
+                                                    record1?.image?.includes("res") ? (
+                                                        <img
+                                                            src={record1.image}
+                                                            alt=""
+                                                            style={{ width: "100px", height: "100px" }}
+                                                        />
+                                                    ) : (
+                                                        <img
+                                                            src={`${baseurl}${record1.image}`}
+                                                            alt=""
+                                                            style={{ width: "100px", height: "100px" }}
+                                                        />
+                                                    )
+                                                }
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Form.Item
+                                                    label="Photo"
+                                                    name="photo"
+                                                    onChange={(e) => setPhoto(e.target.files[0])}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Please upload the driver's photo!",
+                                                        },
+                                                    ]}
+                                                >
+                                                    <Upload
+                                                        listType="picture"
+                                                        beforeUpload={() => false}
+                                                        onChange={uploadImage}
+                                                        showUploadList={false}
+                                                        customRequest={({ file, onSuccess }) => {
+                                                            setTimeout(() => {
+                                                                onSuccess("ok");
+                                                            }, 0);
+                                                        }}
+                                                    >
+                                                        <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                                                    </Upload>
+                                                </Form.Item>
+                                                {photo && (
+                                                    <div>
+                                                        <img
+                                                            src={URL.createObjectURL(photo)}
+                                                            alt="Uploaded"
+                                                            height="100px"
+                                                            width="100px"
+                                                        />
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Form.Item
+                                            label="Photo"
+                                            name="photo"
+                                            onChange={(e) => setPhoto(e.target.files[0])}
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Please upload the driver's photo!",
+                                                },
+                                            ]}
+                                        >
+                                            <Upload
+                                                listType="picture"
+                                                beforeUpload={() => false}
+                                                onChange={uploadImage}
+                                                showUploadList={false}
+                                                customRequest={({ file, onSuccess }) => {
+                                                    setTimeout(() => {
+                                                        onSuccess("ok");
+                                                    }, 0);
+                                                }}
+                                            >
+                                                <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                                            </Upload>
+                                        </Form.Item>
+                                        {photo && (
+                                            <div>
+                                                <img
+                                                    src={URL.createObjectURL(photo)}
+                                                    alt="Uploaded"
+                                                    height="100px"
+                                                    width="100px"
+                                                />
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                {editingCompBlog ? (
+                                    <>
+                                        {cross ? (
+                                            <>
+                                                <CloseCircleOutlined
+                                                    style={{ width: "30px" }}
+                                                    onClick={handleCross}
+                                                />
+                                                {
+                                                    record1?.image?.includes("res") ? (
+                                                        <video
+                                                            src={record1.image}
+                                                            style={{ width: "200px", height: "120px" }}
+                                                            controls
+                                                        />
+                                                    ) : (
+                                                        <video
+                                                            src={`${baseurl}${record1.image}`}
+                                                            style={{ width: "200px", height: "120px" }}
+                                                            controls
+                                                        />
+                                                    )
+                                                }
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Form.Item
+                                                    label="Video"
+                                                    name="photo"
+                                                    onChange={(e) => setPhoto(e.target.files[0])}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Please upload a video!",
+                                                        },
+                                                    ]}
+                                                >
+                                                    <Upload
+                                                        listType="text"
+                                                        beforeUpload={() => false}
+                                                        onChange={uploadImage}
+                                                        showUploadList={false}
+                                                        customRequest={({ file, onSuccess }) => {
+                                                            setTimeout(() => {
+                                                                onSuccess("ok");
+                                                            }, 0);
+                                                        }}
+                                                    >
+                                                        <Button icon={<UploadOutlined />}>Upload Video</Button>
+                                                    </Upload>
+                                                </Form.Item>
+                                                {photo && (
+                                                    <div>
+                                                        <video width="320" height="240" controls>
+                                                            <source src={URL.createObjectURL(photo)} type="video/mp4" />
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Form.Item
+                                            label="Video"
+                                            name="photo"
+                                            onChange={(e) => setPhoto(e.target.files[0])}
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Please upload a video!",
+                                                },
+                                            ]}
+                                        >
+                                            <Upload
+                                                listType="text"
+                                                beforeUpload={() => false}
+                                                onChange={uploadImage}
+                                                showUploadList={false}
+                                                customRequest={({ file, onSuccess }) => {
+                                                    setTimeout(() => {
+                                                        onSuccess("ok");
+                                                    }, 0);
+                                                }}
+                                            >
+                                                <Button icon={<UploadOutlined />}>Upload Video</Button>
+                                            </Upload>
+                                        </Form.Item>
+                                        {photo && (
+                                            <div>
+                                                <video width="320" height="240" controls>
+                                                    <source src={URL.createObjectURL(photo)} type="video/mp4" />
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </>
+                        )
+                    }
+
+
 
 
 

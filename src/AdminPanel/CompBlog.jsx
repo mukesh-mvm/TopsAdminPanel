@@ -62,13 +62,13 @@ const CompBlog = () => {
 
     const handleCategoryChange = (value) => {
         setSelectedCategory(value); // save selected category ID to variable
-        console.log("Selected Category ID:", value);
+        // console.log("Selected Category ID:", value);
     };
 
 
     const handleCategoryChange1 = (value) => {
         setSelectedSubCategory(value); // save selected category ID to variable
-        console.log("Selected Category ID:", value);
+        // console.log("Selected Category ID:", value);
     };
 
 
@@ -76,7 +76,7 @@ const CompBlog = () => {
 
 
     const handleRowClick = (record) => {
-        console.log("Clicked row data:", record);
+        // console.log("Clicked row data:", record);
         setRecord(record);
         setImage(record?.logo);
         setCross(true);
@@ -131,7 +131,7 @@ const CompBlog = () => {
     const fetchData2 = async () => {
         try {
             const res = await axios.get(`${baseurl}/getOneSubByCategoryId/${selectedCategory}`);
-            console.log("----data-----", res.data);
+            // console.log("----data-----", res.data);
             setSubCategoris(res.data);
             setLoading(false);
         } catch (error) {
@@ -144,7 +144,7 @@ const CompBlog = () => {
     const fetchData6 = async () => {
         try {
             const res = await axios.get(`${baseurl}/getCompanySubId/${selectedSubCategory}`);
-            console.log("----data-----", res.data);
+            // console.log("----data-----", res.data);
             setCompany(res.data);
             setLoading(false);
         } catch (error) {
@@ -189,7 +189,7 @@ const CompBlog = () => {
         try {
             const res = await axios.get(baseurl + "/getALlcompblogs");
 
-            console.log("----data-----", res.data);
+            // console.log("----data-----", res.data);
             setData(res.data);
             setLoading(false);
         } catch (error) {
@@ -207,12 +207,12 @@ const CompBlog = () => {
     const handleEdit = (record) => {
         setImageTrue(true);
         setEditingCompBlog(record);
-        console.log(record);
+        // console.log(record);
         setSelectedCategory(record.categories._id)
         setSelectedSubCategory(record.subcategories._id)
         setEditorContent(record?.body)
-        console.log("---body---",record.body)
-        console.log("--------data-----------", record.subcategories._id)
+        console.log("---body---", record.body)
+        // console.log("--------data-----------", record.subcategories._id)
         form.setFieldsValue({
             title: record.title,
             mtitle: record.mtitle,
@@ -222,10 +222,10 @@ const CompBlog = () => {
             tags: record.tags._id,
             faqs: record?.faqs || [],
             company: record.company.map(c => c._id),
-            slug:record?.slug,
-            subHeading:record?.subHeading,
-            heading:record?.heading,
-            para:record?.para
+            slug: record?.slug,
+            subHeading: record?.subHeading,
+            heading: record?.heading,
+            para: record?.para
 
             // dob:record.dateOfBirth,
         });
@@ -237,7 +237,7 @@ const CompBlog = () => {
             const response = await axios.patch(
                 `${baseurl}/updateCompStatus/${record?._id}`
             );
-            console.log(response);
+            // console.log(response);
 
             if (response) {
                 message.success("Status updated succesfully");
@@ -264,7 +264,7 @@ const CompBlog = () => {
 
 
     const uploadImage = async (file) => {
-        console.log(file);
+        // console.log(file);
         const formData = new FormData();
         formData.append("image", file.file);
         // console.log(file.file.name);
@@ -308,22 +308,22 @@ const CompBlog = () => {
             image: image1,
             faqs: values.faqs,
             body: editorContent,
-            slug:values?.slug,
-            subHeading:values?.subHeading,
-            heading:values?.heading,
-            para:values?.para,
+            slug: values?.slug,
+            subHeading: values?.subHeading,
+            heading: values?.heading,
+            para: values?.para,
 
 
         };
 
-        console.log(postData)
+        // console.log(postData)
 
         try {
             const response = await axios.post(
                 baseurl + "/createCompblogs",
                 postData
             );
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data) {
                 setIsModalOpen(false);
@@ -351,22 +351,22 @@ const CompBlog = () => {
             image: imageTrue ? image1 : values.logo,
             faqs: values.faqs,
             body: editorContent,
-            slug:values?.slug,
-            subHeading:values?.subHeading,
-            heading:values?.heading,
-            para:values?.para
+            slug: values?.slug,
+            subHeading: values?.subHeading,
+            heading: values?.heading,
+            para: values?.para
 
         };
 
 
-        console.log("----post data----", postData)
+        // console.log("----post data----", postData)
 
         try {
             const response = await axios.put(
                 `${baseurl}/updatecompblogs/${editingCompBlog?._id}`,
                 postData
             );
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data) {
                 setIsModalOpen(false);
@@ -558,21 +558,21 @@ const CompBlog = () => {
                     <Form.Item
                         name="heading"
                         label="Blog Heading"
-                        // rules={[{ required: true, message: "Please input the name!" }]}
+                    // rules={[{ required: true, message: "Please input the name!" }]}
                     >
                         <Input placeholder="Enter Blog Heading" />
                     </Form.Item>
                     <Form.Item
                         name="subHeading"
                         label="Blog SubHeading"
-                        // rules={[{ required: true, message: "Please input the name!" }]}
+                    // rules={[{ required: true, message: "Please input the name!" }]}
                     >
                         <Input placeholder="Enter Blog Sub Heading" />
                     </Form.Item>
                     <Form.Item
                         name="para"
                         label="Blog Para"
-                        // rules={[{ required: true, message: "Please input the name!" }]}
+                    // rules={[{ required: true, message: "Please input the name!" }]}
                     >
                         <Input placeholder="Enter Blog Para" />
                     </Form.Item>
@@ -789,7 +789,7 @@ const CompBlog = () => {
                                     },
                                     defaultHandlerSuccess: function (data, resp) {
                                         const files = data.files || [];
-                                        console.log({ files });
+                                        // console.log({ files });
                                         if (files) {
                                             this.selection.insertImage(files.url, null, 250);
                                         }

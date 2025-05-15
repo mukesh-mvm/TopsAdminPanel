@@ -42,7 +42,7 @@ const SubCategory = () => {
     const fetchData1 = async () => {
         try {
             const res = await axios.get(baseurl + "/category");
-            console.log("----data-----", res.data);
+            // console.log("----data-----", res.data);
             setCategoris(res.data);
             setLoading(false);
         } catch (error) {
@@ -55,7 +55,7 @@ const SubCategory = () => {
         try {
             const res = await axios.get(baseurl + "/getAllSubcategory");
 
-            console.log("----data-----", res.data);
+            // console.log("----data-----", res.data);
             setData(res.data);
             setLoading(false);
         } catch (error) {
@@ -72,7 +72,7 @@ const SubCategory = () => {
 
     const handleEdit = (record) => {
         setEditingSubCategory(record);
-        console.log(record.email);
+        // console.log(record.email);
         form.setFieldsValue({
             name: record.name,
             parent: record.category._id
@@ -87,7 +87,7 @@ const SubCategory = () => {
             const response = await axios.patch(
                 `${baseurl}/updateSubCategoryStatus/${record?._id}`
             );
-            console.log(response);
+            // console.log(response);
 
             if (response) {
                 message.success("Status updated succesfully");
@@ -99,10 +99,10 @@ const SubCategory = () => {
     };
 
 
-    const handleDelete = async(record)=>{
+    const handleDelete = async (record) => {
         try {
-             const response = await axios.delete(`${baseurl}/delteSubCategory/${record}`)
-             if (response) {
+            const response = await axios.delete(`${baseurl}/delteSubCategory/${record}`)
+            if (response) {
                 message.success("Status updated succesfully");
                 fetchData();
             }
@@ -123,7 +123,7 @@ const SubCategory = () => {
                 baseurl + "/creatSubcategory",
                 postData
             );
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data) {
                 setIsModalOpen(false);
@@ -147,7 +147,7 @@ const SubCategory = () => {
                 `${baseurl}/updateSubcategory/${editingSubCategory?._id}`,
                 postData
             );
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data) {
                 setIsModalOpen(false);

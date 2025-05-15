@@ -32,7 +32,7 @@ const Category = () => {
 
     const editor = useRef(null);
 
-    const [content,setContent] = useState("")
+    const [content, setContent] = useState("")
     const [editorContent, setEditorContent] = useState("");
 
 
@@ -75,7 +75,7 @@ const Category = () => {
         try {
             const res = await axios.get(baseurl + "/category");
 
-            console.log("----data-----", res.data);
+            // console.log("----data-----", res.data);
             setData(res.data);
             setLoading(false);
         } catch (error) {
@@ -92,7 +92,7 @@ const Category = () => {
 
     const handleEdit = (record) => {
         setEditingCategory(record);
-        console.log(record.email);
+        // console.log(record.email);
         form.setFieldsValue({
             name: record.name,
 
@@ -107,7 +107,7 @@ const Category = () => {
             const response = await axios.patch(
                 `${baseurl}/updateCategoryStatus/${record?._id}`
             );
-            console.log(response);
+            // console.log(response);
 
             if (response) {
                 message.success("Status updated succesfully");
@@ -119,10 +119,10 @@ const Category = () => {
     };
 
 
-    const handleDelete = async(record)=>{
+    const handleDelete = async (record) => {
         try {
-             const response = await axios.delete(`${baseurl}/deleteCategroy/${record}`)
-             if (response) {
+            const response = await axios.delete(`${baseurl}/deleteCategroy/${record}`)
+            if (response) {
                 message.success("Status updated succesfully");
                 fetchData();
             }
@@ -142,7 +142,7 @@ const Category = () => {
                 baseurl + "/category",
                 postData
             );
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data) {
                 setIsModalOpen(false);
@@ -164,7 +164,7 @@ const Category = () => {
                 `${baseurl}/updateCategroy/${editingCategory?._id}`,
                 postData
             );
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data) {
                 setIsModalOpen(false);
@@ -206,16 +206,16 @@ const Category = () => {
         // specialization
 
         {
-          title: "Status",
-          key: "Status",
-          render: (_, record) => (
-            <Switch
-              checked={record.status === "Active"}
-              onChange={() => handleStatusToggle(record)}
-              checkedChildren="Active"
-              unCheckedChildren="Inactive"
-            />
-          ),
+            title: "Status",
+            key: "Status",
+            render: (_, record) => (
+                <Switch
+                    checked={record.status === "Active"}
+                    onChange={() => handleStatusToggle(record)}
+                    checkedChildren="Active"
+                    unCheckedChildren="Inactive"
+                />
+            ),
         },
 
         {
@@ -228,25 +228,25 @@ const Category = () => {
             ),
         },
 
-         {
-                      title: "Delete",
-                      render: (_, record) => (
-                        <>
-                          {auth1?.user?.role === 'superAdmin' && (
-                            <Popconfirm
-                              title="Are you sure you want to delete this blog?"
-                              onConfirm={() => handleDelete(record._id)}
-                              okText="Yes"
-                              cancelText="No"
-                            >
-                              <Button type="link" danger>
+        {
+            title: "Delete",
+            render: (_, record) => (
+                <>
+                    {auth1?.user?.role === 'superAdmin' && (
+                        <Popconfirm
+                            title="Are you sure you want to delete this blog?"
+                            onConfirm={() => handleDelete(record._id)}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Button type="link" danger>
                                 Delete
-                              </Button>
-                            </Popconfirm>
-                          )}
-                        </>
-                      ),
-                    }
+                            </Button>
+                        </Popconfirm>
+                    )}
+                </>
+            ),
+        }
     ];
 
 
@@ -271,7 +271,7 @@ const Category = () => {
 
         // specialization
 
-       
+
 
         {
             title: "Actions",
@@ -288,25 +288,25 @@ const Category = () => {
             <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
                 Add Category
             </Button>
-           {
-                           auth1?.user?.role==='superAdmin'?(<><Table
-                               columns={columns}
-                               dataSource={data}
-                               loading={loading}
-               
-               
-                           // rowKey="_id"
-                           /></>):(<>
-                           <Table
-                               columns={columns1}
-                               dataSource={data}
-                               loading={loading}
-               
-               
-                           // rowKey="_id"
-                           />
-                           </>)
-                       }
+            {
+                auth1?.user?.role === 'superAdmin' ? (<><Table
+                    columns={columns}
+                    dataSource={data}
+                    loading={loading}
+
+
+                // rowKey="_id"
+                /></>) : (<>
+                    <Table
+                        columns={columns1}
+                        dataSource={data}
+                        loading={loading}
+
+
+                    // rowKey="_id"
+                    />
+                </>)
+            }
 
             <Modal
                 title={editingCategory ? "Edit Category" : "Add Category"}

@@ -29,6 +29,7 @@ const TopHeading = () => {
     const [auth, setAuth] = useAuth();
     const [categories, setCategoris] = useState([])
     const auth1 = JSON.parse(localStorage.getItem('auth'));
+    const [blog, setBlog] = useState([])
     // console.log(auth?.user._id);
 
     useEffect(() => {
@@ -42,8 +43,11 @@ const TopHeading = () => {
     const fetchData1 = async () => {
         try {
             const res = await axios.get(baseurl + "/getALlcompblogs");
-            console.log("----data data-----", res.data);
+            const res1 = await axios.get(baseurl + "/getAllArticle");
+
+            // console.log("----data data-----", res.data);
             setCategoris(res.data);
+            setBlog(res1.data);
             setLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -55,7 +59,7 @@ const TopHeading = () => {
         try {
             const res = await axios.get(baseurl + "/api/topHeading-shorts/getAlltopHeading");
 
-            console.log("----data-----", res.data);
+            // console.log("----data-----", res.data);
 
 
             setData(res.data);
@@ -75,8 +79,9 @@ const TopHeading = () => {
     const handleEdit = (record) => {
         setEditingSubCategory(record);
         form.setFieldsValue({
-            page: record.page,
-            compBlog: record.compBlog.map(c => c._id)
+            // page: record.page,
+            compBlog: record.compBlog.map(c => c._id),
+            blog: record.blog.map(c => c._id)
 
             // dob:record.dateOfBirth,
         });
@@ -88,7 +93,7 @@ const TopHeading = () => {
             const response = await axios.patch(
                 `${baseurl}/api/tops-shorts/toggled/${record?._id}`
             );
-            console.log(response);
+            // console.log(response);
 
             if (response) {
                 message.success("Status updated succesfully");
@@ -115,7 +120,7 @@ const TopHeading = () => {
     const handlePost = async (values) => {
         const postData = {
             compBlog: values.compBlog,
-            page: values.page,
+            blog: values.blog,
 
         };
 
@@ -124,7 +129,7 @@ const TopHeading = () => {
                 baseurl + "/api/topHeading-shorts/createTopHeading",
                 postData
             );
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data) {
                 setIsModalOpen(false);
@@ -139,7 +144,8 @@ const TopHeading = () => {
     const handlePut = async (values) => {
         const postData = {
             compBlog: values.compBlog,
-            page: values.page,
+            // page: values.page,
+            blog: values.blog,
 
         };
 
@@ -148,7 +154,7 @@ const TopHeading = () => {
                 `${baseurl}/api/topHeading-shorts/updateTopHeading/${editingSubCategory?._id}`,
                 postData
             );
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data) {
                 setIsModalOpen(false);
@@ -170,7 +176,7 @@ const TopHeading = () => {
 
     const columns = [
 
-        
+
         // {
         //     title: "Page",
         //     dataIndex: "page",
@@ -185,6 +191,22 @@ const TopHeading = () => {
                 return (
                     <ul style={{ paddingLeft: 20, margin: 0 }}>
                         {record.compBlog.map((blog) => (
+                            <li key={blog._id}>{blog.title}</li>
+                        ))}
+                    </ul>
+                );
+            },
+        },
+
+
+        {
+            title: "blog Titles",
+            key: "BlogTitles",
+            render: (_, record) => {
+                if (!Array.isArray(record.blog)) return "No Blogs";
+                return (
+                    <ul style={{ paddingLeft: 20, margin: 0 }}>
+                        {record.blog.map((blog) => (
                             <li key={blog._id}>{blog.title}</li>
                         ))}
                     </ul>
@@ -247,11 +269,13 @@ const TopHeading = () => {
 
 
 
-        {
-            title: "Page",
-            dataIndex: "page",
-            key: "page",
-        },
+        // {
+        //     title: "Page",
+        //     dataIndex: "page",
+        //     key: "page",
+        // },
+
+
 
         {
             title: "CompBlog Titles",
@@ -261,6 +285,22 @@ const TopHeading = () => {
                 return (
                     <ul style={{ paddingLeft: 20, margin: 0 }}>
                         {record.compBlog.map((blog) => (
+                            <li key={blog._id}>{blog.title}</li>
+                        ))}
+                    </ul>
+                );
+            },
+        },
+
+
+        {
+            title: "blog Titles",
+            key: "BlogTitles",
+            render: (_, record) => {
+                if (!Array.isArray(record.blog)) return "No Blogs";
+                return (
+                    <ul style={{ paddingLeft: 20, margin: 0 }}>
+                        {record.blog.map((blog) => (
                             <li key={blog._id}>{blog.title}</li>
                         ))}
                     </ul>
@@ -300,7 +340,7 @@ const TopHeading = () => {
     return (
         <div>
             <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
-                Add SubCategory
+                Add Top Headline
             </Button>
 
 
@@ -314,7 +354,7 @@ const TopHeading = () => {
                 // rowKey="_id"
                 /></>) : (<>
                     <Table
-                        columns={columns1}
+                        columns={columns}
                         dataSource={data}
                         loading={loading}
                         scroll={{ x: 'max-content' }}
@@ -324,43 +364,65 @@ const TopHeading = () => {
             }
 
             <Modal
-                title={editingSubCategory ? "Edit SubCategory" : "Add SubCategory"}
+                title={editingSubCategory ? "Edit  Top Headline" : "Add Top Headline"}
                 open={isModalOpen}
                 onCancel={() => setIsModalOpen(false)}
                 footer={null}
             >
                 <Form form={form} layout="vertical" onFinish={handleSubmit}>
-                    <Form.Item
+                    {/* <Form.Item
                         name="page"
                         label="page"
                         rules={[{ required: true, message: "Please input the name!" }]}
                     >
                         <Input placeholder="Enter Name" />
-                    </Form.Item>
+                    </Form.Item> */}
 
 
 
 
                     <Form.Item
-  label="compBlog"
-  name="compBlog"
-  rules={[{ required: true, message: 'Please select the Comp blogs' }]}
->
-  <Select
-    mode="multiple"
-    showSearch
-    placeholder="Search and select blogs"
-    optionFilterProp="label"
-    filterOption={(input, option) =>
-      (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-    }
-    loading={loading}
-    options={categories?.map((cat) => ({
-      label: cat.title,  // Displayed text
-      value: cat._id     // Actual value used in form
-    }))}
-  />
-</Form.Item>
+                        label="compBlog"
+                        name="compBlog"
+                    //   rules={[{ required: true, message: 'Please select the Comp blogs' }]}
+                    >
+                        <Select
+                            mode="multiple"
+                            showSearch
+                            placeholder="Search and select blogs"
+                            optionFilterProp="label"
+                            filterOption={(input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                            }
+                            loading={loading}
+                            options={categories?.map((cat) => ({
+                                label: cat.title,  // Displayed text
+                                value: cat._id     // Actual value used in form
+                            }))}
+                        />
+                    </Form.Item>
+
+
+                    <Form.Item
+                        label="Blog"
+                        name="blog"
+                    //   rules={[{ required: true, message: 'Please select the Comp blogs' }]}
+                    >
+                        <Select
+                            mode="multiple"
+                            showSearch
+                            placeholder="Search and select blogs"
+                            optionFilterProp="label"
+                            filterOption={(input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                            }
+                            loading={loading}
+                            options={blog?.map((cat) => ({
+                                label: cat.title,  // Displayed text
+                                value: cat._id     // Actual value used in form
+                            }))}
+                        />
+                    </Form.Item>
 
 
 

@@ -32,6 +32,7 @@ import { Profile } from "./Profile";
 import TopsShorts from "./TopsShorts";
 import TrendingShorts from "./TrendingShorts";
 import TopHeading from "./TopHe";
+import MasterCards from "./MasterCards";
 // import logo from "../../public/logo.png";
 // properties-details
 
@@ -90,13 +91,9 @@ const AdminPanel = () => {
           return <Blogs />;
 
 
-      case "blog":
-        return <BlogList setSelectedTab={setSelectedTab} />;
 
-      case "testinomial":
-        return <Testinomial />;
-      case "blog-post":
-        return <BlogPosting setSelectedTab={setSelectedTab} />;
+         case "master-card":
+        return <MasterCards setSelectedTab={setSelectedTab} />;
 
       // BlogList
     }
@@ -112,6 +109,12 @@ const AdminPanel = () => {
     { key: "topShorts", icon: <TeamOutlined  />, label: "TopsShorts" },
     { key: "trendingShorts", icon: <TeamOutlined  />, label: "TrendingShorts" },
     { key: "topHeading", icon: <TeamOutlined  />, label: "TopHeadingShorts" },
+
+     {
+      key: "master-card",
+      icon: <TeamOutlined />,
+      label: "Merchandising",
+    },
     // { key: "blog", icon: <CarOutlined />, label: "Blog" },
     // { key: "testinomial", icon: <CalendarOutlined />, label: "Testinomial" },
   ];
@@ -127,9 +130,14 @@ const AdminPanel = () => {
     { key: "company", icon: <TeamOutlined  />, label: "Company" },
     { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
     { key: "blogs", icon: <TeamOutlined  />, label: "Blogs" },
-    { key: "topShorts", icon: <TeamOutlined  />, label: "TopsShorts" },
-    { key: "trendingShorts", icon: <TeamOutlined  />, label: "TrendingShorts" },
-    { key: "topHeading", icon: <TeamOutlined  />, label: "TopHeadingShorts" },
+    // { key: "topShorts", icon: <TeamOutlined  />, label: "TopsShorts" },
+    // { key: "trendingShorts", icon: <TeamOutlined  />, label: "TrendingShorts" },
+    // { key: "topHeading", icon: <TeamOutlined  />, label: "TopHeadingShorts" },
+    {
+      key: "master-card",
+      icon: <TeamOutlined />,
+      label: "Merchandising",
+    },
     // { key: "blog", icon: <CarOutlined />, label: "Blog" },
     // { key: "testinomial", icon: <CalendarOutlined />, label: "Testinomial" },
   ];
