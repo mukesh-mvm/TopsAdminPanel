@@ -20,9 +20,7 @@ import {
 const { Header, Sider, Content } = Layout;
 
 import Users from "./Users";
-import BlogList from "./BlogList";
-import BlogPosting from "./BlogPosting";
-import Testinomial from "./Testinomial";
+
 import Category from "./Category";
 import SubCategory from "./SubCategory";
 import Company from "./Company";
