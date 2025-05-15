@@ -104,9 +104,7 @@ const AdminPanel = () => {
     { key: "company", icon: <TeamOutlined  />, label: "Company" },
     { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
     { key: "blogs", icon: <TeamOutlined  />, label: "Blogs" },
-    { key: "topShorts", icon: <TeamOutlined  />, label: "TopsShorts" },
-    { key: "trendingShorts", icon: <TeamOutlined  />, label: "TrendingShorts" },
-    { key: "topHeading", icon: <TeamOutlined  />, label: "TopHeadingShorts" },
+
 
      {
       key: "master-card",
