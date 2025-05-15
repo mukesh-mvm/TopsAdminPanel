@@ -65,7 +65,7 @@ const Category = () => {
         }
     };
 
-    // console.log(auth?.user._id);
+  
 
     useEffect(() => {
         fetchData();
