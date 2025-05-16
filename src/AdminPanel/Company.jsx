@@ -14,6 +14,9 @@ import {
   Popconfirm
 } from "antd";
 
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   BellOutlined,
   TranslationOutlined,
@@ -216,6 +219,7 @@ const Company = () => {
       if (response) {
         message.success("Image uploaded successfully!");
         setImage(response.data.imageUrl);
+         toast.success("image uploaded successfully", { position: "bottom-right" });
       }
 
       return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
@@ -819,6 +823,7 @@ const Company = () => {
           </Form.Item>
         </Form>
       </Modal>
+       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

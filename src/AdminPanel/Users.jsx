@@ -13,6 +13,11 @@ import {
 } from "antd";
 import { baseurl } from "../helper/Helper";
 import axios from "axios";
+
+
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+
 import Password from "antd/es/input/Password";
 import {
   BellOutlined,
@@ -236,6 +241,7 @@ const Users = () => {
       if (response) {
         message.success("Image uploaded successfully!");
         setImage(response.data.imageUrl);
+         toast.success("image uploaded successfully", { position: "bottom-right" });
       }
 
       return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
@@ -720,6 +726,8 @@ const Users = () => {
           </Form.Item>
         </Form>
       </Modal>
+
+       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
