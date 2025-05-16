@@ -82,7 +82,7 @@ const Blogs = () => {
 
 
     const handleRowClick = (record) => {
-        // console.log("Clicked row data:", record);
+        console.log("Clicked row data:", record);
         setRecord(record);
         setImage(record?.image)
         setCross(true);
@@ -229,6 +229,9 @@ const Blogs = () => {
             faqs: record?.faqs || [],
             slug: record?.slug,
             blogType: record?.blogType,
+            blogType1: record?.blogType1,
+            imageType: record?.imageType,
+            conclusion: record?.conclusion,
 
 
 
@@ -366,7 +369,10 @@ const Blogs = () => {
             body: editorContent,
             faqs: values.faqs,
             slug: values.slug,
-            blogType: values?.blogType
+            blogType: values?.blogType,
+            blogType1: values?.blogType1,
+            imageType: values?.imageType,
+            conclusion: values?.conclusion,
 
         };
 
@@ -426,7 +432,10 @@ const Blogs = () => {
             body: editorContent,
             faqs: values?.faqs,
             slug: values?.slug,
-            blogType: values?.blogType
+            blogType: values?.blogType,
+            blogType1: values?.blogType1,
+            imageType: values?.imageType,
+            conclusion: values?.conclusion,
 
         };
 
@@ -848,10 +857,53 @@ const Blogs = () => {
                         </Form.List>
                     </Form.Item>
 
+                    <Form.Item
+                        name="conclusion"
+                        label="Conclusion"
+                    // rules={[{ required: true, message: "Please input the conclusion!" }]}
+                    >
+                        <Input.TextArea placeholder="Enter blog conclusion" rows={4} />
+                    </Form.Item>
+
+
+
+
 
 
                     <Form.Item
-                        label="Blog Type"
+                        label="Blog Type Blog/Stories"
+                        name="blogType1"
+                        rules={[{ required: true, message: 'Please select a blog type' }]}
+                    >
+                        <Select
+                            placeholder="Select blog type"
+                        // onChange={handleChange}
+                        // value={blogType}
+                        >
+                            <Option value="blog">Blog</Option>
+                            <Option value="stories">Stories</Option>
+                        </Select>
+                    </Form.Item>
+
+
+                    <Form.Item
+                        label="Blog Image Type"
+                        name="imageType"
+                        rules={[{ required: true, message: 'Please select a blog type' }]}
+                    >
+                        <Select
+                            placeholder="Select blog type"
+                        // onChange={handleChange}
+                        // value={blogType}
+                        >
+                            <Option value="imageType">Image</Option>
+                            <Option value="storiesType">Video</Option>
+                        </Select>
+                    </Form.Item>
+
+
+                    <Form.Item
+                        label="Blog Image/Video"
                         name="blogType"
                         rules={[{ required: true, message: 'Please select a blog type' }]}
                     >

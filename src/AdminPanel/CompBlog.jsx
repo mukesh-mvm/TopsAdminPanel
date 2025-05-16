@@ -225,8 +225,8 @@ const CompBlog = () => {
             slug: record?.slug,
             subHeading: record?.subHeading,
             heading: record?.heading,
-            para: record?.para
-
+            para: record?.para,
+            conclusion: record?.conclusion,
             // dob:record.dateOfBirth,
         });
         setIsModalOpen(true);
@@ -312,6 +312,7 @@ const CompBlog = () => {
             subHeading: values?.subHeading,
             heading: values?.heading,
             para: values?.para,
+            conclusion: values?.conclusion,
 
 
         };
@@ -354,7 +355,8 @@ const CompBlog = () => {
             slug: values?.slug,
             subHeading: values?.subHeading,
             heading: values?.heading,
-            para: values?.para
+            para: values?.para,
+            conclusion: values?.conclusion,
 
         };
 
@@ -800,6 +802,16 @@ const CompBlog = () => {
                                 removeButtons: ["font"],
                             }}
                         />
+                    </Form.Item>
+
+
+
+                    <Form.Item
+                        name="conclusion"
+                        label="Conclusion"
+                    // rules={[{ required: true, message: "Please input the conclusion!" }]}
+                    >
+                        <Input.TextArea placeholder="Enter blog conclusion" rows={4} />
                     </Form.Item>
 
 

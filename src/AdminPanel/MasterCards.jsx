@@ -24,6 +24,10 @@ const MasterCards = ({ setSelectedTab }) =>
             <div className="card" onClick={() => handleCardClick('topHeading')}>
                 TopHeadingShorts
             </div>
+
+            <div className="card" onClick={() => handleCardClick('dropDown')}>
+                Drop Down
+            </div>
             
             
             

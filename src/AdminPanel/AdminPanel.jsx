@@ -31,6 +31,7 @@ import TopsShorts from "./TopsShorts";
 import TrendingShorts from "./TrendingShorts";
 import TopHeading from "./TopHe";
 import MasterCards from "./MasterCards";
+import DropDown from "./DropDown";
 // import logo from "../../public/logo.png";
 // properties-details
 
@@ -87,6 +88,9 @@ const AdminPanel = () => {
 
         case "blogs":
           return <Blogs />;
+
+        case "dropDown":
+          return <DropDown />;
 
 
 

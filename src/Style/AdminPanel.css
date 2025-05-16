@@ -105,5 +105,5 @@
 }
 
 .ant-modal-root .ant-modal{
-  width: 750px;
+  width: 800px !important;
 }
