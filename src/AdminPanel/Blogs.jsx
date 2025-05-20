@@ -58,6 +58,10 @@ const Blogs = () => {
     const auth1 = JSON.parse(localStorage.getItem('auth'));
 
 
+     const [search, setSearch] = useState("")
+    const [seachloading, setSearchLoading] = useState(false);
+
+
     const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
     const [selectedSubCategory, setSelectedSubCategory] = useState(null);
 
@@ -101,13 +105,20 @@ const Blogs = () => {
     // console.log(auth?.user._id);
 
     useEffect(() => {
-        fetchData();
+       
         fetchData1()
         fetchData3()
         fetchData4()
 
 
     }, []);
+
+
+
+    useEffect(() => {
+        fetchData();
+        
+    }, [seachloading]);
 
 
 
@@ -199,13 +210,43 @@ const Blogs = () => {
             const res = await axios.get(baseurl + "/blogs");
 
             // console.log("----data-----", res.data);
-            setData(res.data);
+            // setData(res.data);
+
+
+             if (seachloading) {
+                const filtered = res?.data.filter(job => job.title.toLowerCase().includes(search.toLowerCase()));
+                setData(filtered);
+            } else {
+                setData(res?.data);
+            }
             setLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
             setLoading(false);
         }
     };
+
+
+
+    
+     const handleSeach = ()=>{
+        setSearchLoading(true)
+       
+  }
+
+  const ClearSeach = ()=>{
+     setSearchLoading(false)
+     setSearch("")
+
+  }
+
+  // console.log("---loading---",seachloading)
+
+  const handleChange1= (value)=>{
+          setSearch(value)
+
+          // console.log("----seach----",value)
+  }
 
     const handleAdd = () => {
         setEditingCompBlog(null);
@@ -606,6 +647,12 @@ const Blogs = () => {
                 Add Blog
             </Button>
 
+            <div className="search">
+                            <Input type="text" value={search} onChange={(e) => { handleChange1(e.target.value) }} placeholder="Enter BLog Title" />
+                            <Button onClick={handleSeach}> Search</Button>
+                            <Button onClick={ClearSeach}> Clear Filter</Button>
+                        </div>
+
 
 
 
@@ -805,8 +852,8 @@ const Blogs = () => {
                                         }
                                     },
                                 },
-                                enter: "DIV",
-                                defaultMode: "DIV",
+                                // enter: "DIV",
+                                // defaultMode: "DIV",
                                 removeButtons: ["font"],
                             }}
                         />

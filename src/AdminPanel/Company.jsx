@@ -50,6 +50,9 @@ const Company = () => {
   const [imageTrue, setImageTrue] = useState(false);
   const auth1 = JSON.parse(localStorage.getItem('auth'));
 
+  const [search, setSearch] = useState("")
+  const [seachloading, setSearchLoading] = useState(false);
+
 
   const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
 
@@ -79,11 +82,16 @@ const Company = () => {
   // console.log(auth?.user._id);
 
   useEffect(() => {
-    fetchData();
+    // fetchData();
     fetchData1()
 
 
   }, []);
+
+
+  useEffect(() => {
+    fetchData();
+  }, [seachloading]);
 
 
 
@@ -124,14 +132,45 @@ const Company = () => {
     try {
       const res = await axios.get(baseurl + "/getAllCompany");
 
-      // console.log("----data-----", res.data);
-      setData(res.data);
+      console.log("----data-----", res.data);
+
+
+      if (seachloading) {
+        const filtered = res?.data.filter(job => job.websiteName.toLowerCase().includes(search.toLowerCase()));
+        setData(filtered);
+      } else {
+        setData(res?.data);
+      }
+
+
+      // setData(res.data);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
       setLoading(false);
     }
   };
+
+
+
+  const handleSeach = () => {
+    setSearchLoading(true)
+
+  }
+
+  const ClearSeach = () => {
+    setSearchLoading(false)
+    setSearch("")
+
+  }
+
+  // console.log("---loading---",seachloading)
+
+  const handleChange = (value) => {
+    setSearch(value)
+
+    // console.log("----seach----",value)
+  }
 
   const handleAdd = () => {
     setEditingCompany(null);
@@ -219,7 +258,7 @@ const Company = () => {
       if (response) {
         message.success("Image uploaded successfully!");
         setImage(response.data.imageUrl);
-         toast.success("image uploaded successfully", { position: "bottom-right" });
+        toast.success("image uploaded successfully", { position: "bottom-right" });
       }
 
       return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
@@ -494,6 +533,12 @@ const Company = () => {
       <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
         Add Company
       </Button>
+
+      <div className="search">
+        <Input type="text" value={search} onChange={(e) => { handleChange(e.target.value) }} placeholder="Enter Website Name" />
+        <Button onClick={handleSeach}> Search</Button>
+        <Button onClick={ClearSeach}> Clear Filter</Button>
+      </div>
 
 
 
@@ -823,7 +868,7 @@ const Company = () => {
           </Form.Item>
         </Form>
       </Modal>
-       <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

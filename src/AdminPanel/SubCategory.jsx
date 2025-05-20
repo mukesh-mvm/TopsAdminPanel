@@ -29,12 +29,21 @@ const SubCategory = () => {
     const [auth, setAuth] = useAuth();
     const [categories, setCategoris] = useState([])
     const auth1 = JSON.parse(localStorage.getItem('auth'));
+
+    const[search,setSearch] = useState("")
+      const[seachloading,setSearchLoading] = useState(false);
     // console.log(auth?.user._id);
 
     useEffect(() => {
-        fetchData();
+        // fetchData();
         fetchData1()
     }, []);
+
+
+     useEffect(() => {
+        fetchData();
+    
+    }, [seachloading]);
 
 
 
@@ -56,7 +65,15 @@ const SubCategory = () => {
             const res = await axios.get(baseurl + "/getAllSubcategory");
 
             // console.log("----data-----", res.data);
-            setData(res.data);
+            // setData(res.data);
+
+
+        if(seachloading){
+        const filtered = res?.data.filter(job =>job.name.toLowerCase().includes(search.toLowerCase()));
+         setData(filtered);
+        }else{
+         setData(res?.data);
+        }
             setLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -97,6 +114,26 @@ const SubCategory = () => {
             console.log(error);
         }
     };
+
+
+       const handleSeach = ()=>{
+        setSearchLoading(true)
+       
+  }
+
+  const ClearSeach = ()=>{
+     setSearchLoading(false)
+     setSearch("")
+
+  }
+
+  // console.log("---loading---",seachloading)
+
+  const handleChange= (value)=>{
+          setSearch(value)
+
+          // console.log("----seach----",value)
+  }
 
 
     const handleDelete = async (record) => {
@@ -278,6 +315,12 @@ const SubCategory = () => {
             <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
                 Add SubCategory
             </Button>
+
+            <div className="search">
+                           <Input type="text" value={search} onChange={(e)=>{handleChange(e.target.value)}} placeholder="Enter SubCategory Name"/>
+                           <Button onClick={handleSeach}> Search</Button>
+                            <Button onClick={ClearSeach}> Clear Filter</Button>
+                       </div>
 
 
 
