@@ -32,6 +32,7 @@ import TrendingShorts from "./TrendingShorts";
 import TopHeading from "./TopHe";
 import MasterCards from "./MasterCards";
 import DropDown from "./DropDown";
+import Tag from "./Tag";
 // import logo from "../../public/logo.png";
 // properties-details
 
@@ -93,6 +94,10 @@ const AdminPanel = () => {
           return <DropDown />;
 
 
+        case "tag":
+          return <Tag />;
+
+
 
          case "master-card":
         return <MasterCards setSelectedTab={setSelectedTab} />;
@@ -108,6 +113,7 @@ const AdminPanel = () => {
     { key: "company", icon: <TeamOutlined  />, label: "Company" },
     { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
     { key: "blogs", icon: <TeamOutlined  />, label: "Blogs" },
+    { key: "tag", icon: <TeamOutlined  />, label: "Tag" },
 
 
      {
@@ -130,6 +136,7 @@ const AdminPanel = () => {
     { key: "company", icon: <TeamOutlined  />, label: "Company" },
     { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
     { key: "blogs", icon: <TeamOutlined  />, label: "Blogs" },
+    { key: "tag", icon: <TeamOutlined  />, label: "Tag" },
     // { key: "topShorts", icon: <TeamOutlined  />, label: "TopsShorts" },
     // { key: "trendingShorts", icon: <TeamOutlined  />, label: "TrendingShorts" },
     // { key: "topHeading", icon: <TeamOutlined  />, label: "TopHeadingShorts" },
