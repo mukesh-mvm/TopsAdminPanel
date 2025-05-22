@@ -88,7 +88,7 @@ const Tag = () => {
         // console.log(record.email);
         form.setFieldsValue({
             name: record.name,
-            category: record.category._id
+            category: record?.category?._id
 
             // dob:record.dateOfBirth,
         });

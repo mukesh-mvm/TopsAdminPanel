@@ -30,12 +30,14 @@ const DropDown = () => {
     const [form] = Form.useForm();
     const [auth, setAuth] = useAuth();
     const [categories, setCategoris] = useState([])
+    const [subcategories, setSubCategoris] = useState([])
     const auth1 = JSON.parse(localStorage.getItem('auth'));
     // console.log(auth?.user._id);
 
     useEffect(() => {
         fetchData();
         fetchData1()
+        fetchData2()
     }, []);
 
 
@@ -46,6 +48,20 @@ const DropDown = () => {
             const res = await axios.get(baseurl + "/category");
             // console.log("----data-----", res.data);
             setCategoris(res.data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setLoading(false);
+        }
+    };
+
+
+      const fetchData2 = async () => {
+        try {
+            const res = await axios.get(baseurl + "/getAllSubcategory");
+
+            // console.log("----data-----", res.data);
+            setSubCategoris(res.data);
             setLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -76,8 +92,9 @@ const DropDown = () => {
         setEditingSubCategory(record);
         // console.log(record.email);
         form.setFieldsValue({
-            category: record.category._id,
-            dropDown: record.dropDown || []
+            category: record?.category?._id,
+            subcategory: record?.subcategory?._id,
+            dropDown: record?.dropDown || []
             // dob:record.dateOfBirth,
         });
         setIsModalOpen(true);
@@ -117,6 +134,7 @@ const DropDown = () => {
             
             category: values.category,
             dropDown: values.dropDown,
+            subcategory: values.subcategory,
 
 
         };
@@ -142,6 +160,8 @@ const DropDown = () => {
         const postData = {
             category: values.category,
             dropDown: values.dropDown,
+            subcategory: values.subcategory,
+            
 
         };
 
@@ -313,6 +333,20 @@ const DropDown = () => {
                     >
                         <Select placeholder="Select a category" loading={loading}>
                             {categories.map((cat) => (
+                                <Option key={cat._id} value={cat._id}>
+                                    {cat.name}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="subcategory"
+                        label="Subcategory"
+                        rules={[{ required: true, message: 'Please select a subcategory!' }]}
+                    >
+                        <Select placeholder="Select a category" loading={loading}>
+                            {subcategories.map((cat) => (
                                 <Option key={cat._id} value={cat._id}>
                                     {cat.name}
                                 </Option>
