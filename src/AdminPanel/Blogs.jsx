@@ -12,12 +12,13 @@ import {
     DatePicker,
     InputNumber,
     Popconfirm,
-    Space
+    Space,
+    List
 } from "antd";
 
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-
+import Dragger from "antd/es/upload/Dragger";
 import {
     BellOutlined,
     TranslationOutlined,
@@ -93,6 +94,7 @@ const Blogs = () => {
         setRecord(record);
         setImage(record?.image)
         setCross(true);
+        setImages(record?.images)
 
         // Access the clicked row's data here
         // You can now use 'record' to get the details of the clicked row
@@ -252,6 +254,7 @@ const Blogs = () => {
         setEditingCompBlog(null);
         form.resetFields();
         setIsModalOpen(true);
+        setImages([])
     };
 
     const handleEdit = (record) => {
@@ -262,6 +265,7 @@ const Blogs = () => {
         setSelectedSubCategory(record.subcategories._id)
         setBlogType(record?.blogType)
         setEditorContent(record.body)
+        setImages(record?.images)
         // console.log("--------data-----------", record.categories._id)
         form.setFieldsValue({
             title: record?.title,
@@ -360,6 +364,44 @@ const Blogs = () => {
         }
     };
 
+
+     const [images, setImages] = useState([]);
+  // Handle image upload and store URL in state
+  const handleUpload = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file.file);
+    console.log("image", file.file);
+    try {
+      const response = await axios.post(
+         `${baseurl}/api/uploadImage`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data.imageUrl) {
+        // Store the image URL in the state array
+        setImages((prevImages) => [...prevImages, response.data.imageUrl]);
+        message.success("Image uploaded successfully!");
+      } else {
+        message.error("Image upload failed!");
+      }
+    } catch (error) {
+      message.error("Error uploading image!");
+    }
+
+    return false; // Prevent default upload behavior
+  };
+
+  // console.log("images",images);
+  // Remove an image URL from the array
+  const removeImage = (url) => {
+    setImages((prevImages) => prevImages.filter((image) => image !== url));
+  };
+
     // const uploadImage = async (file) => {
     //     console.log("Uploading file:", file);
 
@@ -418,6 +460,7 @@ const Blogs = () => {
             blogType1: values?.blogType1,
             imageType: values?.imageType,
             conclusion: values?.conclusion,
+            images:images
 
         };
 
@@ -435,6 +478,8 @@ const Blogs = () => {
                 message.success("User created successfully!");
                 setPhoto("");
                 fetchData();
+                setImages([]);
+                setEditorContent("")
 
 
 
@@ -481,7 +526,7 @@ const Blogs = () => {
             blogType1: values?.blogType1,
             imageType: values?.imageType,
             conclusion: values?.conclusion,
-
+            images:images
         };
 
 
@@ -500,6 +545,8 @@ const Blogs = () => {
                 message.success("User update successfully!");
                 form.resetFields();
                 setPhoto("");
+                setImages([])
+                setEditorContent("")
             }
         } catch (error) {
             console.log(error);
@@ -1298,6 +1345,54 @@ const Blogs = () => {
                             )}
                         </>
                     )} */}
+
+
+                         {/* image array */}
+                              <Form.Item label="Upload Thumb Nail">
+                                <Dragger
+                                  name="file"
+                                  customRequest={handleUpload}
+                                  showUploadList={false}
+                                  multiple={true}
+                                >
+                                  <div>
+                                    <PlusOutlined />
+                                    <div>Click or drag to upload images</div>
+                                  </div>
+                                </Dragger>
+                              </Form.Item>
+                    
+                              {/* Display Uploaded Images */}
+                              <Form.Item label="Uploaded Thumb Nail" >
+                                <List
+                                  itemLayout="horizontal"
+                                  dataSource={images}
+                                  renderItem={(imageUrl) => (
+                                    <List.Item
+                                      actions={[
+                                        <Button
+                                          icon={<MinusCircleOutlined />}
+                                          onClick={() => removeImage(imageUrl)}
+                                          danger
+                                        >
+                                          Remove
+                                        </Button>,
+                                      ]}
+                                    >
+                                      <List.Item.Meta
+                                        title={
+                                          <img
+                                            src={`${baseurl}${imageUrl}`}
+                                            alt="Image Preview"
+                                            style={{ maxWidth: "100px", maxHeight: "100px" }}
+                                          />
+                                        }
+                                        // description={imageUrl}
+                                      />
+                                    </List.Item>
+                                  )}
+                                />
+                              </Form.Item>
 
 
 

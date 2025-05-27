@@ -161,8 +161,6 @@ const DropDown = () => {
             category: values.category,
             dropDown: values.dropDown,
             subcategory: values.subcategory,
-            
-
         };
 
         try {

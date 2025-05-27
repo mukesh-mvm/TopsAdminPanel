@@ -25,13 +25,14 @@ import {
     PlusOutlined,
     MinusCircleOutlined,
 } from "@ant-design/icons";
+
 import { UploadOutlined } from "@ant-design/icons";
 import { baseurl } from "../helper/Helper";
 import axios from "axios";
 import Password from "antd/es/input/Password";
 // import { baseurl } from "../helper/Helper";
 import { useAuth } from "../context/auth";
-import { Popconfirm } from 'antd';
+
 import JoditEditor from "jodit-react";
 const { Option } = Select;
 
@@ -333,6 +334,9 @@ const CompBlog = () => {
             return null;
         }
     };
+
+
+ 
 
     const handlePost = async (values) => {
 
@@ -971,6 +975,10 @@ const CompBlog = () => {
                             )}
                         </>
                     )}
+
+
+
+       
 
 
                     <Form.Item>
