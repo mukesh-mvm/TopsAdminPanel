@@ -11,7 +11,8 @@ import {
   Switch,
   DatePicker,
   InputNumber,
-  Popconfirm
+  Popconfirm,
+  Space
 } from "antd";
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -200,7 +201,8 @@ const Company = () => {
       visitSiteUrl: record?.visitSiteUrl,
       category: record?.category?._id,
       slug: record.slug,
-      subcategories: record?.subcategories?._id
+      subcategories: record?.subcategories?._id,
+       dropDown: record?.dropDown || []
 
       // dob:record.dateOfBirth,
     });
@@ -319,6 +321,7 @@ const Company = () => {
       slug: values.slug,
       subcategories: values.subcategories,
       logo: image1,
+      dropDown: values.dropDown,
 
     };
 
@@ -361,6 +364,7 @@ const Company = () => {
       slug: values.slug,
       subcategories: values.subcategories,
       logo: imageTrue ? image1 : values.logo,
+      dropDown: values.dropDown,
 
     };
 
@@ -740,6 +744,96 @@ const Company = () => {
             <TextArea placeholder="Enter company review" style={{ height: 150 }} />
           </Form.Item>
 
+
+
+                     {/* 🆕 DropDown List UI */}
+<Form.List name="dropDown">
+  {(fields, { add, remove }) => (
+    <>
+      {fields.map(({ key, name, ...restField }) => (
+        <div
+          key={key}
+          style={{
+            marginBottom: 16,
+            padding: 16,
+            border: "1px solid #ccc",
+            borderRadius: 8,
+          }}
+        >
+          <Form.Item
+            {...restField}
+            name={[name, "Head"]}
+            label="Head"
+            // rules={[{ required: true, message: "Please enter Head" }]}
+          >
+            <Input placeholder="Enter Head" />
+          </Form.Item>
+
+          {/* Nested drop Form.List */}
+          <Form.List name={[name, "drop"]}>
+            {(dropFields, { add: addDrop, remove: removeDrop }) => (
+              <>
+                {dropFields.map(({ key: dropKey, name: dropName, fieldKey }) => (
+                  <Space
+                    key={dropKey}
+                    // style={{ display: "flex", marginBottom: 8 }}
+                    align="baseline"
+                  >
+                    <Form.Item
+                      name={dropName}
+                      fieldKey={fieldKey}
+                      rules={[
+                        // { required: true, message: "Please enter a drop item" },
+                      ]}
+                      style={{ flex: 1 }}
+                    >
+                      <Input placeholder="Enter Drop item" />
+                    </Form.Item>
+                    <MinusCircleOutlined
+                      onClick={() => removeDrop(dropName)}
+                      style={{ color: "red" }}
+                    />
+                  </Space>
+                ))}
+
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => addDrop()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Add Data 
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
+
+          <Button
+            danger
+            onClick={() => remove(name)}
+            icon={<MinusCircleOutlined />}
+            style={{ marginTop: 10 }}
+          >
+            Remove Group
+          </Button>
+        </div>
+      ))}
+
+      <Form.Item>
+        <Button
+          type="dashed"
+          onClick={() => add()}
+          block
+          icon={<PlusOutlined />}
+        >
+          Add DropDown Group
+        </Button>
+      </Form.Item>
+    </>
+  )}
+</Form.List>;
 
 
 
