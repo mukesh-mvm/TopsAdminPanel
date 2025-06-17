@@ -184,13 +184,15 @@ const Company = () => {
     setEditingCompany(record);
     // console.log(record);
     setSelectedCategory(record.category._id)
-    const benifits = record?.benifits.join('\n')
+    const benifits = record?.benifits?.join('\n')
+    const eligibility = record?.eligibility?.join('\n')
     const cons = record?.cons.join('\n')
     const features = record?.features.join('\n')
     const pros = record?.pros.join('\n')
     form.setFieldsValue({
       Description: record?.Description,
       benifits: benifits,
+      eligibility: eligibility,
       cons: cons,
       features: features,
       pros: pros,
@@ -303,12 +305,14 @@ const Company = () => {
   const handlePost = async (values) => {
 
     const benifits = values?.benifits.split('\n')
+    const eligibility = values?.eligibility.split('\n')
     const cons = values?.cons.split('\n')
     const features = values?.features.split('\n')
     const pros = values?.pros.split('\n')
     const postData = {
       Description: values.Description,
       benifits: benifits,
+      eligibility: eligibility,
       cons: cons,
       features: features,
       pros: pros,
@@ -346,12 +350,14 @@ const Company = () => {
 
   const handlePut = async (values) => {
     const benifits = values?.benifits.split('\n')
+    const eligibility = values?.eligibility.split('\n')
     const cons = values?.cons.split('\n')
     const features = values?.features.split('\n')
     const pros = values?.pros.split('\n')
     const postData = {
       Description: values.Description,
       benifits: benifits,
+      eligibility: eligibility,
       cons: cons,
       features: features,
       pros: pros,
@@ -705,6 +711,15 @@ const Company = () => {
             name="benifits"
             label="Benefits"
             rules={[{ required: true, message: "Please input the review!" }]}
+          >
+            <TextArea placeholder="Enter Benifits seperated with comma ," style={{ height: 150 }} />
+          </Form.Item>
+
+
+          <Form.Item
+            name="eligibility"
+            label="Eligibility"
+            // rules={[{ required: true, message: "Please input the review!" }]}
           >
             <TextArea placeholder="Enter Benifits seperated with comma ," style={{ height: 150 }} />
           </Form.Item>
