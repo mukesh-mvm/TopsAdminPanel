@@ -12,7 +12,8 @@ import {
   DatePicker,
   InputNumber,
   Popconfirm,
-  Space
+  Space,
+  List
 } from "antd";
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -32,6 +33,7 @@ import axios from "axios";
 import Password from "antd/es/input/Password";
 // import { baseurl } from "../helper/Helper";
 import { useAuth } from "../context/auth";
+import Dragger from "antd/es/upload/Dragger";
 const { Option } = Select;
 
 const { TextArea } = Input;
@@ -56,12 +58,15 @@ const Company = () => {
 
 
   const [selectedCategory, setSelectedCategory] = useState(null); // store in a variable
+  const [images, setImages] = useState([]);
 
   const handleCategoryChange = (value) => {
     setSelectedCategory(value); // save selected category ID to variable
     // console.log("Selected Category ID:", value);
   };
 
+
+  console.log("images", images)
 
 
 
@@ -71,6 +76,7 @@ const Company = () => {
     setRecord(record);
     setImage(record?.logo);
     setCross(true);
+    setImages(record?.images)
 
     // Access the clicked row's data here
     // You can now use 'record' to get the details of the clicked row
@@ -177,12 +183,14 @@ const Company = () => {
     setEditingCompany(null);
     form.resetFields();
     setIsModalOpen(true);
+    setImages([])
   };
 
   const handleEdit = (record) => {
     setImageTrue(true);
     setEditingCompany(record);
     // console.log(record);
+    setImages(record?.images)
     setSelectedCategory(record.category._id)
     const benifits = record?.benifits?.join('\n')
     const eligibility = record?.eligibility?.join('\n')
@@ -204,7 +212,7 @@ const Company = () => {
       category: record?.category?._id,
       slug: record.slug,
       subcategories: record?.subcategories?._id,
-       dropDown: record?.dropDown || []
+      dropDown: record?.dropDown || []
 
       // dob:record.dateOfBirth,
     });
@@ -302,6 +310,42 @@ const Company = () => {
   //     }
   //   };
 
+
+  const handleUpload = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file.file);
+    console.log("image", file.file);
+    try {
+      const response = await axios.post(
+        `${baseurl}/api/uploadImage`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data.imageUrl) {
+        // Store the image URL in the state array
+        setImages((prevImages) => [...prevImages, response.data.imageUrl]);
+        message.success("Image uploaded successfully!");
+      } else {
+        message.error("Image upload failed!");
+      }
+    } catch (error) {
+      message.error("Error uploading image!");
+    }
+
+    return false; // Prevent default upload behavior
+  };
+
+  // console.log("images",images);
+  // Remove an image URL from the array
+  const removeImage = (url) => {
+    setImages((prevImages) => prevImages.filter((image) => image !== url));
+  };
+
   const handlePost = async (values) => {
 
     const benifits = values?.benifits.split('\n')
@@ -326,6 +370,7 @@ const Company = () => {
       subcategories: values.subcategories,
       logo: image1,
       dropDown: values.dropDown,
+      images: images
 
     };
 
@@ -342,6 +387,7 @@ const Company = () => {
         setIsModalOpen(false);
         message.success("User created successfully!");
         fetchData();
+        setImages([]);
       }
     } catch (error) {
       console.log(error);
@@ -371,6 +417,7 @@ const Company = () => {
       subcategories: values.subcategories,
       logo: imageTrue ? image1 : values.logo,
       dropDown: values.dropDown,
+      images: images
 
     };
 
@@ -389,6 +436,7 @@ const Company = () => {
         fetchData();
         message.success("User update successfully!");
         form.resetFields();
+        setImages([]);
       }
     } catch (error) {
       console.log(error);
@@ -719,7 +767,7 @@ const Company = () => {
           <Form.Item
             name="eligibility"
             label="Eligibility"
-            // rules={[{ required: true, message: "Please input the review!" }]}
+          // rules={[{ required: true, message: "Please input the review!" }]}
           >
             <TextArea placeholder="Enter Benifits seperated with comma ," style={{ height: 150 }} />
           </Form.Item>
@@ -761,95 +809,142 @@ const Company = () => {
 
 
 
-                     {/* 🆕 DropDown List UI */}
-<Form.List name="dropDown">
-  {(fields, { add, remove }) => (
-    <>
-      {fields.map(({ key, name, ...restField }) => (
-        <div
-          key={key}
-          style={{
-            marginBottom: 16,
-            padding: 16,
-            border: "1px solid #ccc",
-            borderRadius: 8,
-          }}
-        >
-          <Form.Item
-            {...restField}
-            name={[name, "Head"]}
-            label="Head"
-            // rules={[{ required: true, message: "Please enter Head" }]}
-          >
-            <Input placeholder="Enter Head" />
-          </Form.Item>
-
-          {/* Nested drop Form.List */}
-          <Form.List name={[name, "drop"]}>
-            {(dropFields, { add: addDrop, remove: removeDrop }) => (
+          {/* 🆕 DropDown List UI */}
+          <Form.List name="dropDown">
+            {(fields, { add, remove }) => (
               <>
-                {dropFields.map(({ key: dropKey, name: dropName, fieldKey }) => (
-                  <Space
-                    key={dropKey}
-                    // style={{ display: "flex", marginBottom: 8 }}
-                    align="baseline"
+                {fields.map(({ key, name, ...restField }) => (
+                  <div
+                    key={key}
+                    style={{
+                      marginBottom: 16,
+                      padding: 16,
+                      border: "1px solid #ccc",
+                      borderRadius: 8,
+                    }}
                   >
                     <Form.Item
-                      name={dropName}
-                      fieldKey={fieldKey}
-                      rules={[
-                        // { required: true, message: "Please enter a drop item" },
-                      ]}
-                      style={{ flex: 1 }}
+                      {...restField}
+                      name={[name, "Head"]}
+                      label="Head"
+                    // rules={[{ required: true, message: "Please enter Head" }]}
                     >
-                      <Input placeholder="Enter Drop item" />
+                      <Input placeholder="Enter Head" />
                     </Form.Item>
-                    <MinusCircleOutlined
-                      onClick={() => removeDrop(dropName)}
-                      style={{ color: "red" }}
-                    />
-                  </Space>
+
+                    {/* Nested drop Form.List */}
+                    <Form.List name={[name, "drop"]}>
+                      {(dropFields, { add: addDrop, remove: removeDrop }) => (
+                        <>
+                          {dropFields.map(({ key: dropKey, name: dropName, fieldKey }) => (
+                            <Space
+                              key={dropKey}
+                              // style={{ display: "flex", marginBottom: 8 }}
+                              align="baseline"
+                            >
+                              <Form.Item
+                                name={dropName}
+                                fieldKey={fieldKey}
+                                rules={[
+                                  // { required: true, message: "Please enter a drop item" },
+                                ]}
+                                style={{ flex: 1 }}
+                              >
+                                <Input placeholder="Enter Drop item" />
+                              </Form.Item>
+                              <MinusCircleOutlined
+                                onClick={() => removeDrop(dropName)}
+                                style={{ color: "red" }}
+                              />
+                            </Space>
+                          ))}
+
+                          <Form.Item>
+                            <Button
+                              type="dashed"
+                              onClick={() => addDrop()}
+                              block
+                              icon={<PlusOutlined />}
+                            >
+                              Add Data
+                            </Button>
+                          </Form.Item>
+                        </>
+                      )}
+                    </Form.List>
+
+                    <Button
+                      danger
+                      onClick={() => remove(name)}
+                      icon={<MinusCircleOutlined />}
+                      style={{ marginTop: 10 }}
+                    >
+                      Remove Group
+                    </Button>
+                  </div>
                 ))}
 
                 <Form.Item>
                   <Button
                     type="dashed"
-                    onClick={() => addDrop()}
+                    onClick={() => add()}
                     block
                     icon={<PlusOutlined />}
                   >
-                    Add Data 
+                    Add Data Group
                   </Button>
                 </Form.Item>
               </>
             )}
           </Form.List>
 
-          <Button
-            danger
-            onClick={() => remove(name)}
-            icon={<MinusCircleOutlined />}
-            style={{ marginTop: 10 }}
-          >
-            Remove Group
-          </Button>
-        </div>
-      ))}
 
-      <Form.Item>
-        <Button
-          type="dashed"
-          onClick={() => add()}
-          block
-          icon={<PlusOutlined />}
-        >
-          Add DropDown Group
-        </Button>
-      </Form.Item>
-    </>
-  )}
-</Form.List>;
+{/* image array */}
+          <Form.Item label="Upload Icons">
+            <Dragger
+              name="file"
+              customRequest={handleUpload}
+              showUploadList={false}
+              multiple={true}
+            >
+              <div>
+                <PlusOutlined />
+                <div>Click or drag to upload images</div>
+              </div>
+            </Dragger>
+          </Form.Item>
 
+          {/* Display Uploaded Images */}
+          <Form.Item label="Uploaded Icons" >
+            <List
+              itemLayout="horizontal"
+              dataSource={images}
+              renderItem={(imageUrl) => (
+                <List.Item
+                  actions={[
+                    <Button
+                      icon={<MinusCircleOutlined />}
+                      onClick={() => removeImage(imageUrl)}
+                      danger
+                    >
+                      Remove
+                    </Button>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    title={
+                      <img
+                        src={`${baseurl}${imageUrl}`}
+                        alt="Image Preview"
+                        style={{ maxWidth: "100px", maxHeight: "100px" }}
+                      />
+                    }
+                  // description={imageUrl}
+                  />
+                </List.Item>
+              )}
+            />
+          </Form.Item>
 
 
 
@@ -892,7 +987,7 @@ const Company = () => {
               ) : (
                 <>
                   <Form.Item
-                    label="Photo"
+                    label="Logo"
                     name="photo"
                     onChange={(e) => setPhoto(e.target.files[0])}
                     rules={[
@@ -932,7 +1027,7 @@ const Company = () => {
           ) : (
             <>
               <Form.Item
-                label="Photo"
+                label="Logo"
                 name="photo"
                 onChange={(e) => setPhoto(e.target.files[0])}
                 rules={[
@@ -968,6 +1063,10 @@ const Company = () => {
               )}
             </>
           )}
+
+
+
+          
 
 
           <Form.Item>
