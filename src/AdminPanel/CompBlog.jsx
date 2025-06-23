@@ -269,6 +269,10 @@ const CompBlog = () => {
             heading: record?.heading,
             para: record?.para,
             conclusion: record?.conclusion,
+            type: record?.type,
+            heading1: record?.heading1,
+            heading2: record?.heading2,
+            heading3: record?.heading3,
             // dob:record.dateOfBirth,
         });
         setIsModalOpen(true);
@@ -337,7 +341,7 @@ const CompBlog = () => {
     };
 
 
- 
+
 
     const handlePost = async (values) => {
 
@@ -359,6 +363,10 @@ const CompBlog = () => {
             heading: values?.heading,
             para: values?.para,
             conclusion: values?.conclusion,
+            type: values?.type,
+            heading1: values?.heading1,
+            heading2: values?.heading2,
+            heading3: values?.heading3,
 
 
         };
@@ -403,6 +411,10 @@ const CompBlog = () => {
             heading: values?.heading,
             para: values?.para,
             conclusion: values?.conclusion,
+              type: values?.type,
+            heading1: values?.heading1,
+            heading2: values?.heading2,
+            heading3: values?.heading3,
 
         };
 
@@ -757,6 +769,40 @@ const CompBlog = () => {
                         </Select>
                     </Form.Item>
 
+                    <Form.Item
+                        name="type"
+                        label="Type"
+                        rules={[{ required: true, message: 'Please select a type!' }]}
+                    >
+                        <Select placeholder="Select a type">
+                            <Option value="tabular">Tabular</Option>
+                            <Option value="normal">Normal</Option>
+                        </Select>
+                    </Form.Item>
+
+
+                    <Form.Item
+                        name="heading1"
+                        label="Heading1"
+                        // rules={[{ required: true, message: "Please input the name!" }]}
+                    >
+                        <Input placeholder="Enter Blog Meta Description" />
+                    </Form.Item>
+                    <Form.Item
+                        name="heading2"
+                        label="Heading2"
+                        // rules={[{ required: true, message: "Please input the name!" }]}
+                    >
+                        <Input placeholder="Enter Blog Meta Description" />
+                    </Form.Item>
+                    <Form.Item
+                        name="heading3"
+                        label="Heading3"
+                        // rules={[{ required: true, message: "Please input the name!" }]}
+                    >
+                        <Input placeholder="Enter Blog Meta Description" />
+                    </Form.Item>
+
 
                     <Form.Item label="FAQS" required>
                         <Form.List name="faqs">
@@ -979,7 +1025,7 @@ const CompBlog = () => {
 
 
 
-       
+
 
 
                     <Form.Item>

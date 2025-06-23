@@ -66,7 +66,7 @@ const Company = () => {
   };
 
 
-  console.log("images", images)
+  // console.log("images", images)
 
 
 
