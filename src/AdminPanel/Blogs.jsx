@@ -440,6 +440,41 @@ const Blogs = () => {
 
     // console.log("auth1?.user?._id", auth1?.user)
 
+
+    const [image11,setImage11] = useState("")
+    const uploadImage1 = async (file) => {
+        // console.log(file);
+        const formData = new FormData();
+        formData.append("image", file.file);
+        // console.log(file.file.name);
+
+        try {
+            const response = await axios.post(
+                `${baseurl}/api/uploadImage`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+            if (response) {
+                message.success("Image uploaded successfully!");
+                setImage(response.data.imageUrl);
+                toast.success("image uploaded successfully", { position: "bottom-right" });
+            }
+
+            setImage11(response.data.imageUrl)
+
+            return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
+        } catch (error) {
+            message.error("Error uploading image. Please try again later.");
+            console.error("Image upload error:", error);
+            return null;
+        }
+    };
+
     const handlePost = async (values) => {
 
 
@@ -857,6 +892,51 @@ const Blogs = () => {
                     </Form.Item>
 
 
+
+                                                 <Form.Item
+                                                    label="Image"
+                                                    name="image11"
+                                                    // onChange={(e) => setPhoto(e.target.files[0])}
+                                                    // rules={[
+                                                    //     {
+                                                    //         required: true,
+                                                    //         message: "Please upload the driver's photo!",
+                                                    //     },
+                                                    // ]}
+                                                >
+                                                    <Upload
+                                                        listType="picture"
+                                                        beforeUpload={() => false}
+                                                        onChange={uploadImage1}
+                                                        showUploadList={false}
+                                                        customRequest={({ file, onSuccess }) => {
+                                                            setTimeout(() => {
+                                                                onSuccess("ok");
+                                                            }, 0);
+                                                        }}
+                                                    >
+                                                        <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                                                    </Upload>
+                                                </Form.Item>
+                                               {image11 && (
+  <div style={{ marginTop: 10 }}>
+    <p style={{ wordBreak: 'break-all' }}>{`${baseurl}${image11}`}</p>
+    <Button
+      type="primary"
+      onClick={() => {
+        navigator.clipboard.writeText(`${baseurl}${image11}`);
+        message.success("Link copied to clipboard!");
+      }}
+    >
+      Copy Link
+    </Button>
+  </div>
+)}
+
+
+<br />
+
+
                     <Form.Item label="Content" required>
                         <JoditEditor
                             ref={editor}
@@ -954,6 +1034,11 @@ const Blogs = () => {
                             )}
                         </Form.List>
                     </Form.Item>
+
+
+
+                    
+  
 
                     <Form.Item
                         name="conclusion"

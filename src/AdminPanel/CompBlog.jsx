@@ -341,6 +341,41 @@ const CompBlog = () => {
     };
 
 
+    const [image11,setImage11] = useState("")
+    const uploadImage1 = async (file) => {
+        // console.log(file);
+        const formData = new FormData();
+        formData.append("image", file.file);
+        // console.log(file.file.name);
+
+        try {
+            const response = await axios.post(
+                `${baseurl}/api/uploadImage`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+            if (response) {
+                message.success("Image uploaded successfully!");
+                setImage(response.data.imageUrl);
+                toast.success("image uploaded successfully", { position: "bottom-right" });
+            }
+
+            setImage11(response.data.imageUrl)
+
+            return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
+        } catch (error) {
+            message.error("Error uploading image. Please try again later.");
+            console.error("Image upload error:", error);
+            return null;
+        }
+    };
+
+
 
 
     const handlePost = async (values) => {
@@ -411,10 +446,11 @@ const CompBlog = () => {
             heading: values?.heading,
             para: values?.para,
             conclusion: values?.conclusion,
-              type: values?.type,
+            type: values?.type,
             heading1: values?.heading1,
             heading2: values?.heading2,
             heading3: values?.heading3,
+
 
         };
 
@@ -850,6 +886,13 @@ const CompBlog = () => {
                             )}
                         </Form.List>
                     </Form.Item>
+                   
+
+
+{/* onst [image11,setImage11] = useState("")
+    const uploadImage1 = async (file) => { */}
+
+
 
 
 
