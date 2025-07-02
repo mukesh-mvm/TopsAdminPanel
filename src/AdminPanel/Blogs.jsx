@@ -59,7 +59,7 @@ const Blogs = () => {
     const auth1 = JSON.parse(localStorage.getItem('auth'));
 
 
-     const [search, setSearch] = useState("")
+    const [search, setSearch] = useState("")
     const [seachloading, setSearchLoading] = useState(false);
 
 
@@ -107,7 +107,7 @@ const Blogs = () => {
     // console.log(auth?.user._id);
 
     useEffect(() => {
-       
+
         fetchData1()
         fetchData3()
         fetchData4()
@@ -119,7 +119,7 @@ const Blogs = () => {
 
     useEffect(() => {
         fetchData();
-        
+
     }, [seachloading]);
 
 
@@ -215,7 +215,7 @@ const Blogs = () => {
             // setData(res.data);
 
 
-             if (seachloading) {
+            if (seachloading) {
                 const filtered = res?.data.filter(job => job.title.toLowerCase().includes(search.toLowerCase()));
                 setData(filtered);
             } else {
@@ -230,25 +230,25 @@ const Blogs = () => {
 
 
 
-    
-     const handleSeach = ()=>{
+
+    const handleSeach = () => {
         setSearchLoading(true)
-       
-  }
 
-  const ClearSeach = ()=>{
-     setSearchLoading(false)
-     setSearch("")
+    }
 
-  }
+    const ClearSeach = () => {
+        setSearchLoading(false)
+        setSearch("")
 
-  // console.log("---loading---",seachloading)
+    }
 
-  const handleChange1= (value)=>{
-          setSearch(value)
+    // console.log("---loading---",seachloading)
 
-          // console.log("----seach----",value)
-  }
+    const handleChange1 = (value) => {
+        setSearch(value)
+
+        // console.log("----seach----",value)
+    }
 
     const handleAdd = () => {
         setEditingCompBlog(null);
@@ -365,42 +365,42 @@ const Blogs = () => {
     };
 
 
-     const [images, setImages] = useState([]);
-  // Handle image upload and store URL in state
-  const handleUpload = async (file) => {
-    const formData = new FormData();
-    formData.append("image", file.file);
-    console.log("image", file.file);
-    try {
-      const response = await axios.post(
-         `${baseurl}/api/uploadImage`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+    const [images, setImages] = useState([]);
+    // Handle image upload and store URL in state
+    const handleUpload = async (file) => {
+        const formData = new FormData();
+        formData.append("image", file.file);
+        console.log("image", file.file);
+        try {
+            const response = await axios.post(
+                `${baseurl}/api/uploadImage`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+            if (response.data.imageUrl) {
+                // Store the image URL in the state array
+                setImages((prevImages) => [...prevImages, response.data.imageUrl]);
+                message.success("Image uploaded successfully!");
+            } else {
+                message.error("Image upload failed!");
+            }
+        } catch (error) {
+            message.error("Error uploading image!");
         }
-      );
 
-      if (response.data.imageUrl) {
-        // Store the image URL in the state array
-        setImages((prevImages) => [...prevImages, response.data.imageUrl]);
-        message.success("Image uploaded successfully!");
-      } else {
-        message.error("Image upload failed!");
-      }
-    } catch (error) {
-      message.error("Error uploading image!");
-    }
+        return false; // Prevent default upload behavior
+    };
 
-    return false; // Prevent default upload behavior
-  };
-
-  // console.log("images",images);
-  // Remove an image URL from the array
-  const removeImage = (url) => {
-    setImages((prevImages) => prevImages.filter((image) => image !== url));
-  };
+    // console.log("images",images);
+    // Remove an image URL from the array
+    const removeImage = (url) => {
+        setImages((prevImages) => prevImages.filter((image) => image !== url));
+    };
 
     // const uploadImage = async (file) => {
     //     console.log("Uploading file:", file);
@@ -441,7 +441,7 @@ const Blogs = () => {
     // console.log("auth1?.user?._id", auth1?.user)
 
 
-    const [image11,setImage11] = useState("")
+    const [image11, setImage11] = useState("")
     const uploadImage1 = async (file) => {
         // console.log(file);
         const formData = new FormData();
@@ -495,7 +495,7 @@ const Blogs = () => {
             blogType1: values?.blogType1,
             imageType: values?.imageType,
             conclusion: values?.conclusion,
-            images:images
+            images: images
 
         };
 
@@ -561,7 +561,7 @@ const Blogs = () => {
             blogType1: values?.blogType1,
             imageType: values?.imageType,
             conclusion: values?.conclusion,
-            images:images
+            images: images
         };
 
 
@@ -730,10 +730,10 @@ const Blogs = () => {
             </Button>
 
             <div className="search">
-                            <Input type="text" value={search} onChange={(e) => { handleChange1(e.target.value) }} placeholder="Enter BLog Title" />
-                            <Button onClick={handleSeach}> Search</Button>
-                            <Button onClick={ClearSeach}> Clear Filter</Button>
-                        </div>
+                <Input type="text" value={search} onChange={(e) => { handleChange1(e.target.value) }} placeholder="Enter BLog Title" />
+                <Button onClick={handleSeach}> Search</Button>
+                <Button onClick={ClearSeach}> Clear Filter</Button>
+            </div>
 
 
 
@@ -893,48 +893,48 @@ const Blogs = () => {
 
 
 
-                                                 <Form.Item
-                                                    label="Image"
-                                                    name="image11"
-                                                    // onChange={(e) => setPhoto(e.target.files[0])}
-                                                    // rules={[
-                                                    //     {
-                                                    //         required: true,
-                                                    //         message: "Please upload the driver's photo!",
-                                                    //     },
-                                                    // ]}
-                                                >
-                                                    <Upload
-                                                        listType="picture"
-                                                        beforeUpload={() => false}
-                                                        onChange={uploadImage1}
-                                                        showUploadList={false}
-                                                        customRequest={({ file, onSuccess }) => {
-                                                            setTimeout(() => {
-                                                                onSuccess("ok");
-                                                            }, 0);
-                                                        }}
-                                                    >
-                                                        <Button icon={<UploadOutlined />}>Upload Photo</Button>
-                                                    </Upload>
-                                                </Form.Item>
-                                               {image11 && (
-  <div style={{ marginTop: 10 }}>
-    <p style={{ wordBreak: 'break-all' }}>{`${baseurl}${image11}`}</p>
-    <Button
-      type="primary"
-      onClick={() => {
-        navigator.clipboard.writeText(`${baseurl}${image11}`);
-        message.success("Link copied to clipboard!");
-      }}
-    >
-      Copy Link
-    </Button>
-  </div>
-)}
+                    <Form.Item
+                        label="Image"
+                        name="image11"
+                    // onChange={(e) => setPhoto(e.target.files[0])}
+                    // rules={[
+                    //     {
+                    //         required: true,
+                    //         message: "Please upload the driver's photo!",
+                    //     },
+                    // ]}
+                    >
+                        <Upload
+                            listType="picture"
+                            beforeUpload={() => false}
+                            onChange={uploadImage1}
+                            showUploadList={false}
+                            customRequest={({ file, onSuccess }) => {
+                                setTimeout(() => {
+                                    onSuccess("ok");
+                                }, 0);
+                            }}
+                        >
+                            <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                        </Upload>
+                    </Form.Item>
+                    {image11 && (
+                        <div style={{ marginTop: 10 }}>
+                            <p style={{ wordBreak: 'break-all' }}>{`${baseurl}${image11}`}</p>
+                            <Button
+                                type="primary"
+                                onClick={() => {
+                                    navigator.clipboard.writeText(`${baseurl}${image11}`);
+                                    message.success("Link copied to clipboard!");
+                                }}
+                            >
+                                Copy Link
+                            </Button>
+                        </div>
+                    )}
 
 
-<br />
+                    <br />
 
 
                     <Form.Item label="Content" required>
@@ -1037,8 +1037,8 @@ const Blogs = () => {
 
 
 
-                    
-  
+
+
 
                     <Form.Item
                         name="conclusion"
@@ -1432,52 +1432,52 @@ const Blogs = () => {
                     )} */}
 
 
-                         {/* image array */}
-                              <Form.Item label="Upload Thumb Nail">
-                                <Dragger
-                                  name="file"
-                                  customRequest={handleUpload}
-                                  showUploadList={false}
-                                  multiple={true}
-                                >
-                                  <div>
-                                    <PlusOutlined />
-                                    <div>Click or drag to upload images</div>
-                                  </div>
-                                </Dragger>
-                              </Form.Item>
-                    
-                              {/* Display Uploaded Images */}
-                              <Form.Item label="Uploaded Thumb Nail" >
-                                <List
-                                  itemLayout="horizontal"
-                                  dataSource={images}
-                                  renderItem={(imageUrl) => (
-                                    <List.Item
-                                      actions={[
+                    {/* image array */}
+                    <Form.Item label="Upload Thumb Nail">
+                        <Dragger
+                            name="file"
+                            customRequest={handleUpload}
+                            showUploadList={false}
+                            multiple={true}
+                        >
+                            <div>
+                                <PlusOutlined />
+                                <div>Click or drag to upload images</div>
+                            </div>
+                        </Dragger>
+                    </Form.Item>
+
+                    {/* Display Uploaded Images */}
+                    <Form.Item label="Uploaded Thumb Nail" >
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={images}
+                            renderItem={(imageUrl) => (
+                                <List.Item
+                                    actions={[
                                         <Button
-                                          icon={<MinusCircleOutlined />}
-                                          onClick={() => removeImage(imageUrl)}
-                                          danger
+                                            icon={<MinusCircleOutlined />}
+                                            onClick={() => removeImage(imageUrl)}
+                                            danger
                                         >
-                                          Remove
+                                            Remove
                                         </Button>,
-                                      ]}
-                                    >
-                                      <List.Item.Meta
+                                    ]}
+                                >
+                                    <List.Item.Meta
                                         title={
-                                          <img
-                                            src={`${baseurl}${imageUrl}`}
-                                            alt="Image Preview"
-                                            style={{ maxWidth: "100px", maxHeight: "100px" }}
-                                          />
+                                            <img
+                                                src={`${baseurl}${imageUrl}`}
+                                                alt="Image Preview"
+                                                style={{ maxWidth: "100px", maxHeight: "100px" }}
+                                            />
                                         }
-                                        // description={imageUrl}
-                                      />
-                                    </List.Item>
-                                  )}
-                                />
-                              </Form.Item>
+                                    // description={imageUrl}
+                                    />
+                                </List.Item>
+                            )}
+                        />
+                    </Form.Item>
 
 
 
@@ -1490,7 +1490,7 @@ const Blogs = () => {
                 </Form>
             </Modal>
 
-      <ToastContainer position="top-right" autoClose={3000} />
+            <ToastContainer position="top-right" autoClose={3000} />
 
         </div>
     );

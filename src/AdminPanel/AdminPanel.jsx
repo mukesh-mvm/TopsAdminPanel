@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout, Menu, Avatar, Button, Dropdown } from "antd";
 import { useAuth } from "../context/auth";
+import WebStoryCrud from './WebStoryCrud'
 import "../Style/AdminPanel.css";
 import {
   UserOutlined,
@@ -33,6 +34,7 @@ import TopHeading from "./TopHe";
 import MasterCards from "./MasterCards";
 import DropDown from "./DropDown";
 import Tag from "./Tag";
+import DetailsFormTable from "./DetailsFormTable ";
 // import logo from "../../public/logo.png";
 // properties-details
 
@@ -94,8 +96,14 @@ const AdminPanel = () => {
           return <DropDown />;
 
 
+        case "webstories":
+          return <WebStoryCrud />;
+
+
         case "tag":
           return <Tag />;
+        case "details":
+          return <DetailsFormTable />;
 
 
 
@@ -114,6 +122,7 @@ const AdminPanel = () => {
     { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
     { key: "blogs", icon: <TeamOutlined  />, label: "Blogs" },
     { key: "tag", icon: <TeamOutlined  />, label: "Tag" },
+    { key: "webstories", icon: <TeamOutlined  />, label: "Web stories" },
 
 
      {
@@ -130,6 +139,7 @@ const AdminPanel = () => {
   const menuItems1 = [
     // { key: "home", icon: <TeamOutlined />, label: "Home" },
     { key: "profile", icon: <HomeOutlined />, label: "Profile" },
+    { key: "details", icon: <HomeOutlined />, label: "Details" },
     { key: "users", icon: < UserOutlined/>, label: "Admin" },
     { key: "categories", icon: <HomeOutlined />, label: "Categories" },
     { key: "sub-categories", icon: <TeamOutlined  />, label: "Sub-Categories" },
@@ -137,6 +147,7 @@ const AdminPanel = () => {
     { key: "compBlog", icon: <TeamOutlined  />, label: "CompBlog" },
     { key: "blogs", icon: <TeamOutlined  />, label: "Blogs" },
     { key: "tag", icon: <TeamOutlined  />, label: "Tag" },
+    { key: "webstories", icon: <TeamOutlined  />, label: "Web stories" },
     // { key: "topShorts", icon: <TeamOutlined  />, label: "TopsShorts" },
     // { key: "trendingShorts", icon: <TeamOutlined  />, label: "TrendingShorts" },
     // { key: "topHeading", icon: <TeamOutlined  />, label: "TopHeadingShorts" },
