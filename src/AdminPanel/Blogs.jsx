@@ -266,6 +266,7 @@ const Blogs = () => {
         setBlogType(record?.blogType)
         setEditorContent(record.body)
         setImages(record?.images)
+        const link = record?.link?.join('\n')
         // console.log("--------data-----------", record.categories._id)
         form.setFieldsValue({
             title: record?.title,
@@ -280,6 +281,7 @@ const Blogs = () => {
             blogType1: record?.blogType1,
             imageType: record?.imageType,
             conclusion: record?.conclusion,
+            link: link,
 
 
 
@@ -478,7 +480,8 @@ const Blogs = () => {
     const handlePost = async (values) => {
 
 
-
+        
+    const link = values?.link.split('\n')
         const postData = {
             title: values?.title,
             mtitle: values?.mtitle,
@@ -495,7 +498,8 @@ const Blogs = () => {
             blogType1: values?.blogType1,
             imageType: values?.imageType,
             conclusion: values?.conclusion,
-            images: images
+            images: images,
+            link:link
 
         };
 
@@ -545,6 +549,7 @@ const Blogs = () => {
 
     const handlePut = async (values) => {
         // console.log("auth1?.user?._id",auth1)
+        const link = values?.link.split('\n')
         const postData = {
             title: values?.title,
             mtitle: values?.mtitle,
@@ -561,7 +566,8 @@ const Blogs = () => {
             blogType1: values?.blogType1,
             imageType: values?.imageType,
             conclusion: values?.conclusion,
-            images: images
+            images: images,
+            link:link
         };
 
 
@@ -1433,7 +1439,7 @@ const Blogs = () => {
 
 
                     {/* image array */}
-                    <Form.Item label="Upload Thumb Nail">
+                    <Form.Item label="Popup Images Both for Desktop and Mobile">
                         <Dragger
                             name="file"
                             customRequest={handleUpload}
@@ -1448,7 +1454,7 @@ const Blogs = () => {
                     </Form.Item>
 
                     {/* Display Uploaded Images */}
-                    <Form.Item label="Uploaded Thumb Nail" >
+                    <Form.Item label="Uploaded Popup Images " >
                         <List
                             itemLayout="horizontal"
                             dataSource={images}
@@ -1478,6 +1484,15 @@ const Blogs = () => {
                             )}
                         />
                     </Form.Item>
+
+
+                            <Form.Item
+                                name="link"
+                                label="Link"
+                              // rules={[{ required: true, message: "Please input the review!" }]}
+                              >
+                                <TextArea placeholder="Enter Link ," style={{ height: 150 }} />
+                              </Form.Item>
 
 
 

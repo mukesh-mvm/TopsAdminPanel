@@ -12,7 +12,8 @@ import {
     DatePicker,
     InputNumber,
     Space,
-    Popconfirm
+    Popconfirm,
+    List
 } from "antd";
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -29,6 +30,7 @@ import {
 
 import { UploadOutlined } from "@ant-design/icons";
 import { baseurl } from "../helper/Helper";
+import Dragger from "antd/es/upload/Dragger";
 import axios from "axios";
 import Password from "antd/es/input/Password";
 // import { baseurl } from "../helper/Helper";
@@ -89,6 +91,7 @@ const CompBlog = () => {
         setRecord(record);
         setImage(record?.logo);
         setCross(true);
+        setImages(record?.images)
 
         // Access the clicked row's data here
         // You can now use 'record' to get the details of the clicked row
@@ -244,6 +247,7 @@ const CompBlog = () => {
         setEditingCompBlog(null);
         form.resetFields();
         setIsModalOpen(true);
+        setImages([])
     };
 
     const handleEdit = (record) => {
@@ -254,6 +258,8 @@ const CompBlog = () => {
         setSelectedSubCategory(record.subcategories._id)
         setEditorContent(record?.body)
         console.log("---body---", record.body)
+        setImages(record?.images)
+        const link = record?.link?.join('\n')
         // console.log("--------data-----------", record.subcategories._id)
         form.setFieldsValue({
             title: record.title,
@@ -273,6 +279,7 @@ const CompBlog = () => {
             heading1: record?.heading1,
             heading2: record?.heading2,
             heading3: record?.heading3,
+             link: link,
             // dob:record.dateOfBirth,
         });
         setIsModalOpen(true);
@@ -341,13 +348,12 @@ const CompBlog = () => {
     };
 
 
-    const [image11,setImage11] = useState("")
-    const uploadImage1 = async (file) => {
-        // console.log(file);
+    const [images, setImages] = useState([]);
+    // Handle image upload and store URL in state
+    const handleUpload = async (file) => {
         const formData = new FormData();
         formData.append("image", file.file);
-        // console.log(file.file.name);
-
+        console.log("image", file.file);
         try {
             const response = await axios.post(
                 `${baseurl}/api/uploadImage`,
@@ -359,27 +365,32 @@ const CompBlog = () => {
                 }
             );
 
-            if (response) {
+            if (response.data.imageUrl) {
+                // Store the image URL in the state array
+                setImages((prevImages) => [...prevImages, response.data.imageUrl]);
                 message.success("Image uploaded successfully!");
-                setImage(response.data.imageUrl);
                 toast.success("image uploaded successfully", { position: "bottom-right" });
+            } else {
+                message.error("Image upload failed!");
             }
-
-            setImage11(response.data.imageUrl)
-
-            return response.data.imageUrl; // Assuming the API returns the image URL in the 'url' field
         } catch (error) {
-            message.error("Error uploading image. Please try again later.");
-            console.error("Image upload error:", error);
-            return null;
+            message.error("Error uploading image!");
         }
+
+        return false; // Prevent default upload behavior
+    };
+
+    // console.log("images",images);
+    // Remove an image URL from the array
+    const removeImage = (url) => {
+        setImages((prevImages) => prevImages.filter((image) => image !== url));
     };
 
 
 
 
     const handlePost = async (values) => {
-
+ const link = values?.link.split('\n')
 
         const postData = {
             title: values.title,
@@ -402,6 +413,8 @@ const CompBlog = () => {
             heading1: values?.heading1,
             heading2: values?.heading2,
             heading3: values?.heading3,
+               images: images,
+            link:link
 
 
         };
@@ -420,6 +433,7 @@ const CompBlog = () => {
                 message.success("User created successfully!");
                 fetchData();
                 setPhoto("");
+                setImages([]);
             }
         } catch (error) {
             console.log(error);
@@ -428,7 +442,7 @@ const CompBlog = () => {
 
     const handlePut = async (values) => {
 
-
+  const link = values?.link.split('\n')
         const postData = {
             title: values.title,
             mtitle: values.mtitle,
@@ -450,6 +464,8 @@ const CompBlog = () => {
             heading1: values?.heading1,
             heading2: values?.heading2,
             heading3: values?.heading3,
+            images: images,
+            link:link
 
 
         };
@@ -470,6 +486,7 @@ const CompBlog = () => {
                 message.success("User update successfully!");
                 form.resetFields();
                 setPhoto("");
+                setImages([]);
             }
         } catch (error) {
             console.log(error);
@@ -896,7 +913,7 @@ const CompBlog = () => {
 
 
 
-                    <Form.Item label="Content" required>
+                    <Form.Item label="Content" >
                         <JoditEditor
                             ref={editor}
                             value={editorContent}
@@ -1065,6 +1082,66 @@ const CompBlog = () => {
                             )}
                         </>
                     )}
+
+
+
+
+
+                                        {/* image array */}
+                    <Form.Item label="Popup Images Both for Desktop and Mobile">
+                        <Dragger
+                            name="file"
+                            customRequest={handleUpload}
+                            showUploadList={false}
+                            multiple={true}
+                        >
+                            <div>
+                                <PlusOutlined />
+                                <div>Click or drag to upload images</div>
+                            </div>
+                        </Dragger>
+                    </Form.Item>
+
+                    {/* Display Uploaded Images */}
+                    <Form.Item label="Uploaded Popup Images " >
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={images}
+                            renderItem={(imageUrl) => (
+                                <List.Item
+                                    actions={[
+                                        <Button
+                                            icon={<MinusCircleOutlined />}
+                                            onClick={() => removeImage(imageUrl)}
+                                            danger
+                                        >
+                                            Remove
+                                        </Button>,
+                                    ]}
+                                >
+                                    <List.Item.Meta
+                                        title={
+                                            <img
+                                                src={`${baseurl}${imageUrl}`}
+                                                alt="Image Preview"
+                                                style={{ maxWidth: "100px", maxHeight: "100px" }}
+                                            />
+                                        }
+                                    // description={imageUrl}
+                                    />
+                                </List.Item>
+                            )}
+                        />
+                    </Form.Item>
+
+
+                            <Form.Item
+                                name="link"
+                                label="Link"
+                              // rules={[{ required: true, message: "Please input the review!" }]}
+                              >
+                                <TextArea placeholder="Enter Link ," style={{ height: 150 }} />
+                              </Form.Item>
 
 
 
