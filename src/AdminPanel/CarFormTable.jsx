@@ -5,17 +5,18 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { baseurl } from "../helper/Helper";
 
-const DetailsFormTable = () => {
+const CarFormTable = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch API data
   const fetchData = async () => {
     try {
-      const res = await axios.get(baseurl+"/api/detailsForm/getAll");
+      const res = await axios.get(baseurl+"/api/carforms/get");
       setData(res.data);
     } catch (err) {
       console.error("Fetch failed:", err);
+      message.error("Failed to fetch data!");
     } finally {
       setLoading(false);
     }
@@ -28,24 +29,28 @@ const DetailsFormTable = () => {
   // Delete entry by ID
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${baseurl}/api/detailsForm/delete/${id}`);
+      await axios.delete(`${baseurl}/api/carforms/${id}`);
       message.success("Deleted successfully!");
-      // Refresh table
       setData((prev) => prev.filter((item) => item._id !== id));
     } catch (error) {
       console.error("Delete failed:", error);
-      message.error("Failed to delete!");
+      message.error("Failed to delete entry!");
     }
   };
 
   // Table columns
   const columns = [
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Phone", dataIndex: "phone", key: "phone" },
-    { title: "City", dataIndex: "city", key: "city" },
-    { title: "Project Interest", dataIndex: "projectInterest", key: "projectInterest" },
-    { title: "Budget", dataIndex: "budgets", key: "budgets" },
-    { title: "Buy Planning", dataIndex: "buyPlanning", key: "buyPlanning" },
+    { title: "Brand", dataIndex: "brand", key: "brand" },
+    { title: "Model", dataIndex: "model", key: "model" },
+    { title: "Variant", dataIndex: "variant", key: "variant" },
+    { title: "Transmission", dataIndex: "transmission", key: "transmission" },
+    { title: "Year", dataIndex: "year", key: "year" },
+    { title: "KMs Driven", dataIndex: "kmsDriven", key: "kmsDriven" },
+    { title: "Car Location", dataIndex: "carLocation", key: "carLocation" },
+    { title: "Register State", dataIndex: "registerState", key: "registerState" },
+    { title: "RTO Number", dataIndex: "rtoNumber", key: "rtoNumber" },
+    { title: "Planning", dataIndex: "planning", key: "planning" },
+    { title: "Phone Number", dataIndex: "phoneNumber", key: "phoneNumber" },
     {
       title: "Created At",
       dataIndex: "createdAt",
@@ -74,15 +79,15 @@ const DetailsFormTable = () => {
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "DetailsFormData");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "CarFormsData");
     const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const file = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(file, "details_form_data.xlsx");
+    saveAs(file, "car_forms_data.xlsx");
   };
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>📋 User Details</h2>
+      <h2>🚗 Car Form Submissions</h2>
       <br />
       <Button type="primary" onClick={exportToExcel} style={{ marginBottom: 16 }}>
         Export
@@ -102,4 +107,4 @@ const DetailsFormTable = () => {
   );
 };
 
-export default DetailsFormTable;
+export default CarFormTable;

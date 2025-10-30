@@ -35,6 +35,8 @@ import MasterCards from "./MasterCards";
 import DropDown from "./DropDown";
 import Tag from "./Tag";
 import DetailsFormTable from "./DetailsFormTable ";
+
+import CarFormTable from "./CarFormTable";
 // import logo from "../../public/logo.png";
 // properties-details
 
@@ -105,6 +107,9 @@ const AdminPanel = () => {
         case "details":
           return <DetailsFormTable />;
 
+          case "car":
+          return <CarFormTable />;
+
 
 
          case "master-card":
@@ -140,6 +145,7 @@ const AdminPanel = () => {
     // { key: "home", icon: <TeamOutlined />, label: "Home" },
     { key: "profile", icon: <HomeOutlined />, label: "Profile" },
     { key: "details", icon: <HomeOutlined />, label: "Details" },
+    { key: "car", icon: <HomeOutlined />, label: "CarResell" },
     { key: "users", icon: < UserOutlined/>, label: "Admin" },
     { key: "categories", icon: <HomeOutlined />, label: "Categories" },
     { key: "sub-categories", icon: <TeamOutlined  />, label: "Sub-Categories" },
