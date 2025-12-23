@@ -73,7 +73,13 @@ const Category = () => {
 
     const fetchData = async () => {
         try {
-            const res = await axios.get(baseurl + "/category");
+            const res = await axios.get(baseurl + "/category", {
+          headers: {
+            "Content-Type": "multipart/form-data",
+             Authorization: `Bearer ${auth?.token}`,
+ 
+          },
+        });
 
             // console.log("----data-----", res.data);
             setData(res.data);
@@ -102,80 +108,111 @@ const Category = () => {
         setIsModalOpen(true);
     };
 
-    const handleStatusToggle = async (record) => {
-        try {
-            const response = await axios.patch(
-                `${baseurl}/updateCategoryStatus/${record?._id}`
-            );
-            // console.log(response);
+const handleStatusToggle = async (record) => {
+  try {
+    const response = await axios.patch(
+      `${baseurl}/updateCategoryStatus/${record?._id}`,
+      null, // no body being sent
+      {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      }
+    );
 
-            if (response) {
-                message.success("Status updated succesfully");
-                fetchData();
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-
-    const handleDelete = async (record) => {
-        try {
-            const response = await axios.delete(`${baseurl}/deleteCategroy/${record}`)
-            if (response) {
-                message.success("Status updated succesfully");
-                fetchData();
-            }
-        } catch (error) {
-            console.log(error)
-        }
+    if (response?.data) {
+      message.success("Status updated successfully");
+      fetchData();
     }
+  } catch (error) {
+    console.error(error);
+    message.error("Failed to update status");
+  }
+};
 
-    const handlePost = async (values) => {
-        const postData = {
-            name: values.name,
 
-        };
 
-        try {
-            const response = await axios.post(
-                baseurl + "/category",
-                postData
-            );
-            // console.log(response.data);
+const handleDelete = async (record) => {
+  try {
+    const response = await axios.delete(
+      `${baseurl}/deleteCategroy/${record}`,
+      {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      }
+    );
 
-            if (response.data) {
-                setIsModalOpen(false);
-                message.success("User created successfully!");
-                fetchData();
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    if (response.status === 200) {
+      message.success("Category deleted successfully");
+      fetchData();
+    }
+  } catch (error) {
+    console.error(error);
+    message.error("Failed to delete category");
+  }
+};
 
-    const handlePut = async (values) => {
-        const postData = {
-            name: values.name,
-        };
 
-        try {
-            const response = await axios.put(
-                `${baseurl}/updateCategroy/${editingCategory?._id}`,
-                postData
-            );
-            // console.log(response.data);
 
-            if (response.data) {
-                setIsModalOpen(false);
-                fetchData();
-                message.success("User update successfully!");
-                form.resetFields();
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
+  const handlePost = async (values) => {
+  const postData = {
+    name: values.name,
+  };
+
+  try {
+    const response = await axios.post(
+      `${baseurl}/category`,
+      postData,
+      {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      }
+    );
+
+    if (response.data) {
+      setIsModalOpen(false);
+      message.success("User created successfully!");
+      fetchData();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
+
+const handlePut = async (values) => {
+  const postData = {
+    name: values.name,
+  };
+
+  try {
+    const response = await axios.put(
+      `${baseurl}/updateCategroy/${editingCategory?._id}`,
+      postData,
+      {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      }
+    );
+
+    if (response.data) {
+      setIsModalOpen(false);
+      fetchData();
+      message.success("User update successfully!");
+      form.resetFields();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
     const handleSubmit = async (values) => {
         if (editingCategory) {
             await handlePut(values);

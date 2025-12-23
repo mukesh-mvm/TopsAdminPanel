@@ -207,7 +207,11 @@ const Users = () => {
   const handleStatusToggle = async (record) => {
     try {
       const response = await axios.patch(
-        `${baseurl}/updateUserStatus/${record?._id}`
+        `${baseurl}/updateUserStatus/${record?._id}`, {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    }
       );
       // console.log(response);
 
@@ -234,6 +238,7 @@ const Users = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth?.token}`,
           },
         }
       );
@@ -275,7 +280,12 @@ const Users = () => {
     try {
       const response = await axios.post(
         baseurl + "/register",
-        postData
+        postData,
+         {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    }
       );
       // console.log(response.data);
 
@@ -314,7 +324,12 @@ const Users = () => {
     try {
       const response = await axios.patch(
         `${baseurl}/updateUser/${editingUser?._id}`,
-        postData
+        postData,
+         {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    }
       );
       // console.log(response.data);
 

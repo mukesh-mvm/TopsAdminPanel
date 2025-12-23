@@ -1,28 +1,35 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import axios from "axios";
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
+
 const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
     user: null,
-    token: "",
+    token: null,
   });
 
-  //default axios
-  axios.defaults.headers.common["Authorization"] = auth?.token;
-
+  // Set axios header ONLY when token changes
   useEffect(() => {
-    const data = localStorage.getItem("auth");
-    if (data) {
-      const parseData = JSON.parse(data);
+    if (auth?.token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${auth.token}`;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+    }
+  }, [auth?.token]);
+
+  // Load auth from localStorage on app start
+  useEffect(() => {
+    const storedAuth = localStorage.getItem("auth");
+    if (storedAuth) {
+      const parsed = JSON.parse(storedAuth);
       setAuth({
-        ...auth,
-        user: parseData.admin,
-        token: parseData.token,
+        user: parsed.user,
+        token: parsed.token,
       });
     }
-    //eslint-disable-next-line
   }, []);
+
   return (
     <AuthContext.Provider value={[auth, setAuth]}>
       {children}
@@ -31,6 +38,12 @@ const AuthProvider = ({ children }) => {
 };
 
 // custom hook
-const useAuth = () => useContext(AuthContext);
+const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
+  return context;
+};
 
 export { useAuth, AuthProvider };

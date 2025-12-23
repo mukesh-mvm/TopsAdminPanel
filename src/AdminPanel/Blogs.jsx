@@ -293,7 +293,12 @@ const Blogs = () => {
     const handleStatusToggle = async (record) => {
         try {
             const response = await axios.patch(
-                `${baseurl}/updateBlogStatus/${record?._id}`
+                `${baseurl}/updateBlogStatus/${record?._id}`,
+                 {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    }
             );
             // console.log(response);
 
@@ -309,7 +314,11 @@ const Blogs = () => {
 
     const handleDelete = async (record) => {
         try {
-            const response = await axios.delete(`${baseurl}/deleteblogs/${record}`)
+            const response = await axios.delete(`${baseurl}/deleteblogs/${record}`, {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    })
             if (response) {
                 message.success("Status updated succesfully");
                 fetchData();
@@ -346,10 +355,11 @@ const Blogs = () => {
                 `${baseurl}/api/uploadImage`,
                 formData,
                 {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
             );
 
             if (response) {
@@ -377,11 +387,12 @@ const Blogs = () => {
             const response = await axios.post(
                 `${baseurl}/api/uploadImage`,
                 formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
+                 {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
             );
 
             if (response.data.imageUrl) {
@@ -455,10 +466,11 @@ const Blogs = () => {
                 `${baseurl}/api/uploadImage`,
                 formData,
                 {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
             );
 
             if (response) {
@@ -508,7 +520,12 @@ const Blogs = () => {
         try {
             const response = await axios.post(
                 baseurl + "/blogs",
-                postData
+                postData,
+                 {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    }
             );
             // console.log(response.data);
 
@@ -549,7 +566,7 @@ const Blogs = () => {
 
     const handlePut = async (values) => {
         // console.log("auth1?.user?._id",auth1)
-        const link = values?.link.split('\n')
+        const link = values?.link?.split('\n')
         const postData = {
             title: values?.title,
             mtitle: values?.mtitle,
@@ -576,7 +593,12 @@ const Blogs = () => {
         try {
             const response = await axios.put(
                 `${baseurl}/updateblogs/${editingCompBlog?._id}`,
-                postData
+                postData,
+                 {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    }
             );
             // console.log(response.data);
 

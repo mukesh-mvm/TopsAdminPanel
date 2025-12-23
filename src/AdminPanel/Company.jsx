@@ -91,72 +91,93 @@ const Company = () => {
   useEffect(() => {
     // fetchData();
     fetchData1()
-
-
-  }, []);
+  }, [auth?.token]);
 
 
   useEffect(() => {
     fetchData();
-  }, [seachloading]);
+  }, [seachloading,auth?.token]);
 
 
 
   useEffect(() => {
     fetchData2()
-  }, [selectedCategory])
+  }, [selectedCategory,auth?.token])
 
 
 
 
-  const fetchData1 = async () => {
-    try {
-      const res = await axios.get(baseurl + "/category");
-      // console.log("----data-----", res.data);
-      setCategoris(res.data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
-    }
-  };
+ const fetchData1 = async () => {
+  try {
+    const res = await axios.get(`${baseurl}/category`, {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    });
+
+    setCategoris(res.data);
+    setLoading(false);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    setLoading(false);
+  }
+};
 
 
 
-  const fetchData2 = async () => {
-    try {
-      const res = await axios.get(`${baseurl}/getOneSubByCategoryId/${selectedCategory}`);
-      // console.log("----data-----", res.data);
-      setSubCategoris(res.data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
-    }
-  };
 
-  const fetchData = async () => {
-    try {
-      const res = await axios.get(baseurl + "/getAllCompany");
-
-      console.log("----data-----", res.data);
-
-
-      if (seachloading) {
-        const filtered = res?.data.filter(job => job.websiteName.toLowerCase().includes(search.toLowerCase()));
-        setData(filtered);
-      } else {
-        setData(res?.data);
+ const fetchData2 = async () => {
+  try {
+    const res = await axios.get(
+      `${baseurl}/getOneSubByCategoryId/${selectedCategory}`,
+      {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
       }
+    );
+
+    setSubCategoris(res.data);
+    setLoading(false);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    setLoading(false);
+  }
+};
 
 
-      // setData(res.data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
+ const fetchData = async () => {
+  try {
+    const res = await axios.get(`${baseurl}/getAllCompany`, {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    });
+
+    console.log("data",res.data)
+
+    if (seachloading) {
+      const filtered = res.data.filter((job) =>
+        job.websiteName.toLowerCase().includes(search.toLowerCase())
+      );
+
+     const reverseData = filtered?.reverse();
+
+      setData(reverseData);
+    } else {
+
+       const reverseData = res?.data?.reverse();
+
+      setData(reverseData);
     }
-  };
+
+    setLoading(false);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    setLoading(false);
+  }
+};
+
 
 
 
@@ -222,7 +243,12 @@ const Company = () => {
   const handleStatusToggle = async (record) => {
     try {
       const response = await axios.patch(
-        `${baseurl}/updateCompanyStatus/${record?._id}`
+        `${baseurl}/updateCompanyStatus/${record?._id}`,
+         {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      }
       );
       // console.log(response);
 
@@ -238,7 +264,11 @@ const Company = () => {
 
   const handleDelete = async (record) => {
     try {
-      const response = await axios.delete(`${baseurl}/deleteCompany/${record}`)
+      const response = await axios.delete(`${baseurl}/deleteCompany/${record}`, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      })
       if (response) {
         message.success("Status updated succesfully");
         fetchData();
@@ -263,6 +293,7 @@ const Company = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth?.token}`,
           },
         }
       );
@@ -280,6 +311,8 @@ const Company = () => {
       return null;
     }
   };
+
+
   // const uploadImage = async (file) => {
   //     console.log(file);
   //     const formData = new FormData();
@@ -322,6 +355,8 @@ const Company = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth?.token}`,
+
           },
         }
       );
@@ -379,7 +414,12 @@ const Company = () => {
     try {
       const response = await axios.post(
         baseurl + "/createCompany",
-        postData
+        postData,
+         {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      }
       );
       // console.log(response.data);
 
@@ -427,7 +467,12 @@ const Company = () => {
     try {
       const response = await axios.put(
         `${baseurl}/updateCompany/${editingCompany?._id}`,
-        postData
+        postData,
+         {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      }
       );
       // console.log(response.data);
 

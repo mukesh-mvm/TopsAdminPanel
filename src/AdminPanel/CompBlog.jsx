@@ -126,7 +126,10 @@ const CompBlog = () => {
 
 
     useEffect(() => {
+
+        console.log("selectedSubCategory",selectedSubCategory)
         fetchData6()
+        
     }, [selectedSubCategory])
 
 
@@ -162,7 +165,7 @@ const CompBlog = () => {
     const fetchData6 = async () => {
         try {
             const res = await axios.get(`${baseurl}/getCompanySubId/${selectedSubCategory}`);
-            // console.log("----data-----", res.data);
+            console.log("---- company data-----", res.data);
             setCompany(res.data);
             setLoading(false);
         } catch (error) {
@@ -211,9 +214,13 @@ const CompBlog = () => {
 
             if (seachloading) {
                 const filtered = res?.data.filter(job => job.title.toLowerCase().includes(search.toLowerCase()));
-                setData(filtered);
+
+                 const reverseData = filtered?.reverse();
+                setData(reverseData);
             } else {
-                setData(res?.data);
+
+                const reverseData = res?.data?.reverse();
+                setData(reverseData);
             }
             // setData(res.data);
             setLoading(false);
@@ -288,7 +295,11 @@ const CompBlog = () => {
     const handleStatusToggle = async (record) => {
         try {
             const response = await axios.patch(
-                `${baseurl}/updateCompStatus/${record?._id}`
+                `${baseurl}/updateCompStatus/${record?._id}`, {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    }
             );
             // console.log(response);
 
@@ -304,7 +315,11 @@ const CompBlog = () => {
 
     const handleDelete = async (record) => {
         try {
-            const response = await axios.delete(`${baseurl}/deletecompblogs/${record}`)
+            const response = await axios.delete(`${baseurl}/deletecompblogs/${record}`, {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    })
             if (response) {
                 message.success("Status updated succesfully");
                 fetchData();
@@ -326,11 +341,12 @@ const CompBlog = () => {
             const response = await axios.post(
                 `${baseurl}/api/uploadImage`,
                 formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
+                 {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
             );
 
             if (response) {
@@ -358,11 +374,12 @@ const CompBlog = () => {
             const response = await axios.post(
                 `${baseurl}/api/uploadImage`,
                 formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
+                 {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
             );
 
             if (response.data.imageUrl) {
@@ -390,7 +407,7 @@ const CompBlog = () => {
 
 
     const handlePost = async (values) => {
- const link = values?.link.split('\n')
+ const link = values?.link?.split('\n')
 
         const postData = {
             title: values.title,
@@ -424,7 +441,12 @@ const CompBlog = () => {
         try {
             const response = await axios.post(
                 baseurl + "/createCompblogs",
-                postData
+                postData,
+                 {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    }
             );
             // console.log(response.data);
 
@@ -476,7 +498,12 @@ const CompBlog = () => {
         try {
             const response = await axios.put(
                 `${baseurl}/updatecompblogs/${editingCompBlog?._id}`,
-                postData
+                postData,
+                 {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    }
             );
             // console.log(response.data);
 

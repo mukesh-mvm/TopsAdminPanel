@@ -98,7 +98,11 @@ const Tag = () => {
     const handleStatusToggle = async (record) => {
         try {
             const response = await axios.patch(
-                `${baseurl}/updatetagStatus/${record?._id}`
+                `${baseurl}/updatetagStatus/${record?._id}`, {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    }
             );
             // console.log(response);
 
@@ -134,7 +138,11 @@ const Tag = () => {
 
     const handleDelete = async (record) => {
         try {
-            const response = await axios.delete(`${baseurl}/deletetags/${record}`)
+            const response = await axios.delete(`${baseurl}/deletetags/${record}`, {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    })
             if (response) {
                 message.success("Status updated succesfully");
                 fetchData();
@@ -154,7 +162,12 @@ const Tag = () => {
         try {
             const response = await axios.post(
                 baseurl + "/createtags",
-                postData
+                postData,
+                 {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    }
             );
             // console.log(response.data);
 
@@ -178,7 +191,12 @@ const Tag = () => {
         try {
             const response = await axios.put(
                 `${baseurl}/updatetag/${editingSubCategory?._id}`,
-                postData
+                postData,
+                 {
+      headers: {
+        Authorization: `Bearer ${auth?.token}`,
+      },
+    }
             );
             // console.log(response.data);
 

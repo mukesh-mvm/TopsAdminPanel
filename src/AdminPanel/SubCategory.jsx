@@ -37,49 +37,64 @@ const SubCategory = () => {
     useEffect(() => {
         // fetchData();
         fetchData1()
-    }, []);
+    }, [auth.token]);
 
 
      useEffect(() => {
         fetchData();
     
-    }, [seachloading]);
+    }, [seachloading,auth.token]);
 
 
 
 
-    const fetchData1 = async () => {
-        try {
-            const res = await axios.get(baseurl + "/category");
-            // console.log("----data-----", res.data);
-            setCategoris(res.data);
-            setLoading(false);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            setLoading(false);
-        }
-    };
+const fetchData1 = async () => {
+  try {
+    const res = await axios.get(
+      `${baseurl}/category`,
+      {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      }
+    );
 
-    const fetchData = async () => {
-        try {
-            const res = await axios.get(baseurl + "/getAllSubcategory");
+    setCategoris(res.data);
+    setLoading(false);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    setLoading(false);
+  }
+};
 
-            // console.log("----data-----", res.data);
-            // setData(res.data);
 
+const fetchData = async () => {
+  try {
+    const res = await axios.get(
+      `${baseurl}/getAllSubcategory`,
+      {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      }
+    );
 
-        if(seachloading){
-        const filtered = res?.data.filter(job =>job.name.toLowerCase().includes(search.toLowerCase()));
-         setData(filtered);
-        }else{
-         setData(res?.data);
-        }
-            setLoading(false);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            setLoading(false);
-        }
-    };
+    if (seachloading) {
+      const filtered = res?.data.filter(job =>
+        job.name.toLowerCase().includes(search.toLowerCase())
+      );
+      setData(filtered);
+    } else {
+      setData(res?.data);
+    }
+
+    setLoading(false);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    setLoading(false);
+  }
+};
+
 
     const handleAdd = () => {
         setEditingSubCategory(null);
@@ -99,21 +114,28 @@ const SubCategory = () => {
         setIsModalOpen(true);
     };
 
-    const handleStatusToggle = async (record) => {
-        try {
-            const response = await axios.patch(
-                `${baseurl}/updateSubCategoryStatus/${record?._id}`
-            );
-            // console.log(response);
+   const handleStatusToggle = async (record) => {
+  try {
+    const response = await axios.patch(
+      `${baseurl}/updateSubCategoryStatus/${record?._id}`,
+      {}, // ✅ empty body (since you’re not sending data)
+      {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      }
+    );
 
-            if (response) {
-                message.success("Status updated succesfully");
-                fetchData();
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    if (response) {
+      message.success("Status updated successfully");
+      fetchData();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
 
 
        const handleSeach = ()=>{
@@ -138,7 +160,11 @@ const SubCategory = () => {
 
     const handleDelete = async (record) => {
         try {
-            const response = await axios.delete(`${baseurl}/delteSubCategory/${record}`)
+            const response = await axios.delete(`${baseurl}/delteSubCategory/${record}`,{
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      })
             if (response) {
                 message.success("Status updated succesfully");
                 fetchData();
@@ -148,54 +174,68 @@ const SubCategory = () => {
         }
     }
 
+
     const handlePost = async (values) => {
-        const postData = {
-            name: values.name,
-            category: values.parent,
+  const postData = {
+    name: values.name,
+    category: values.parent,
+  };
 
-        };
+  try {
+    const response = await axios.post(
+      `${baseurl}/creatSubcategory`,
+      postData,
+      {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      }
+    );
 
-        try {
-            const response = await axios.post(
-                baseurl + "/creatSubcategory",
-                postData
-            );
-            // console.log(response.data);
+    if (response.data) {
+      setIsModalOpen(false);
+      message.success("User created successfully!");
+      fetchData();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-            if (response.data) {
-                setIsModalOpen(false);
-                message.success("User created successfully!");
-                fetchData();
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
-    const handlePut = async (values) => {
-        const postData = {
-            name: values.name,
-            category: values.parent,
 
-        };
 
-        try {
-            const response = await axios.put(
-                `${baseurl}/updateSubcategory/${editingSubCategory?._id}`,
-                postData
-            );
-            // console.log(response.data);
+ const handlePut = async (values) => {
+  const postData = {
+    name: values.name,
+    category: values.parent,
+  };
 
-            if (response.data) {
-                setIsModalOpen(false);
-                fetchData();
-                message.success("User update successfully!");
-                form.resetFields();
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
+  try {
+    const response = await axios.put(
+      `${baseurl}/updateSubcategory/${editingSubCategory?._id}`,
+      postData,
+      {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      }
+    );
+
+    if (response.data) {
+      setIsModalOpen(false);
+      fetchData();
+      message.success("User update successfully!");
+      form.resetFields();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
+
     const handleSubmit = async (values) => {
         if (editingSubCategory) {
             await handlePut(values);
